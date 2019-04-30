@@ -54,7 +54,7 @@ try
                 EPOCommunications('transmit', 'M150');
                 status = EPOCommunications('transmit', 'S');
             case 'm'%iddle
-                EPOCommunications('transmit', 'D150');
+                EPOCommunications('transmit', 'D154');
                 status = EPOCommunications('transmit', 'S');
         end
 
