@@ -1,10 +1,11 @@
-% x_brake, v_brake, x_acc, v_acc consist of 8 vectors each (every
+% x_acc, v_acc consist of 8 vectors each (every
 % speedsetting)
-function brakePoint = KITTstop(batt_level, speedsetting, stopdistance, x_brake, v_brake, x_acc, v_acc)
-    
+function brakePoint = KITTstop(batt_level, speedsetting, stopdistance, x_rollout, v_rollout, x_acc, v_acc, brakeEnd)
+    % Compensating for battery level
+    batt_comp = batt_level/18.4;
 
     % Select the curves at speedsetting and compensate for battery level
     % 8 speedlevels (8 is fastest)
-    brakePoint = CurvesIntersect(stopdistance, x_brake(speedsetting), v_brake(speedsetting), x_acc(speedsetting), v_acc(speedsetting), brakeEndings(speedsetting));
+    brakePoint = CurvesIntersect(stopdistance, x_rollout, v_rollout, x_acc(speedsetting, :), batt_comp*v_acc(speedsetting, :), brakeEnd);
     
 end
