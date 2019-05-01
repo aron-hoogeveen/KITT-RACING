@@ -1,5 +1,13 @@
-function [distanceR, distanceL] = mainKITT(comPort)
+function [distanceR, distanceL] = mainKITT(comPort, speed, stopDistance)
 %MAINKITT control unit for challenge 1
+%    speed is defined as: 
+if (nargin < 2)
+    error('Not enough input arguments (two required).');
+end
+if (nargin < 3)
+    stopDistance = 100;
+end
+
 try
     % Initialize the connection
     result = EPOCommunications('open', comPort);
@@ -31,8 +39,9 @@ try
     input('Press enter to start...');
     
     % Start driving forward
-    EPOCommunications('transmit', 'D154');
-    EPOCommunications('transmit', 'M156');
+    speedKITT = strcat('M', speed);
+    EPOCommunications('transmit', 'D154');  % Fix the steering offset of the car
+    EPOCommunications('transmit', speedKITT);
     
     disp('Process started.');
     while (KITT_STOP ~= 1)
@@ -58,14 +67,11 @@ try
         distanceR = [distanceR, distR];
         distanceL = [distanceL, distL];
         
-        
-        
-        % STOP THE CAR YEET
-        if (distR < 200 || distL < 200)
+        if (distR < stopDistance || distL < stopDistance)
             KITT_STOP = 1;
         end
         
-        pause(0.09);
+        pause(0.09); % Command refresh time
     end
     
     % Close the connection
