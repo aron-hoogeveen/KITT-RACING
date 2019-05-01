@@ -10,20 +10,25 @@ try
         disp('The connecton has been established');
     end
     
-    % Check if appropriate (global) variables are declared
+    % Global variables. These variables are used to comminucate between
+    % functions. KITT_STOP signals that the smooth_stop function should be
+    % activated. distL and distR contain the current read out sensor values
+    % TODO: read out a couple of sensor values and take the average. This
+    % can be done to filter out sensor errors. 
     global KITT_STOP;
     global distR;
     global distL;
     
-    KITT_STOP = 0;
+    KITT_STOP = 0;  % At the start of this script we do not want the car to stop
     distR = 999; % Initialize distance overload
     distL = 999; % Initialize distance overload
     
+    % Matrices to store the sensor values in
     distanceR = [];
     distanceL = [];
     
     % Wait for user input to start
-    input('press enter to start...');
+    input('Press enter to start...');
     
     % Start driving forward
     EPOCommunications('transmit', 'D154');
@@ -37,12 +42,12 @@ try
         %   Extract distance
         % Check for stop signal
         %   Stop the car + status
-     
+        
         status = EPOCommunications('transmit', 'S');
-        % Extract distance from status
+        % Extract sensor values from the returned status
         distIndex = strfind(status, 'Dist');
         distEnd = strfind(status(distIndex:end), '*');
-        distStr = status(distIndex:distIndex+distEnd-3); % Very beun, much wow
+        distStr = status(distIndex:distIndex+distEnd-3);
         distStr = transpose(split(distStr));
         distRtemp = distStr(3);
         distR = str2num(distRtemp{1});
