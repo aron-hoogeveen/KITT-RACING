@@ -37,6 +37,8 @@ else
     % Determine rollout end point for shifting
 end
 
+
+% Remove dit
 plot(Xcomb, Vcomb)
 hold on;
 plot(x_rollout, v_rollout)
