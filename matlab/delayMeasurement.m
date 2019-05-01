@@ -15,7 +15,7 @@ n = 100;
 % Start time measurement
 tic
     for i=1:n
-        EPOCommunications('transmit', 'M150');
+%         EPOCommunications('transmit', 'M150');
         status = EPOCommunications('transmit', 'S');
     end
 toc
