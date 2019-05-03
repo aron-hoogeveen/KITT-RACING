@@ -1,4 +1,4 @@
-function [distanceR, distanceL] = mainKITT(comPort, speed, stopDistance)
+function [distanceR, distanceL] = testStop(comPort, speed, stopDistance)
 %mainKITT controls the KITT racing car.
 %    [distanceR, distanceL] = mainKITT(comPort, speed, stopDistance) opens
 %    up a serial bluetooth connection with the KITT racing car, with which
@@ -21,7 +21,7 @@ function [distanceR, distanceL] = mainKITT(comPort, speed, stopDistance)
 strSpeedErr = '"speed" needs to be of the form "xxx" with xxx an integer value between 156 and 160.';
 
 % Default values
-cmdRefreshTime = 0.09; % [s] FIXME: fine tune this interval
+cmdRefreshTime = 0.04; % [s] FIXME: fine tune this interval
 
 % Check input arguments
 if (nargin < 2)
@@ -51,6 +51,7 @@ try
 %         return;
     else
         disp('The connecton has been established');
+        EPOCommunications('transmit', 'D154');
     end
     
     % Global variables. These variables are used to comminucate between
@@ -63,6 +64,7 @@ try
     global distR;
     global distL;
     global distParR distParL
+    global stopL stopR
     
     KITT_STOP = 0;  % At the start of this script we do not want the car to stop
     distR = 999; % Initialize distance overload
@@ -115,7 +117,30 @@ try
         % stopping at the stopDistance.
         if (distR < stopDistance || distL < stopDistance)
 %             KITT_STOP = 1;
+            EPOCommunications('transmit', 'M135');
+            stopStat = [];
+            stopL = []; stopR = [];
+            for i=1:26
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+        %         distIndex = strfind(status, 'Dist');
+        %         distEnd = strfind(status(distIndex:end), '*');
+        %         distStr = status(distIndex:distIndex+distEnd-3);
+        %         distStr = transpose(split(distStr));
+        %         distRtemp = distStr(3);
+        %         distR = str2num(distRtemp{1});
+        %         distLtemp = distStr(5);
+        %         distL = str2num(distLtemp{1});
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                stopR = [stopR, distR]; distParR = [distParR, distR];
+                stopL = [stopL, distL]; distParL = [distParL, distL];
+            end
             EPOCommunications('transmit', 'M150');
+            break;
             % FIXME: consider using break instead of KITT_STOP. This will
             % only make sense when only this conditional statement
             % determines the moment to stop.
@@ -128,9 +153,17 @@ try
     EPOCommunications('close');
     disp('Done with execution, we are.');
     
+    clf;
     plot(distanceR);
     hold on;
     plot(distanceL);
+    legend('JEMOEDER', 'JEMOEDEL');
+    
+    figure;
+    plot(stopR);
+    hold on;
+    plot(stopL);
+    legend('R', 'ziekeL');
 catch e
     % MAIDAY MAIDAY CLOSE THE CONNECTION
     EPOCommunications('close');
