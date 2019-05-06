@@ -5,7 +5,7 @@
 % level
 
 % There are 9 speedsettings :157-165
-speedsetting = 9; % This is changed for every measurement
+speedsetting = 3; % This is changed for every measurement
 
 %Only once:
 %x_acc = zeros(9,40);
@@ -21,15 +21,15 @@ end
 Xcomb = distComb(1)-distComb;
 
 % smooth Xcomb data:
-Xcomb = smooth(smooth(smooth(Xcomb)));
+Xcomb = smooth(smooth(Xcomb));
         
 Vcomb = diff(Xcomb);
 Vcomb(length(Xcomb)) = Vcomb(length(Xcomb)-1);
 
 % Vectors will be extended to 40, assuming constant speed is achieved.
-last3average = (Vcomb(length(Vcomb))+Vcomb(length(Vcomb)-1)+Vcomb(length(Vcomb)-2))/3;
 for i = length(Vcomb):40
-    Vcomb(i) = last3average;
+    last3average = (Vcomb(length(Vcomb))+Vcomb(length(Vcomb)-1)/3;
+    Vcomb(i) = last2average;
     Xcomb(i) = Xcomb(i-1)+Xcomb(length(Xcomb))-Xcomb(length(Xcomb)-1);
 end
 
