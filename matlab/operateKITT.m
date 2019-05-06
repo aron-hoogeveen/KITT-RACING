@@ -39,10 +39,11 @@ try
             case 's'%tatus
                 status = EPOCommunications('transmit', 'S');
             case 'f'%orwards
-                EPOCommunications('transmit', 'M160'); 
+%                 EPOCommunications('transmit', 'D154');
+                EPOCommunications('transmit', 'M165'); 
                 status = EPOCommunications('transmit', 'S');
             case 'b'%ackwards
-                EPOCommunications('transmit', 'M140');
+                EPOCommunications('transmit', 'M135');
                 status = EPOCommunications('transmit', 'S');
             case 'l'%eft
                 EPOCommunications('transmit', 'D200');

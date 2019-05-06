@@ -16,12 +16,14 @@ n = 100;
 tic
     for i=1:n
 %         EPOCommunications('transmit', 'M150');
-        status = EPOCommunications('transmit', 'S');
+        status = EPOCommunications('transmit', 'Sd');
     end
 toc
 elapsedTime = toc;
 
 disp(elapsedTime/n);
+
+timeAverage = elapsedTime/n;
 
 % Close the connection
 EPOCommunications('close');
