@@ -1,5 +1,7 @@
-function point = CurvesIntersect(d, x_brake, v_brake, x_acc, v_acc, brakeEnding)
+function point = CurvesIntersect(d, x_brake, v_brake, x_acc, v_acc, brakeEnding, getPosition)
 
+    % If getPosition = 1, x location is given, otherwise v location
+ 
     % d = desired ending point
 
     % Accerlating
@@ -9,10 +11,12 @@ function point = CurvesIntersect(d, x_brake, v_brake, x_acc, v_acc, brakeEnding)
     plot(x_acc, v_acc);
 
     % Intersection point (m)
-    Braking_Point = intersectCurves(x_brake - shift_x, v_brake, x_acc, v_acc);
-    
-    point = Braking_Point;
-    
+    if (getPosition)
+        point = intersectCurves(x_brake - shift_x, v_brake, x_acc, v_acc);
+    else
+        point = intersectCurves(v_brake, x_brake - shift_x, v_acc, x_acc);
+    end
+   
     function brakeStart = intersectCurves(x_brak, v_brak, x_acc, v_acc)
         brakeStart = polyxpoly(x_brak, v_brak, x_acc, v_acc);
     end 

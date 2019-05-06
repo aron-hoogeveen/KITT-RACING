@@ -1,0 +1,10 @@
+function brakePoint = KITTstop(stopdistance, x_brake, v_brake, x_acc, v_acc, brakeEnd, delay)
+
+    % Compensate for delay (ms)
+    4.5/90 %cm/ms
+    
+    
+    
+    brakePoint = CurvesIntersect(stopdistance, x_brake, v_brake, x_acc, v_acc, brakeEnd);
+  
+end

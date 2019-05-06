@@ -5,7 +5,7 @@
 % level
 
 % There are 9 speedsettings :157-165
-speedsetting = 9; % This is changed for every measurement
+speedsetting = 4; % This is changed for every measurement
 
 %Only once:
 %x_acc = zeros(9,40);
