@@ -67,7 +67,7 @@ try
         distanceR = [distanceR, distR];
         distanceL = [distanceL, distL];
         
-        if (distR < stopDistance || distL < stopDistance)
+        if ((distR < stopDistance && distR > 20) || (distL < stopDistance && distL > 20))
             KITT_STOP = 1;
         end
         
