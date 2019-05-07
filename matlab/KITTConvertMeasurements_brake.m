@@ -1,5 +1,8 @@
 % Converts measurements to matrices of brake with battery voltage:   18.4-18.6V
 
+clear distComb;
+clear Vcomb;
+clear Xcomb;
 for i = 1:length(stopL)
     distComb(i) = (stopL(i) + stopR(i))/2;
 end
@@ -9,7 +12,7 @@ end
 Xcomb = distComb(1)-distComb;
 
 % smooth Xcomb data:
-Xcomb = smooth(smooth(Xcomb));
+Xcomb = smooth(smooth(smooth(Xcomb)));
         
 Vcomb = diff(Xcomb);
 Vcomb(length(Xcomb)) = Vcomb(length(Xcomb)-1);
