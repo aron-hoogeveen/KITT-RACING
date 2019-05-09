@@ -15,10 +15,10 @@ Vcomb = diff(Xcomb);
 Vcomb(length(Xcomb)) = Vcomb(length(Xcomb)-1);
 
 %Save brake curve
-x_brake160 = Xcomb;
-v_brake160 = Vcomb;
+x_brake145 = Xcomb;
+v_brake145 = Vcomb;
 
 % Determine rollout end point for shifting
-x_brake160_end = 225;
+x_brake145_end = 126;
 
-plot(x_brake160, v_brake160);
+plot(x_brake145, v_brake145);

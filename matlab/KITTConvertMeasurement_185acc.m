@@ -1,6 +1,6 @@
 % Converts measurements to matrices of rollout with battery voltage:
 % 18.4-18.6V
-
+clear distComb;
 for i = 1:length(d1)
     distComb(i) = (d1(i) + d2(i))/2;
 end
