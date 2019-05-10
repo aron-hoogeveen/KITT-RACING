@@ -1,4 +1,4 @@
-function brakePoint = KITTstop(stopdistance, x_brake, v_brake, x_acc, v_acc, brakeEnd, delay)
+function [brakePoint, vPoint] = KITTstop(stopdistance, x_brake, v_brake, x_acc, v_acc, brakeEnd, delay)
 
     xPoint = CurvesIntersect(stopdistance, x_brake, v_brake, x_acc, v_acc, brakeEnd, 1);
     vPoint = CurvesIntersect(stopdistance, x_brake, v_brake, x_acc, v_acc, brakeEnd, 0);

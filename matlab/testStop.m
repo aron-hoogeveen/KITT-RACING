@@ -29,12 +29,9 @@ function [distanceR, distanceL, currentVoltage] = testStop(comPort, speed, stopD
 cmdRefreshTime = 0.04; % [s] FIXME: fine tune this interval
 
 % Check input arguments
-if (nargin < 2)
-    error('Not enough input arguments (minimum of two required). Type "help mainKITT" to check the syntax of this function.');
-end
-if (nargin < 3)
-    stopDistance = 100; % Default stop distance.
-end
+% if (nargin < 2)
+%     error('Not enough input arguments (minimum of two required). Type "help mainKITT" to check the syntax of this function.');
+% end
 
 try
     % Initialize the connection
@@ -61,7 +58,6 @@ try
 %     global distParR distParL
 %     global stopL stopR
     
-    KITT_STOP = 0;  % At the start of this script we do not want the car to stop
     distR = 999; % Initialize distance overload
     distL = 999; % Initialize distance overload
     
@@ -69,17 +65,9 @@ try
     distanceR = [];
     distanceL = [];
     
-    % Wait for user input to start
-    input('Press enter to start...');
-    disp('READY');
-    pause(0.5); % This is worth our valuable time
-    disp('SET');
-    pause(0.4);
-    
     % Start driving forward
-%     speedKITT = strcat('M', string(speed));
-    speedKITT = 'M160';
-    EPOCommunications('transmit', 'D154');  % Fix the steering offset of the car
+    speedKITT = char(strcat('M', string(speed)));
+%     EPOCommunications('transmit', 'D154');  % Fix the steering offset of the car
     % TODO: save default values in a seperate file and read them out. This
     % way it is possible to change a specific value in one place only and
     % have the effect through all functions.
@@ -87,7 +75,7 @@ try
     EPOCommunications('transmit', speedKITT);
     
     disp('GO!');
-    while (KITT_STOP ~= 1)
+    while (1 == 1)
         % TODO: Request only the distance status 'Sd'
         
         status = EPOCommunications('transmit', 'Sd'); % Request only distance
@@ -103,10 +91,16 @@ try
         % TODO: implement the stop curve in a way that makes the car stop
         % at exactly the stopDistance. At this moment the car starts
         % stopping at the stopDistance.
-        if (((distR < stopDistance && distR > 20) || (distL < stopDistance && distL > 20)) && (abs(distR - distL) < 15) )
+        differenceL = distL - stopDistance;
+        differenceR = distR - stopDistance;
+        delta = 0;
+
+        disp(strcat('Diff L and R = ', string(differenceL), ',', string(differenceR)));
+        if ( abs(distL - distR) < 30 ) && ( differenceL < delta || differenceR < delta )
 %             KITT_STOP = 1;
-            EPOCommunications('transmit', 'M145');
-            for i=1:35 % This loop is equivalent to a pause statement of approximately 26*37 [ms] 
+            disp('STOP K DING');
+            EPOCommunications('transmit', 'M135');
+            for i=1:10 % This loop is equivalent to a pause statement of approximately 0.4 [s]. 
                 status = EPOCommunications('transmit', 'Sd'); % Request only distance
                 % Extract sensor values from the returned status
                 distStr = strsplit(status);
@@ -117,14 +111,512 @@ try
                 distanceR = [distanceR, distR];
                 distanceL = [distanceL, distL];
             end
+            status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
             EPOCommunications('transmit', 'M150');
+            status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
+                status = EPOCommunications('transmit', 'Sd'); % Request only distance
+                % Extract sensor values from the returned status
+                distStr = strsplit(status);
+                distL = str2num(distStr{1}(4:end));
+                distR = str2num(distStr{2}(4:end));
+                
+                % Save the distances
+                distanceR = [distanceR, distR];
+                distanceL = [distanceL, distL];
             break;
             % FIXME: consider using break instead of KITT_STOP. This will
             % only make sense when only this conditional statement
             % determines the moment to stop.
         end
         
-        pause(cmdRefreshTime);
+%         pause(cmdRefreshTime);
     end
     
     % Close the connection

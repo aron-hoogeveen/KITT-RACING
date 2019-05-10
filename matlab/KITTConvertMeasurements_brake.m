@@ -23,5 +23,6 @@ v_brake165 = Vcomb;
 
 % Determine rollout end point for shifting
 x_brake165_end = 120;
-
+plot(distComb);
+figure
 plot(x_brake165, v_brake165);
