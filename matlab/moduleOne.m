@@ -77,24 +77,25 @@ stopDistance = stopDistance + 8.5;
 % The starting speed is predefined and should be set here. If needed one
 % could add an optional function input parameter that overwrites this
 % predefined startSpeed value. 
-startSpeed = 160;
-KITTspeed = char(strcat('M', string(startSpeed)));
+speedSetting = 160;
+KITTspeed = char(strcat('M', string(speedSetting)));
 
 % Calculate the break point
 % Load curves
 %load Acc160-185V.mat;
 %load Brake140-185V.mat;
 load LAATSTEVANVRIJDAG3.mat;
-delay = 0; %[ms]
 driveDistance = startDistance - stopDistance;
-[breakPoint, speed] = KITTstop(driveDistance, x_brake135, v_brake135, x_acc185, v_acc185, x_brake135_end, delay);
+[breakPoint, speed] = KITTstop(driveDistance, x_brake135, v_brake135, x_acc185, v_acc185, x_brake135_end, 0);
+% speed is returned in distance per sample time
 
 stopPoint = startDistance - breakPoint;
-disp(stopPoint);
+disp(strcat('stopPoint=', stopPoint));
 % Start driving until the breakPoint has been reached (or the value is
 % close enough to the breakpoint, want vertragingen).
-speed = speed / 0.04; % [cm / s]
-delta = speed * 0.160; % TODO: calculate the maximum distance difference between the read out distance and the real time distance
+speed = speed / 0.037; % [cm/s] speed at the moment of stopping
+delay = 37e-3 + 0.5 * 35e-3 + FIXME + 0.5 * 37e-3; % requestDistanceDelay + 0.5 * sensorUpdateDelay + matlabCalculationsDelay + sendStopDelay(=0.5*requestDistanceDelay)
+
 
 % Correct the steering offset
 EPOCommunications('transmit', 'D154');
@@ -104,8 +105,8 @@ while (1 == 1)
     % Only compare sensor values that can be considered accurate
     status = EPOCommunications('transmit', 'Sd');
     distStr = strsplit(status);
-    sensorL = str2num(distStr{1}(4:end)); % TODO:
-    sensorR = str2num(distStr{2}(4:end));
+    sensorL = str2double(distStr{1}(4:end));
+    sensorR = str2double(distStr{2}(4:end));
     
     % The sensor values can be considered accurate when
     %   - THE FOLLOWING IS NOT TRUE. ~they are smaller than +/-250 cm;~
@@ -115,16 +116,18 @@ while (1 == 1)
     %     value could be higher)
     
     % differenceX resembles the current distance to the breakPoint
-    differenceL = sensorL - stopPoint; % FIXME: maybe include this statement in a abs() since the case could arise that the car is already a bit further than the breakPoint
-    differenceR = sensorR - stopPoint;
-    if ( abs(sensorL - sensorR) < 40 ) && ( (differenceL < delta) || (differenceR < delta ))
-        % IT'S TIME TO STOP!
-        disp(sensorL);
-        disp(sensorR);
-        disp(delta);
-        smoothStop(startSpeed); % actual stop function is written in another function to keep this function readable.
+    
+    projectedDistanceL = sensorL + delay * speed;
+    projectedDistanceR = sensorR + delay * speed;
+    if ( abs(sensorL - sensorR) <= 10 ) && ( (projectedDistanceR < stopPoint) || (projectedDistanceL < stopPoint ))
+        % If the deviation between the two sensors is more than 10 cm, the 
+        % sensor values (or at least one) should be considered worthless. 
+        disp(strcat('SensorL=', sensorL, ', projectedDistanceL=', projectedDistanceL));
+        disp(strcat('SensorR=', sensorR, ', projectedDistanceR=', projectedDistanceR));
+        
+        smoothStop(speedSetting); % actual stop function is written in another function to keep this function readable.
         break;
-    end%
+    end
     
     % FIXME: should we include a pause statement here? Most likely not.
 end%while
