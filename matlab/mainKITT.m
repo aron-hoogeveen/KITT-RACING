@@ -64,7 +64,7 @@ try
         distanceL = [distanceL, distL];
         
         % If the car is at the given 'stop' distance, start stopping
-        if (((distR < stopDistance && distR > 20) || (distL < stopDistance && distL > 20)) && (abs(distR - distL) < 15))
+        if (((distR < stopDistance && distR > 20) || (distL < stopDistance && distL > 20)) && (abs(distR - distL) <= 10))
             % The above conditional statement should filter out most of the
             % random errors that the distance sensors will give sometimes. 
             break;
