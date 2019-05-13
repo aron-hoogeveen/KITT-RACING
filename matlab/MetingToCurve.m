@@ -11,7 +11,9 @@ end
 Xcomb = distComb(1)-distComb;
 
 % smooth Xcomb data:
-Xcomb = smooth(smooth(smooth(Xcomb)));
+for i = 1:3330
+    Xcomb = smooth(smooth(smooth(Xcomb)));
+end
         
 Vcomb = diff(Xcomb);
 Vcomb(length(Xcomb)) = Vcomb(length(Xcomb)-1);
