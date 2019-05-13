@@ -10,7 +10,7 @@ Xcomb = distComb(1)-distComb;
 
 % smooth Xcomb data:
 Xcomb = smooth(smooth(smooth(smooth(Xcomb))));
-        
+
 Vcomb = diff(Xcomb);
 Vcomb(length(Xcomb)) = Vcomb(length(Xcomb)-1);
 
