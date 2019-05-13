@@ -1,8 +1,15 @@
-function [distanceR, distanceL] = brakeKITT(comPort, speed, stopDistance)
+function [distanceR, distanceL, timeVector] = brakeKITT(comPort, speed, stopDistance)
 %[distanceR, distanceL] = brakeKITT(comPort, speed, stopDistance) is used
 %    to let the car drive up to 1 meter distance from the wall and then
 %    stop the car. (It is assumed that the car will be stopped in time
 %    before it reaches the wall)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% NOTE: DO NOT FORGET TO VALIDATE ALL CAR SETTINGS (like speed, brake
+% speed, etc) AND INCLUDE IT IN THE FILENAME, OR BETTER AS SEPERATE
+% VARIABLES THAT WILL BE SAVED ALONGSIDE THE SENSORDATA
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 if (nargin < 1)
     error('Not enough input arguments.');
 end
@@ -32,6 +39,7 @@ try
     % Matrices to store the sensor values in
     distanceR = [];
     distanceL = [];
+    timeVector = [0];
     
     % Wait for user input to start
     input('Press enter to start...');
@@ -42,6 +50,7 @@ try
     EPOCommunications('transmit', speedKITT);
     
     disp('Process started.');
+    startTime = tic;
     while (1 == 1)
         % Request the data from the KITT distance sensors.
         % There will be duplicate data in the received data, as the time it
@@ -49,6 +58,7 @@ try
         % the time it takes the sensors to refresh their measurement is
         % about 70 milliseconds.
         status = EPOCommunications('transmit', 'Sd');
+        newTime = tic(startTime);
         distStr = strsplit(status);
         distL = str2num(distStr{1}(4:end));
         distR = str2num(distStr{2}(4:end));
@@ -56,15 +66,19 @@ try
         % Append the distance to the previous measured distances.
         distanceR = [distanceR, distR];
         distanceL = [distanceL, distL];
+        timeVector = [timeVector, newTime];
         
         % If the car is at the given 'stop' distance, start stopping
         if (((distR < stopDistance && distR > 20) || (distL < stopDistance && distL > 20)) && (abs(distR - distL) <= 10))
             % The above conditional statement should filter out most of the
             % random errors that the distance sensors will give sometimes. 
             
+            EPOCommunications('transmit', 'M138');
             % Stop the car
+            tic
             for i=1:10 % Tweak this value when the car does not stop in time
                 status = EPOCommunications('transmit', 'Sd');
+                newTime = toc(startTime);
                 distStr = strsplit(status);
                 distL = str2num(distStr{1}(4:end));
                 distR = str2num(distStr{2}(4:end));
@@ -72,7 +86,9 @@ try
                 % Append the distance to the previous measured distances.
                 distanceR = [distanceR, distR];
                 distanceL = [distanceL, distL];
+                timeVector = [timeVector, newTime];
             end
+            EPOCommunications('transmit', 'M150');
             
             break;%while
         end%if
@@ -83,6 +99,7 @@ try
     % Add a few extra measurements to the breaking data
     for i=1:4 
         status = EPOCommunications('transmit', 'Sd');
+        newTime = toc(startTime);
         distStr = strsplit(status);
         distL = str2num(distStr{1}(4:end));
         distR = str2num(distStr{2}(4:end));
@@ -90,6 +107,7 @@ try
         % Append the distance to the previous measured distances.
         distanceR = [distanceR, distR];
         distanceL = [distanceL, distL];
+        timeVector = [timeVector, newTime];
     end
     
     % Close the connection
