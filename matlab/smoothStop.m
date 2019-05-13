@@ -32,6 +32,10 @@ switch speed
         EPOCommunications('transmit', stopSpeed);
         pause(stopTime);
         EPOCommunications('transmit', 'M150');
+    otherwise
+        disp('The provided speed for the smoothStop function could not be found in the switch statement.');
+        disp('Closing the connection te the car...');
+        EPOCommunications('close');
 end%switch
 
 end%smoothStop
