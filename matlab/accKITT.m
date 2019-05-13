@@ -1,4 +1,4 @@
-function [distanceR, distanceL] = accKITT(comPort, speed, stopDistance)
+function [distanceR, distanceL, timeVector] = accKITT(comPort, speed, stopDistance)
 %[distanceR, distanceL] = accKITT(comPort, speed, stopDistance) lets the
 %    car drive untill the cr is 30 centimeters from the wall. The car MUST 
 %    be stopped by hand, otherwise ti will crash into the wall.
@@ -31,6 +31,7 @@ try
     % Matrices to store the sensor values in
     distanceR = [];
     distanceL = [];
+    timeVector = [0];
     
     % Wait for user input to start
     input('Press enter to start...');
@@ -41,6 +42,9 @@ try
     EPOCommunications('transmit', speedKITT);
     
     disp('Process started.');
+    % Time vector (in case the transmit command is not consistently 37
+    % milliseconds)
+    startTime = tic;
     while (1 == 1)
         % Request the data from the KITT distance sensors.
         % There will be duplicate data in the received data, as the time it
@@ -48,6 +52,7 @@ try
         % the time it takes the sensors to refresh their measurement is
         % about 70 milliseconds.
         status = EPOCommunications('transmit', 'Sd');
+        newTime = toc(startTime);
         distStr = strsplit(status);
         distL = str2num(distStr{1}(4:end));
         distR = str2num(distStr{2}(4:end));
@@ -55,6 +60,7 @@ try
         % Append the distance to the previous measured distances.
         distanceR = [distanceR, distR];
         distanceL = [distanceL, distL];
+        timeVector = [timeVector, newTime];
         
         % If the car is at the given 'stop' distance, start stopping
         if (((distR < stopDistance && distR > 20) || (distL < stopDistance && distL > 20)) && (abs(distR - distL) <= 10))
