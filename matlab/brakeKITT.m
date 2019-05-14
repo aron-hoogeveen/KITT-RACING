@@ -19,8 +19,8 @@ function [distanceR, distanceL, timeVector] = brakeKITT(comPort)
 % if (nargin < 3)
 %     stopDistance = 100;
 % end
-speed = 160;
-stopDistance = 150;
+speed = 165;
+stopDistance = 200;
 if (stopDistance < 20)
     error('stopDistance needs to be greater than 20.');
 end
@@ -72,11 +72,15 @@ try
         timeVector = [timeVector, newTime];
         
         % If the car is at the given 'stop' distance, start stopping
-        if (((distR < stopDistance && distR > 20) || (distL < stopDistance && distL > 20)) && (abs(distR - distL) <= 20))
+        if (((distR < stopDistance && distR > 20) || (distL < stopDistance && distL > 20)) && (abs(distR - distL) <= 40))
             % The above conditional statement should filter out most of the
             % random errors that the distance sensors will give sometimes. 
             
-            EPOCommunications('transmit', 'M138');
+            if (speed == 165)
+                EPOCommunications('transmit', 'M135');
+            else
+                EPOCommunications('transmit', 'M138');
+            end
             % Stop the car
             breakTimer = tic;
             for i=1:10 % Tweak this value when the car does not stop in time
