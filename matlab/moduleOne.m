@@ -45,8 +45,7 @@ function [] = moduleOne(comPort, startDistance, stopDistance, steeringOffset)
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 % Actual Program
-% The code could contain some pseudo code (non working code that only
-% resembles the function that should be implemented).
+% 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
 
 if (nargin < 3)
@@ -76,6 +75,8 @@ disp(strcat('the comport is "', comPort, '"'));
 
 % Open up the connection to the KITT Racing car.
 if (EPOCommunications('open', comPort) ~= 1)
+    % TODO: Most likely the conenction failed due to an already open port.
+    %     Close the connection to the port. 
     error('The connection could not be established.');
 end
 disp('Connection to KITT Racing car succesful.');
@@ -166,8 +167,6 @@ while (1 == 1)
         smoothStop(speedSetting); % actual stop function is written in another function to keep this function readable.
         break;
     end
-    
-    % FIXME: should we include a pause statement here? Most likely not.
 end%while
 pause(1);
 % read out the final measured distance at standstill
