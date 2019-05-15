@@ -1,4 +1,4 @@
-function [] = moduleOne(comPort, startDistance, stopDistance)
+function [] = moduleOne(comPort, startDistance, stopDistance, steeringOffset)
 %moduleOne(argsIn) is the one and only midterm challenge function that will
 %    get us our pass.
 %    The comPort need only be the numberic part of the comport. The textual
@@ -49,6 +49,17 @@ function [] = moduleOne(comPort, startDistance, stopDistance)
 % resembles the function that should be implemented).
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
 
+if (nargin < 3)
+    error('Not enough input arguments. Check the help for the function syntax');
+end
+if (nargin < 4)
+    steeringOffset = 'D152'; % Default steering offset as used in the last EPO sessions
+else
+    steeringOffset = char(strcat('D', string(steeringOffset)));
+end
+
+% FIXME: I am not entirely sure that we will only get integers as input
+%     values. If not, then this integer check should be removed.
 % Validate the input argument(s)
 % check if the stopDist is an integer.
 if (mod(stopDistance,1) ~= 0)
@@ -69,7 +80,7 @@ if (EPOCommunications('open', comPort) ~= 1)
 end
 disp('Connection to KITT Racing car succesful.');
 
-% Compensate the distance that the sensors are behind the bumper.
+% Compensate the distance that the sensors are behind the bumper of the car
 stopDistance = stopDistance + 8.5;
 
 
@@ -81,27 +92,28 @@ speedSetting = 160;
 KITTspeed = char(strcat('M', string(speedSetting)));
 
 % Calculate the break point
-% Load curves
+% Load the brake & acceleration data to compute the stoppoint with
 %load Acc160-185V.mat;
 %load Brake140-185V.mat;
 load acc_ploy.mat;
 load brake_ploy_v2.mat;
+
 yspeed_acc = [yspeed_acc 156];  % fixes for a too short acceleration for version 1
 ydis_acc = [ydis_acc 500]; % fixes for a too short acceleration curve for version 1
 driveDistance = startDistance - stopDistance;
 [breakPoint, speed] = KITTstop(driveDistance, ydis_brake, yspeed_brake, ydis_acc, yspeed_acc, 186.5, 0);
-% speed is returned in distance per sample time
 
+% breakPoint is given as the distance that the car should drive, so convert
+% it to the distance that the car will be from the wall
 stopPoint = startDistance - breakPoint;
 disp(strcat('stopPoint=', string(stopPoint)));
 % Start driving until the breakPoint has been reached (or the value is
 % close enough to the breakpoint, want vertragingen).
-% speed = speed / 0.037; % [cm/s] speed at the moment of stopping
 delay = (37e-3 + 0.5 * 35e-3 + 0.5 * 37e-3) * 5; % requestDistanceDelay + 0.5 * sensorUpdateDelay + matlabCalculationsDelay + sendStopDelay(=0.5*requestDistanceDelay)
 
 
 % Correct the steering offset
-EPOCommunications('transmit', 'D152');
+EPOCommunications('transmit', steeringOffset);
 EPOCommunications('transmit', KITTspeed);
 while (1 == 1)
     % Read out sensor data and compare it to the breakPoint
