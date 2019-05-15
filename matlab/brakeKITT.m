@@ -19,7 +19,7 @@ function [distanceR, distanceL, timeVector] = brakeKITT(comPort)
 % if (nargin < 3)
 %     stopDistance = 100;
 % end
-speed = 165;
+speed = 160;
 stopDistance = 200;
 if (stopDistance < 20)
     error('stopDistance needs to be greater than 20.');

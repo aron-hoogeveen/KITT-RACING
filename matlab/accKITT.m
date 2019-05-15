@@ -1,7 +1,8 @@
 function [distanceR, distanceL, timeVector] = accKITT(comPort, speed, stopDistance)
 %[distanceR, distanceL] = accKITT(comPort, speed, stopDistance) lets the
-%    car drive untill the cr is 30 centimeters from the wall. The car MUST 
-%    be stopped by hand, otherwise ti will crash into the wall.
+%    car drive untill the cr is 30 centimeters (or stopDistance) from the
+%    wall. The car will not stop in time to prevent a crash, so someone
+%    needs to catch the car right before the wall. 
 if (nargin < 1)
     error('Not enough input arguments.');
 end
