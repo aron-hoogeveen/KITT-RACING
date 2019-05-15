@@ -1,6 +1,9 @@
 function [] = smoothStop(speed)
 %smoothStop(speed) stops the KITT Racing car that is driving at a constant
 %    speed with speed setting 'speed'.
+%    If the speed setting is not valid the car will brake (of reverse) for
+%    a short time, and the connection to the car will be closed to prevent
+%    damage to the car.
 
 switch speed
     case 157
