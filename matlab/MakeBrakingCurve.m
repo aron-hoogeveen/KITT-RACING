@@ -8,8 +8,8 @@ const_speed = 18.5;
 
 %plot(sensorR); hold on; plot(sensorL);
 % truncate sensors (vanaf moment van remmen)
-begin = 50;
-ending = 77;
+begin = 41;
+ending = 78;
 
 d1 = sensorL(begin:ending);
 d2 = sensorR(begin:ending);
@@ -29,27 +29,29 @@ title('Xcomb');
 
 % Fit the curve to polynominal corresponding to constant speed and stop
 % distance
-% Line part
-line_samples = 0:16;
-line_part = polyfit(line_samples, Xcomb(line_samples+1), 1);
-X_line = polyval(line_part, line_samples);
+% f = ax^2 +bx +c;
+% f'(0) = 18.5;
+% f'(27) = 0;
+% f(0) = 0;
 
-
-poly_samples = 16:44;
-ri = 10.244;
-pu = 153.31275;
-%aplusc= ri-pu;
-%bmin2c = ri - 2*(ri-pu);
-b = ri;
-c = pu;
+poly_samples = 0:(ending-begin);
+a = -18.5/70;
+b = 18.5;
 % (poly) Braking part
-ft = fittype(@(a, x) a*(x-16)A.^2+b*(x-16)+c);
-FO = fit(poly_samples',X_combpoly',ft);
-%poly_part = polyfitB(samples, Xcomb(17:45), 2, 153.127450980392);
-%X_poly = polyval(poly_part, samples);
+ft = fittype(@(c, x) a*x.^2+b*x+c);
+FO = fit(poly_samples',Xcomb',ft);
 
-%Xcombi = [X_line; X_poly];
-
+figure(1) % plot the curve fitting
+plot(Xcomb);
+hold on;
 plot(FO);
+
+figure(2) % plot the curve fitting
+x_brake = FO(poly_samples);
+v_brake = diff(x_brake);
+x_brake = x_brake(1:length(x_brake)-1);
+plot(x_brake, v_brake);
+
+
 
 
