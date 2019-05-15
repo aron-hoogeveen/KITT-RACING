@@ -83,6 +83,11 @@ disp('Connection to KITT Racing car succesful.');
 % Compensate the distance that the sensors are behind the bumper of the car
 stopDistance = stopDistance + 8.5;
 
+% Read out the current voltage of the car. This voltage will be used to
+% adjust the projected distance accordingly.
+voltageStr = EPOCommunications('transmit', 'Sv');
+voltage = str2double(voltageStr(6:9)); % Extract the voltage
+
 
 % Start driving towards the wall. 
 % The starting speed is predefined and should be set here. If needed one
@@ -111,9 +116,25 @@ disp(strcat('stopPoint=', string(stopPoint)));
 % close enough to the breakpoint, want vertragingen).
 delay = (37e-3 + 0.5 * 35e-3 + 0.5 * 37e-3) * 5; % requestDistanceDelay + 0.5 * sensorUpdateDelay + matlabCalculationsDelay + sendStopDelay(=0.5*requestDistanceDelay)
 
+% Voltage Correction
+if (voltage > 19)
+    voltageCorrection = 1;
+elseif (voltage <= 19 && voltage > 18.5)
+    voltageCorrection = 1.1;
+elseif (voltage <= 18.5 && voltage > 18)
+    voltageCorrection = 1.2; % The average undershoot was 10 centimeter at this voltage. So with a delay of 50 centimeter the voltage corrention should then be 1.2
+elseif (voltage <= 18 && voltage > 17.5)
+    voltageCorrection = 1.3; % This value is a guess based of the voltageCorrection for 18 < V <= 18.5
+elseif (voltage <= 17.5 && voltage > 17)
+    voltageCorrection = 1.4;
+else
+    % Voltage is lower than 17
+    voltageCorrection = 1.6;
+end
 
 % Correct the steering offset
 EPOCommunications('transmit', steeringOffset);
+% Drive
 EPOCommunications('transmit', KITTspeed);
 while (1 == 1)
     % Read out sensor data and compare it to the breakPoint
@@ -132,8 +153,8 @@ while (1 == 1)
     
     % differenceX resembles the current distance to the breakPoint
     
-    projectedDistanceL = sensorL - delay * speed;
-    projectedDistanceR = sensorR - delay * speed;
+    projectedDistanceL = sensorL - delay * speed * voltageCorrection;
+    projectedDistanceR = sensorR - delay * speed * voltageCorrection;
     if ( abs(sensorL - sensorR) <= 40 ) && ( (projectedDistanceR < stopPoint) || (projectedDistanceL < stopPoint ))
         % If the deviation between the two sensors is more than 20 cm, the 
         % sensor values (or at least one) should be considered worthless. 
