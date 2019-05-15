@@ -84,21 +84,24 @@ KITTspeed = char(strcat('M', string(speedSetting)));
 % Load curves
 %load Acc160-185V.mat;
 %load Brake140-185V.mat;
-load LAATSTEVANVRIJDAG3.mat;
+load acc_ploy.mat;
+load brake_ploy_v2.mat;
+yspeed_acc = [yspeed_acc 156];  % fixes for a too short acceleration for version 1
+ydis_acc = [ydis_acc 500]; % fixes for a too short acceleration curve for version 1
 driveDistance = startDistance - stopDistance;
-[breakPoint, speed] = KITTstop(driveDistance, x_brake135, v_brake135, x_acc185, v_acc185, x_brake135_end, 0);
+[breakPoint, speed] = KITTstop(driveDistance, ydis_brake, yspeed_brake, ydis_acc, yspeed_acc, 186.5, 0);
 % speed is returned in distance per sample time
 
 stopPoint = startDistance - breakPoint;
-disp(strcat('stopPoint=', stopPoint));
+disp(strcat('stopPoint=', string(stopPoint)));
 % Start driving until the breakPoint has been reached (or the value is
 % close enough to the breakpoint, want vertragingen).
-speed = speed / 0.037; % [cm/s] speed at the moment of stopping
-delay = 37e-3 + 0.5 * 35e-3 + FIXME + 0.5 * 37e-3; % requestDistanceDelay + 0.5 * sensorUpdateDelay + matlabCalculationsDelay + sendStopDelay(=0.5*requestDistanceDelay)
+% speed = speed / 0.037; % [cm/s] speed at the moment of stopping
+delay = (37e-3 + 0.5 * 35e-3 + 0.5 * 37e-3) * 5; % requestDistanceDelay + 0.5 * sensorUpdateDelay + matlabCalculationsDelay + sendStopDelay(=0.5*requestDistanceDelay)
 
 
 % Correct the steering offset
-EPOCommunications('transmit', 'D154');
+EPOCommunications('transmit', 'D152');
 EPOCommunications('transmit', KITTspeed);
 while (1 == 1)
     % Read out sensor data and compare it to the breakPoint
@@ -117,13 +120,15 @@ while (1 == 1)
     
     % differenceX resembles the current distance to the breakPoint
     
-    projectedDistanceL = sensorL + delay * speed;
-    projectedDistanceR = sensorR + delay * speed;
-    if ( abs(sensorL - sensorR) <= 10 ) && ( (projectedDistanceR < stopPoint) || (projectedDistanceL < stopPoint ))
-        % If the deviation between the two sensors is more than 10 cm, the 
+    projectedDistanceL = sensorL - delay * speed;
+    projectedDistanceR = sensorR - delay * speed;
+    if ( abs(sensorL - sensorR) <= 40 ) && ( (projectedDistanceR < stopPoint) || (projectedDistanceL < stopPoint ))
+        % If the deviation between the two sensors is more than 20 cm, the 
         % sensor values (or at least one) should be considered worthless. 
-        disp(strcat('SensorL=', sensorL, ', projectedDistanceL=', projectedDistanceL));
-        disp(strcat('SensorR=', sensorR, ', projectedDistanceR=', projectedDistanceR));
+        disp(strcat('Speed=', string(speed)));
+        disp(strcat('delta=', string(delay * speed)));
+        disp(strcat('SensorL=', string(sensorL), ', projectedDistanceL=', string(projectedDistanceL)));
+        disp(strcat('SensorR=', string(sensorR), ', projectedDistanceR=', string(projectedDistanceR)));
         
         smoothStop(speedSetting); % actual stop function is written in another function to keep this function readable.
         break;
