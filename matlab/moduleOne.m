@@ -74,12 +74,12 @@ comPort = char(strcat('.//COM', string(comPort)));
 disp(strcat('the comport is "', comPort, '"'));
 
 % Open up the connection to the KITT Racing car.
-if (EPOCommunications('open', comPort) ~= 1)
-    % TODO: Most likely the conenction failed due to an already open port.
-    %     Close the connection to the port. 
-    error('The connection could not be established.');
-end
-disp('Connection to KITT Racing car succesful.');
+% if (EPOCommunications('open', comPort) ~= 1)
+%     % TODO: Most likely the conenction failed due to an already open port.
+%     %     Close the connection to the port. 
+%     error('The connection could not be established.');
+% end
+% disp('Connection to KITT Racing car succesful.');
 
 % Compensate the distance that the sensors are behind the bumper of the car
 stopDistance = stopDistance + 8.5;
@@ -119,11 +119,11 @@ delay = (37e-3 + 0.5 * 35e-3 + 0.5 * 37e-3) * 5; % requestDistanceDelay + 0.5 * 
 
 % Voltage Correction
 if (voltage > 19)
-    voltageCorrection = 1;
+    voltageCorrection = 0.9;
 elseif (voltage <= 19 && voltage > 18.5)
     voltageCorrection = 1.1;
 elseif (voltage <= 18.5 && voltage > 18)
-    voltageCorrection = 1.2; % The average undershoot was 10 centimeter at this voltage. So with a delay of 50 centimeter the voltage corrention should then be 1.2
+    voltageCorrection = 1.1; % The average undershoot was 10 centimeter at this voltage. So with a delay of 50 centimeter the voltage corrention should then be 1.2
 elseif (voltage <= 18 && voltage > 17.5)
     voltageCorrection = 1.3; % This value is a guess based of the voltageCorrection for 18 < V <= 18.5
 elseif (voltage <= 17.5 && voltage > 17)
@@ -175,6 +175,6 @@ disp(status);
 disp(string(stopPoint));
 
 % Close the connection to the car. 
-EPOCommunications('close');
+% EPOCommunications('close');
 disp('Connection closed.');
 end%moduleOne

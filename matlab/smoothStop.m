@@ -14,6 +14,7 @@ switch speed
         EPOCommunications('transmit', 'M150');
     case 160
         % Testcase 18.9[V]
+        disp('smooth 160 stop');
         stopSpeed = 'M138';
         stopTime = 0.4;
         EPOCommunications('transmit', stopSpeed);
