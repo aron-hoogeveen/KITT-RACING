@@ -1,10 +1,15 @@
+% EPO-4 Group B4
+% 06-05-2019
+% intersection of two curves with shifting included
+
+% d: desired x where v = 0;
+% x_brake, v_brake, x_acc, v_acc: velocity-position curves
+% brakeEnding: property of braking curve where v = 0;
+% If getPosition = 1, x location is given, otherwise v location
+   
+
 function point = CurvesIntersect(d, x_brake, v_brake, x_acc, v_acc, brakeEnding, getPosition)
-
-    % If getPosition = 1, x location is given, otherwise v location
  
-    % d = desired ending point
-
-    % Accerlating
     shift_x = shift(d); % Shift the braking curve to match distance
     plot(x_brake - shift_x, v_brake);
     hold on;
@@ -26,3 +31,4 @@ function point = CurvesIntersect(d, x_brake, v_brake, x_acc, v_acc, brakeEnding,
     end
 end
 
+% End of code
