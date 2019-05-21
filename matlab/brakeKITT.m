@@ -1,8 +1,8 @@
 function [distanceR, distanceL, timeVector] = brakeKITT(comPort)
-%[distanceR, distanceL] = brakeKITT(comPort, speed, stopDistance) is used
-%    to let the car drive up to 1 meter distance from the wall and then
-%    stop the car. (It is assumed that the car will be stopped in time
-%    before it reaches the wall)
+%[distanceR, distanceL, timeVector] = brakeKITT(comPort, speed, 
+%    stopDistance) is used to let the car drive up to 1 meter distance
+%    from the wall and then stop the car. (It is assumed that the car 
+%    will be stopped in time before it reaches the wall)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % NOTE: DO NOT FORGET TO VALIDATE ALL CAR SETTINGS (like speed, brake
@@ -10,15 +10,6 @@ function [distanceR, distanceL, timeVector] = brakeKITT(comPort)
 % VARIABLES THAT WILL BE SAVED ALONGSIDE THE SENSORDATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% if (nargin < 1)
-%     error('Not enough input arguments.');
-% end
-% if (nargin < 2)
-%     speed = 160;
-% end
-% if (nargin < 3)
-%     stopDistance = 100;
-% end
 speed = 160;
 stopDistance = 200;
 if (stopDistance < 20)
@@ -56,10 +47,6 @@ try
     
     while (1 == 1)
         % Request the data from the KITT distance sensors.
-        % There will be duplicate data in the received data, as the time it
-        % takes to request the distance is only about 40 milliseconds while
-        % the time it takes the sensors to refresh their measurement is
-        % about 70 milliseconds.
         status = EPOCommunications('transmit', 'Sd');
         newTime = toc(startTime);
         distStr = strsplit(status);
@@ -102,8 +89,6 @@ try
             
             break;%while
         end%if
-        
-        % Removed the wait statement that was here.
     end%while
     
     % Add a few extra measurements to the breaking data
