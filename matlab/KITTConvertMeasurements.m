@@ -1,3 +1,5 @@
+% EPO-4 Group B4
+% 13-05-2019
 % Converts measurements to matrices with velocities and positions
 % With battery voltage:   18.8-19V
 % Inputs: distL, distR vectors (unit: cm)
@@ -38,3 +40,5 @@ x_acc(speedsetting, :) = Xcomb;
 v_acc(speedsetting, :) = Vcomb;
 
 plot(x_acc(speedsetting, :), v_acc(speedsetting,:))
+
+% End of code
