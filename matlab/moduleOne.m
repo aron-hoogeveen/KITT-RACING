@@ -1,4 +1,4 @@
-function [] = moduleOne(comPort, startDistance, stopDistance)
+function [] = moduleOne(comPort, startDistance, stopDistance, steeringOffset)
 %moduleOne(argsIn) is the one and only midterm challenge function that will
 %    get us our pass.
 %    The comPort need only be the numberic part of the comport. The textual
@@ -45,10 +45,20 @@ function [] = moduleOne(comPort, startDistance, stopDistance)
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 % Actual Program
-% The code could contain some pseudo code (non working code that only
-% resembles the function that should be implemented).
+% 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
 
+if (nargin < 3)
+    error('Not enough input arguments. Check the help for the function syntax');
+end
+if (nargin < 4)
+    steeringOffset = 'D152'; % Default steering offset as used in the last EPO sessions
+else
+    steeringOffset = char(strcat('D', string(steeringOffset)));
+end
+
+% FIXME: I am not entirely sure that we will only get integers as input
+%     values. If not, then this integer check should be removed.
 % Validate the input argument(s)
 % check if the stopDist is an integer.
 if (mod(stopDistance,1) ~= 0)
@@ -64,48 +74,76 @@ comPort = char(strcat('.//COM', string(comPort)));
 disp(strcat('the comport is "', comPort, '"'));
 
 % Open up the connection to the KITT Racing car.
-if (EPOCommunications('open', comPort) ~= 1)
-    error('The connection could not be established.');
-end
-disp('Connection to KITT Racing car succesful.');
+% if (EPOCommunications('open', comPort) ~= 1)
+%     % TODO: Most likely the conenction failed due to an already open port.
+%     %     Close the connection to the port. 
+%     error('The connection could not be established.');
+% end
+% disp('Connection to KITT Racing car succesful.');
 
-% Compensate the distance that the sensors are behind the bumper.
+% Compensate the distance that the sensors are behind the bumper of the car
 stopDistance = stopDistance + 8.5;
+
+% Read out the current voltage of the car. This voltage will be used to
+% adjust the projected distance accordingly.
+voltageStr = EPOCommunications('transmit', 'Sv');
+voltage = str2double(voltageStr(6:9)); % Extract the voltage
 
 
 % Start driving towards the wall. 
 % The starting speed is predefined and should be set here. If needed one
 % could add an optional function input parameter that overwrites this
 % predefined startSpeed value. 
-startSpeed = 160;
-KITTspeed = char(strcat('M', string(startSpeed)));
+speedSetting = 160;
+KITTspeed = char(strcat('M', string(speedSetting)));
 
 % Calculate the break point
-% Load curves
+% Load the brake & acceleration data to compute the stoppoint with
 %load Acc160-185V.mat;
 %load Brake140-185V.mat;
-load LAATSTEVANVRIJDAG3.mat;
-delay = 0; %[ms]
-driveDistance = startDistance - stopDistance;
-[breakPoint, speed] = KITTstop(driveDistance, x_brake135, v_brake135, x_acc185, v_acc185, x_brake135_end, delay);
+load acc_ploy.mat;
+load brake_ploy_v2.mat;
 
+yspeed_acc = [yspeed_acc 156];  % fixes for a too short acceleration for version 1
+ydis_acc = [ydis_acc 500]; % fixes for a too short acceleration curve for version 1
+driveDistance = startDistance - stopDistance;
+[breakPoint, speed] = KITTstop(driveDistance, ydis_brake, yspeed_brake, ydis_acc, yspeed_acc, 186.5, 0);
+
+% breakPoint is given as the distance that the car should drive, so convert
+% it to the distance that the car will be from the wall
 stopPoint = startDistance - breakPoint;
-disp(stopPoint);
+disp(strcat('stopPoint=', string(stopPoint)));
 % Start driving until the breakPoint has been reached (or the value is
 % close enough to the breakpoint, want vertragingen).
-speed = speed / 0.04; % [cm / s]
-delta = speed * 0.160; % TODO: calculate the maximum distance difference between the read out distance and the real time distance
+delay = (37e-3 + 0.5 * 35e-3 + 0.5 * 37e-3) * 5; % requestDistanceDelay + 0.5 * sensorUpdateDelay + matlabCalculationsDelay + sendStopDelay(=0.5*requestDistanceDelay)
+
+% Voltage Correction
+if (voltage > 19)
+    voltageCorrection = 0.9;
+elseif (voltage <= 19 && voltage > 18.5)
+    voltageCorrection = 1.1;
+elseif (voltage <= 18.5 && voltage > 18)
+    voltageCorrection = 1.1; % The average undershoot was 10 centimeter at this voltage. So with a delay of 50 centimeter the voltage corrention should then be 1.2
+elseif (voltage <= 18 && voltage > 17.5)
+    voltageCorrection = 1.3; % This value is a guess based of the voltageCorrection for 18 < V <= 18.5
+elseif (voltage <= 17.5 && voltage > 17)
+    voltageCorrection = 1.4;
+else
+    % Voltage is lower than 17
+    voltageCorrection = 1.6;
+end
 
 % Correct the steering offset
-EPOCommunications('transmit', 'D154');
+EPOCommunications('transmit', steeringOffset);
+% Drive
 EPOCommunications('transmit', KITTspeed);
 while (1 == 1)
     % Read out sensor data and compare it to the breakPoint
     % Only compare sensor values that can be considered accurate
     status = EPOCommunications('transmit', 'Sd');
     distStr = strsplit(status);
-    sensorL = str2num(distStr{1}(4:end)); % TODO:
-    sensorR = str2num(distStr{2}(4:end));
+    sensorL = str2double(distStr{1}(4:end));
+    sensorR = str2double(distStr{2}(4:end));
     
     % The sensor values can be considered accurate when
     %   - THE FOLLOWING IS NOT TRUE. ~they are smaller than +/-250 cm;~
@@ -115,18 +153,20 @@ while (1 == 1)
     %     value could be higher)
     
     % differenceX resembles the current distance to the breakPoint
-    differenceL = sensorL - stopPoint; % FIXME: maybe include this statement in a abs() since the case could arise that the car is already a bit further than the breakPoint
-    differenceR = sensorR - stopPoint;
-    if ( abs(sensorL - sensorR) < 40 ) && ( (differenceL < delta) || (differenceR < delta ))
-        % IT'S TIME TO STOP!
-        disp(sensorL);
-        disp(sensorR);
-        disp(delta);
-        smoothStop(startSpeed); % actual stop function is written in another function to keep this function readable.
-        break;
-    end%
     
-    % FIXME: should we include a pause statement here? Most likely not.
+    projectedDistanceL = sensorL - delay * speed * voltageCorrection;
+    projectedDistanceR = sensorR - delay * speed * voltageCorrection;
+    if ( abs(sensorL - sensorR) <= 40 ) && ( (projectedDistanceR < stopPoint) || (projectedDistanceL < stopPoint ))
+        % If the deviation between the two sensors is more than 20 cm, the 
+        % sensor values (or at least one) should be considered worthless. 
+        disp(strcat('Speed=', string(speed)));
+        disp(strcat('delta=', string(delay * speed)));
+        disp(strcat('SensorL=', string(sensorL), ', projectedDistanceL=', string(projectedDistanceL)));
+        disp(strcat('SensorR=', string(sensorR), ', projectedDistanceR=', string(projectedDistanceR)));
+        
+        smoothStop(speedSetting); % actual stop function is written in another function to keep this function readable.
+        break;
+    end
 end%while
 pause(1);
 % read out the final measured distance at standstill
@@ -135,6 +175,6 @@ disp(status);
 disp(string(stopPoint));
 
 % Close the connection to the car. 
-EPOCommunications('close');
+% EPOCommunications('close');
 disp('Connection closed.');
 end%moduleOne

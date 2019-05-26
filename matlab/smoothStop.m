@@ -1,9 +1,10 @@
 function [] = smoothStop(speed)
-%smoothStop(startSpeed) aims to stop the KITT Racing car without overshoot
-%    when the car has a constant speed of startSpeed.
-%
-%    TODO: Test if it is needed to use the realtime speed as input instead
-%    of startSpeed, since maybe the car is not yet at full speed.
+%smoothStop(speed) stops the KITT Racing car that is driving at a constant
+%    speed with speed setting 'speed'.
+%    If the speed setting is not valid the car will brake (of reverse) for
+%    a short time, and the connection to the car will be closed to prevent
+%    damage to the car.
+
 switch speed
     case 157
         stopSpeed = 'M145';
@@ -13,6 +14,7 @@ switch speed
         EPOCommunications('transmit', 'M150');
     case 160
         % Testcase 18.9[V]
+        disp('smooth 160 stop');
         stopSpeed = 'M138';
         stopTime = 0.4;
         EPOCommunications('transmit', stopSpeed);
@@ -32,6 +34,15 @@ switch speed
         EPOCommunications('transmit', stopSpeed);
         pause(stopTime);
         EPOCommunications('transmit', 'M150');
+    otherwise
+        warning('smoothStop: the provided speed setting could not be processed. Trying to slow down the car now...');
+        % Brake for a short time to avoid major crashes.
+        EPOCommunications('transmit', 'M140');
+        pause(0.3);
+        EPOCommunications('transmit', 'M150');
+        disp('Closing the connection te the car...');
+        EPOCommunications('close');
+        disp('Connection closed.');
 end%switch
 
 end%smoothStop

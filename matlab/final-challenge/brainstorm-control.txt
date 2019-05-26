@@ -1,0 +1,52 @@
+---------------------------------------------------------------------------
+-- BRAINSTORM . Control
+---------------------------------------------------------------------------
+
+REQUIREMENTS / INFORMATION OF THE TASK(S)
+The system should be autonomous. At the start of the challenge the position 
+as well as the orientation of KITT is known. The FIRST TASK is to drive 
+from the starting point to the end point. The SECOND TASK is to drive from 
+the starting point to an intermediate point and then to the end point. 
+The points are all at least 1.5 meter seperated from each other. KITT must 
+stop for at least 2 seconds at the intermediate point and signal in the 
+user interface that it has reached the intermediate point. The user 
+interface should include a plot which visualizes the past and current 
+positions. 
+Bonus points are given to the fastest team. 
+
+
+COMPONENTS
+- matrix, which resembles the field in which KITT drives;
+- plot, in which can be seen where KITT has been, and where it now is;
+- localization / TDOA, which returns the distances that KITT is from the 
+  microphones;
+- control, which is the main script that merges all components together. 
+- driveControl, which is used to determine which action the car should 
+  take;
+
+
+DRIVING THROUGH THE FIELD
+- the maximum distance between two adjadent points is 1.5 meter. This is 
+  possibly larger than the turning ration of KITT, so it is most likely 
+  that KITT can reach every next point by only taking a turn while driving;
+- an exception on this, is when KITT ends up with its front bumper 
+  orientating close to the edge of the field. In this case KITT should 
+  drive backwards until it can make the turn to get to the next waypoint 
+  without leaving the field.
+- it is of course possible to let KITT also drive in reverse. Why limit 
+  KITT into driving only forwards? In some situations it could be faster or 
+  easier to just drive in reverse to the next point.
+
+
+WHAT TO MEASURE
+x angles of the wheels for different steering commands
+- turning ratio for the different steering angles driving forward (also at 
+  different speeds)
+- turning ratio for the different steering angles driving backwards (also 
+  at different speeds)
+
+
+POSSIBLE GLITCHES THAT SHOULD BE PREVENTED
+- KITT is not able to get a specific point and keeps driving in circles 
+  around that point(s).
+- KITT drives out of the field. 
