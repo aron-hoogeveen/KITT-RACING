@@ -2,7 +2,7 @@ function [] = operateKITT(comPort)
 %OPERATEKITT(params) is a loop for controlling the KITT racing car.
 %    <INSERT DETAILED FUNCTION DESCRIPTION>
 try
-    debugValue = 1;
+    debugValue = 0;
     % available commands
     helpStr = 'Available commands: s(tatus);f(orwards);b(ackwards);l(eft);r(ight);n(eutral);m(iddle)';
 
@@ -39,16 +39,16 @@ try
             case 's'%tatus
                 status = EPOCommunications('transmit', 'S');
             case 'f'%orwards
-                EPOCommunications('transmit', 'M165'); 
+                EPOCommunications('transmit', 'M157'); 
                 status = EPOCommunications('transmit', 'S');
             case 'b'%ackwards
                 EPOCommunications('transmit', 'M135');
                 status = EPOCommunications('transmit', 'S');
             case 'l'%eft
-                EPOCommunications('transmit', 'D200');
+                EPOCommunications('transmit', 'D185');
                 status = EPOCommunications('transmit', 'S');
             case 'r'%ight
-                EPOCommunications('transmit', 'D100');
+                EPOCommunications('transmit', 'D115');
                 status = EPOCommunications('transmit', 'S');
             case 'n'%eutral
                 EPOCommunications('transmit', 'M150');
