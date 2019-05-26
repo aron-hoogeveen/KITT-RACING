@@ -70,6 +70,17 @@ switch choice
             soundsc(y,Fs);
         end
         
+    case 'vroom'
+        % load audio file
+        [y,Fs] = audioread('audio/vroom.mp3');
+        % Play the audio
+        player = audioplayer(y,Fs);
+        if (blocking == true)
+            playblocking(player);
+        else
+            soundsc(y,Fs);
+        end
+        
     otherwise
         disp('Unknown option for argsIn in playAudio.');
         return;
