@@ -54,6 +54,22 @@ switch choice
             soundsc(y,Fs);
         end
         
+    case 'first'
+        % load audio file
+        if (strcmp(language, 'de'))
+            [y,Fs] = audioread('audio/erster-ziel.mp3');
+        else
+            % Defaults to Dutch
+            [y,Fs] = audioread('audio/eerste-stop.mp3');
+        end
+        % Play the audio
+        player = audioplayer(y,Fs);
+        if (blocking == true)
+            playblocking(player);
+        else
+            soundsc(y,Fs);
+        end
+        
     otherwise
         disp('Unknown option for argsIn in playAudio.');
         return;
