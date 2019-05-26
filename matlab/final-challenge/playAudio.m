@@ -8,6 +8,8 @@ function [] = playAudio(choice, blocking, language)
 %
 %    Example: playAudio('start', false, 'de');
 %
+%    Sounds generated with https://soundoftext.com/
+%
 % Version 1.0
 % Date: 26-05-2019
 % Group: B.04
