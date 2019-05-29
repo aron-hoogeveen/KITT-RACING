@@ -21,8 +21,9 @@ elseif (nargin>3 && (waypoint(1) < 50 || waypoint(1) > 650 || waypoint(2) < 50 |
 end
 
 
-% Set up vectors
+% Set up vectors and parameters
 run convertAngleMeasurements.m
+run turningParameters.m
 clf;
 
 if (nargin <4)% Challenge A: no waypoint
@@ -36,8 +37,10 @@ if (nargin <4)% Challenge A: no waypoint
     
     % Calculate the turn
     [turntime, direction, turnEndPos, new_orientation] = calculateTurn(startpoint,endpoint,orientation);
-    disp('[turntime, direction, new_orientation] = ');
-    disp([turntime, direction, new_orientation]);
+    disp('turning time:');
+    disp( turntime);
+    disp('[direction, new_orientation] = ');
+    disp([direction, new_orientation]);
     disp('turnEndPos (x, y) = ');
     disp( turnEndPos);
     new_dist = sqrt((endpoint(2)-turnEndPos(2))^2+(endpoint(1)-turnEndPos(1))^2);
