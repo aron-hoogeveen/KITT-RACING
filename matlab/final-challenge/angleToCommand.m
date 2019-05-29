@@ -9,8 +9,7 @@ function command = angleToCommand(angle, direction)
     global ang_q;
 
     if (abs(angle) > 25)
-        msg = 'Angle is out of range (>25)';
-        error(msg)
+        error('Angle is out of range (>25)');
     end
 
     if (strcmp(direction,'right'))

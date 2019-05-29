@@ -1,6 +1,6 @@
 % EPO-4 Group B4
 % 29-05-2019
-%[] = KITTControl(argsIn) is the main control unit for the final challenge
+% [] = KITTControl(argsIn) is the main control unit for the final challenge
 function [] = KITTControl(orientation, startpoint, endpoint, waypoint, obstacles)
 % Arguments:
 %   orientation: -180 to 180 degrees, x-axis is 0;
@@ -24,6 +24,7 @@ end
 % Set up vectors and parameters
 run convertAngleMeasurements.m
 run turningParameters.m
+run convertAngleMeasurements.m
 clf;
 
 if (nargin <4)% Challenge A: no waypoint
@@ -37,7 +38,7 @@ if (nargin <4)% Challenge A: no waypoint
     
     % Calculate the turn
     [turntime, direction, turnEndPos, new_orientation] = calculateTurn(startpoint,endpoint,orientation);
-    disp('turning time:');
+    disp('turning time (ms):');
     disp( turntime);
     disp('[direction, new_orientation] = ');
     disp([direction, new_orientation]);
