@@ -3,12 +3,23 @@ function [] = drawMap(startpoint, endpoint, orientation, waypoint)
     % Map size
     %figure('WindowState', 'maximized')
     
+    %Draw the bounds of the field:
+    rectangle('Position', [0,0,50,700], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
+    hold on;
+    rectangle('Position', [650,0,700,700], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
+    hold on;
+    rectangle('Position', [0,650,700,700], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
+    hold on;
+    rectangle('Position', [0,0,700,50], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
+    hold on;
+    % Draw the points
     plot(startpoint(1), startpoint(2), 'b*', 'MarkerSize', 10);
     hold on;
     plot(endpoint(1), endpoint(2), 'r*', 'MarkerSize', 10);
     hold on;
     quiver(startpoint(1), startpoint(2), 150*cosd(orientation), 150*sind(orientation), 0, 'MaxHeadSize', 10, 'color',[0 0.6 0]);
     hold on;
+
     if (nargin > 3)
         plot(waypoint(1), waypoint(2), 'g*', 'MarkerSize', 10);
         legend('Startpoint', 'Endpoint', 'Starting orientation', 'Waypoint');
@@ -17,8 +28,8 @@ function [] = drawMap(startpoint, endpoint, orientation, waypoint)
     end
     
     %drawLine(startpoint, endpoint)
-    xlim([0,600]);
-    ylim([0, 600]);
+    xlim([0,700]);
+    ylim([0, 700]);
     xlabel('cm');
     ylabel('cm');
     grid on;
