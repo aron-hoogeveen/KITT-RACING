@@ -10,10 +10,18 @@ function [] = KITTControl(orientation,startpoint, endpoint, waypoint, obstacles)
 %   endpoint: [x, y] location of endpoint
 %   waypoint: [x, y] location of waypoint, if waypoint = 0: no waypoint
 %   obstacles: true/false
+if(abs(orientation) > 180)
+    error('orientation must be between -180 and 180, with x-axis being theta = 0');
+end
+
+run convertAngleMeasurements.m
+
+%input('Press any key to start driving','s')
+
 clf;
 if (nargin <4)% Challenge A: no waypoint
     drawMap(startpoint, endpoint, orientation);
-    [turntime, direction, turnEndPos, new_orientation] = calculateTurn(startpoint,endpoint,0)
+    [turntime, direction, turnEndPos, new_orientation] = calculateTurn(startpoint,endpoint,orientation)
     plot(turnEndPos(1), turnEndPos(2), 'b.', 'MarkerSize', 10);
     hold on;
 
