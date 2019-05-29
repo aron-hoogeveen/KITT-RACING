@@ -6,12 +6,13 @@ function [] = drawMap(startpoint, endpoint, orientation, waypoint)
     %Draw the bounds of the field:
     rectangle('Position', [0,0,50,700], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
     hold on;
-    rectangle('Position', [650,0,700,700], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
+    rectangle('Position', [650,0,50,700], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
     hold on;
-    rectangle('Position', [0,650,700,700], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
+    rectangle('Position', [0,650,700,50], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
     hold on;
     rectangle('Position', [0,0,700,50], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
     hold on;
+    
     % Draw the points
     plot(startpoint(1), startpoint(2), 'b*', 'MarkerSize', 10);
     hold on;

@@ -1,6 +1,6 @@
 function [turntime, direction, turnEndPos, new_orientation] = calculateTurn(startpoint, destination, orientation)
     % For our chosen angle(20 degrees):
-    t_radius = 40;%cm
+    t_radius = 50;%cm
     v_rot = 60; %speed when rotating in cm per second, assuming constant for now
    
     alfa_begin = tandWithCompensation(destination(2)-startpoint(2),destination(1)-startpoint(1));
@@ -38,7 +38,7 @@ function [turntime, direction, turnEndPos, new_orientation] = calculateTurn(star
         alfa_new = tandWithCompensation((destination(2)-y_incr),(destination(1)-x_incr));
         
         % if the angles match, stop the turning
-        if (abs(theta_lim - alfa_new) < 0.2) %if the angles match
+        if (abs(theta_lim - alfa_new) < 0.1) %if the angles match
             found = 1;
         end
         

@@ -13,9 +13,9 @@ function [] = KITTControl(orientation,startpoint, endpoint, waypoint, obstacles)
 if(abs(orientation) > 180)
     error('orientation must be between -180 and 180, with x-axis being theta = 0');
 elseif (startpoint(1) < 0 || startpoint(1) > 700 || startpoint(2) < 0 || startpoint(2) > 700)
-    error('orientation must be between -180 and 180, with x-axis being theta = 0');
+    error('Point(s) out of bounds');
 elseif (endpoint(1) < 0 || endpoint(1) > 700 || endpoint(2) < 0 || endpoint(2) > 700)
-    error('orientation must be between -180 and 180, with x-axis being theta = 0');
+    error('Point(s) out of bounds');
 end
 
 
