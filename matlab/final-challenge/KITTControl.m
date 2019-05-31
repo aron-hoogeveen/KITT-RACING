@@ -22,9 +22,12 @@ end
 
 
 % Set up vectors and parameters
-run convertAngleMeasurements.m
-run turningParameters.m
-run convertAngleMeasurements.m
+transmitDelay = 45; %ms for the car to react to change in speed command
+[v_rot, t_radius] = turningParameters();
+[d_q, ang_q] = convertAngleMeasurements();
+
+
+
 clf;
 
 if (nargin <4)% Challenge A: no waypoint
@@ -37,7 +40,7 @@ if (nargin <4)% Challenge A: no waypoint
     end
     
     % Calculate the turn
-    [turntime, direction, turnEndPos, new_orientation] = calculateTurn(startpoint,endpoint,orientation);
+    [turntime, direction, turnEndPos, new_orientation] = calculateTurn(startpoint,endpoint,orientation, t_radius, v_rot);
     disp('turning time (ms):');
     disp( turntime);
     disp('[direction, new_orientation] = ');
@@ -51,11 +54,28 @@ if (nargin <4)% Challenge A: no waypoint
     %input('Press any key to start driving','s')
 
     %%%%%%%%%%%%%%%%%%%%%% START DRIVING %%%%%%%%%%%%%%%%%%%%%%%%
-    %A.STEP 1: Turn KITT
+    %%% A.STEP 1: Turn KITT
+        
+        if (direction == 1)
+            steering =  sprintf('%s%d', 'D' ,angleToCommand(20, 'left'));
+        else
+            steering =  sprintf('%s%d', 'D' ,angleToCommand(20, 'right'));
+        end
+        
     
-    %A.STEP 2: Accelerate and stop 50cm before point
+        % EPOCommunications('transmit', steering);
+        % EPOCommunications('transmit', KITTspeed);
+        pause(turntime/1000 - transmitDelay/1000);  %let the car drive for calculated time
+        % EPOCommunications('transmit', 'D152'); % wheels straight
+        % remove this later:
+        % EPOCommunications('transmit', M150); % rollout
     
-    %A.STEP 3: Turn KITT again using actual orientation by audio beacon and
+    %%% A.STEP 2: Accelerate and stop 100cm before point
+        KITTspeed = 160;
+        % EPOCommunications('transmit', KITTspeed);
+        
+    
+    %%% A.STEP 3: Turn KITT again using actual orientation by audio beacon and
     %actual location
     
     
