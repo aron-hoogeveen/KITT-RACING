@@ -6,7 +6,7 @@ function [] = KITTControl(orientation, startpoint, endpoint, waypoint, obstacles
 %   orientation: -180 to 180 degrees, x-axis is 0;
 %   startpoint: [x, y] location of startingpoint
 %   endpoint: [x, y] location of endpoint
-%   waypoint: [x, y] location of waypoint, if waypoint = 0: no waypoint
+%   waypoint: [x, y] location of waypoint, if nargin < 4: no waypoint
 %   obstacles: true/false
 
 % Check for input errors
@@ -57,9 +57,9 @@ if (nargin <4)% Challenge A: no waypoint
     %%% A.STEP 1: Turn KITT
         
         if (direction == 1)
-            steering =  sprintf('%s%d', 'D' ,angleToCommand(20, 'left'));
+            steering =  sprintf('%s%d', 'D' ,angleToCommand(20, 'left', d_q, ang_q));
         else
-            steering =  sprintf('%s%d', 'D' ,angleToCommand(20, 'right'));
+            steering =  sprintf('%s%d', 'D' ,angleToCommand(20, 'right', d_q, ang_q));
         end
         
     
@@ -68,7 +68,7 @@ if (nargin <4)% Challenge A: no waypoint
         pause(turntime/1000 - transmitDelay/1000);  %let the car drive for calculated time
         % EPOCommunications('transmit', 'D152'); % wheels straight
         % remove this later:
-        % EPOCommunications('transmit', M150); % rollout
+        % EPOCommunications('transmit', 'M150'); % rollout
     
     %%% A.STEP 2: Accelerate and stop 100cm before point
         KITTspeed = 160;
