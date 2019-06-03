@@ -44,13 +44,13 @@ clf;
 
 if (challengeA)% Challenge A: no waypoint
     drawMap(startpoint, endpoint, orientation); %initiation of map
-    
+
     dist = sqrt((endpoint(2)-startpoint(2))^2+(endpoint(1)-startpoint(1))^2);
     alfa_begin = atandWithCompensation(endpoint(2)-startpoint(2),endpoint(1)-startpoint(1));
     if ((abs(alfa_begin - orientation) > 150) && dist < 200) %car is facing other way and distance is small
         %consider driving backwards
     end
-    
+
     % Calculate the turn
     [turntime, direction, turnEndPos, new_orientation] = calculateTurn(startpoint,endpoint,orientation, t_radius, v_rot_prime);
     disp('turning time (ms):');
@@ -67,30 +67,30 @@ if (challengeA)% Challenge A: no waypoint
 
     %%%%%%%%%%%%%%%%%%%%%% START DRIVING %%%%%%%%%%%%%%%%%%%%%%%%
     %%% A.STEP 1: Turn KITT
-        
+
         if (direction == 1)
             steering =  sprintf('%s%d', 'D' ,angleToCommand(20, 'left', d_q, ang_q));
         else
             steering =  sprintf('%s%d', 'D' ,angleToCommand(20, 'right', d_q, ang_q));
         end
-        
-    
+
+
         % EPOCommunications('transmit', steering);
         % EPOCommunications('transmit', KITTspeed);
         pause(turntime/1000 - transmitDelay/1000);  %let the car drive for calculated time
         % EPOCommunications('transmit', 'D152'); % wheels straight
         % remove this later:
         % EPOCommunications('transmit', 'M150'); % rollout
-    
+
     %%% A.STEP 2: Accelerate and stop 100cm before point
         KITTspeed = 160;
         % EPOCommunications('transmit', KITTspeed);
-        
-    
+
+
     %%% A.STEP 3: Turn KITT again using actual orientation by audio beacon and
     %actual location
-    
-    
+
+
 elseif (challengeA ~= true) % Challenge B: one waypoint
 else %Challenge C: complete chaos
 end
