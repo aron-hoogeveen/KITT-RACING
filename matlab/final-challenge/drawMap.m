@@ -10,20 +10,14 @@ function [] = drawMap(startpoint, endpoint, orientation, waypoint)
     rectangle('Position', [0,0,50,700], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
     hold on;
     rectangle('Position', [650,0,50,700], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
-    hold on;
     rectangle('Position', [0,650,700,50], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
-    hold on;
     rectangle('Position', [0,0,700,50], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
-    hold on;
     
     % Draw the start and end points (and optionally waypoint)
     plot(startpoint(1), startpoint(2), 'b*', 'MarkerSize', 10);
-    hold on;
     plot(endpoint(1), endpoint(2), 'r*', 'MarkerSize', 10);
-    hold on;
     % Draw orientation of the startposition of the car
     quiver(startpoint(1), startpoint(2), 150*cosd(orientation), 150*sind(orientation), 0, 'MaxHeadSize', 10, 'color',[0 0.6 0]);
-    hold on;
 
     % Add a legend
     if (nargin > 3)
