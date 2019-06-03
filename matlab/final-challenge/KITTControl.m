@@ -25,7 +25,7 @@ elseif (nargin>3 && (waypoint(1) < 50 || waypoint(1) > 650 || waypoint(2) < 50 |
     error('Waypoint out of bounds');
 elseif (nargin < 4)
     % No waypoint
-    challengeA = false; % Do challenge B --> one waypoint
+    challengeA = false; % Do challenge B or C --> one waypoint
 elseif (nargin < 5)
     obstacles = false;
 end
