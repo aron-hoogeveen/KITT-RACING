@@ -13,22 +13,24 @@ function [] = KITTControl(orientation, startpoint, endpoint, waypoint, obstacles
 challengeA = true;
 
 % Check for input errors
+disp('(O.O) - Checking input arguments for any errors...');
 if (nargin < 3)
-    error('Minimum number of input arguments required is three!');
+    error('(*.*) - Minimum number of input arguments required is three!');
 elseif(abs(orientation) > 180)
-    error('orientation must be between -180 and 180, with x-axis being theta = 0');
+    error('(*.*) - orientation must be between -180 and 180, with x-axis being theta = 0');
 elseif (startpoint(1) < 50 || startpoint(1) > 650 || startpoint(2) < 0 || startpoint(2) > 650)
-    error('Startpoint out of bounds');
+    error('(*.*) - Startpoint out of bounds');
 elseif (endpoint(1) < 50 || endpoint(1) > 650 || endpoint(2) < 50 || endpoint(2) > 650)
-    error('Endpoint out of bounds');
+    error('(*.*) - Endpoint out of bounds');
 elseif (nargin>3 && (waypoint(1) < 50 || waypoint(1) > 650 || waypoint(2) < 50 || waypoint(2) > 650))
-    error('Waypoint out of bounds');
-elseif (nargin < 4)
+    error('(*.*) - Waypoint out of bounds');
+elseif (nargin > 3)
     % No waypoint
     challengeA = false; % Do challenge B or C --> one waypoint
 elseif (nargin < 5)
     obstacles = false;
 end
+disp('(^.^) - No input argument errors.');
 
 
 % Set up vectors and parameters
@@ -37,7 +39,7 @@ transmitDelay = 45; %ms for the car to react to change in speed command
 [d_q, ang_q] = convertAngleMeasurements();
 
 
-
+% Clear all existing figures
 clf;
 
 if (challengeA)% Challenge A: no waypoint
@@ -45,7 +47,7 @@ if (challengeA)% Challenge A: no waypoint
     
     dist = sqrt((endpoint(2)-startpoint(2))^2+(endpoint(1)-startpoint(1))^2);
     alfa_begin = atandWithCompensation(endpoint(2)-startpoint(2),endpoint(1)-startpoint(1));
-    if ((abs(alfa_begin - orientation) >150) && dist < 200) %car is facing other way and distance is small
+    if ((abs(alfa_begin - orientation) > 150) && dist < 200) %car is facing other way and distance is small
         %consider driving backwards
     end
     
