@@ -55,7 +55,7 @@ if (challengeA)% Challenge A: no waypoint
     [turntime, direction, turnEndPos, new_orientation] = calculateTurn(startpoint,endpoint,orientation, t_radius, v_rot);
     disp('turning time (ms):');
     disp( turntime);
-    disp('[direction, new_orientation] = ');
+    disp('[direction (1:left, -1:right), new_orientation] = ');
     disp([direction, new_orientation]);
     disp('turnEndPos (x, y) = ');
     disp( turnEndPos);
