@@ -36,7 +36,7 @@ disp('(^.^) - No input argument errors.');
 % Set up vectors and parameters
 transmitDelay = 45; %ms for the car to react to change in speed command
 [v_rot, t_radius] = turningParameters();
-[d_q, ang_q] = convertAngleMeasurements();
+[d_q, ang_q] = convertAngleMeasurements(); % Returns steering commands and accompanying steering angles
 
 
 % Clear all existing figures
