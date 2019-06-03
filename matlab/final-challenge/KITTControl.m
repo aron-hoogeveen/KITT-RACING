@@ -7,7 +7,7 @@ function [] = KITTControl(orientation, startpoint, endpoint, waypoint, obstacles
 %   startpoint: [x, y] location of startingpoint
 %   endpoint: [x, y] location of endpoint
 %   waypoint: [x, y] location of waypoint, if nargin < 4: no waypoint
-%   obstacles: true/false
+%   obstacles: true/false, if nargin < 5: no obstacles
 
 % Check for input errors
 if(abs(orientation) > 180)
@@ -18,6 +18,8 @@ elseif (endpoint(1) < 50 || endpoint(1) > 650 || endpoint(2) < 50 || endpoint(2)
     error('Endpoint out of bounds');
 elseif (nargin>3 && (waypoint(1) < 50 || waypoint(1) > 650 || waypoint(2) < 50 || waypoint(2) > 650))
     error('Waypoint out of bounds');
+elseif (nargin < 5)
+    obstacles = false;
 end
 
 
