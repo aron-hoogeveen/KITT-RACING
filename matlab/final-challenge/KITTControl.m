@@ -9,6 +9,9 @@ function [] = KITTControl(orientation, startpoint, endpoint, waypoint, obstacles
 %   waypoint: [x, y] location of waypoint, if nargin < 4: no waypoint
 %   obstacles: true/false, if nargin < 5: no obstacles
 
+% Default challenge is A
+challengeA = true;
+
 % Check for input errors
 if(abs(orientation) > 180)
     error('orientation must be between -180 and 180, with x-axis being theta = 0');
@@ -18,6 +21,9 @@ elseif (endpoint(1) < 50 || endpoint(1) > 650 || endpoint(2) < 50 || endpoint(2)
     error('Endpoint out of bounds');
 elseif (nargin>3 && (waypoint(1) < 50 || waypoint(1) > 650 || waypoint(2) < 50 || waypoint(2) > 650))
     error('Waypoint out of bounds');
+elseif (nargin < 4)
+    % No waypoint
+    challengeA = false; % Do challenge B --> one waypoint
 elseif (nargin < 5)
     obstacles = false;
 end
@@ -32,7 +38,7 @@ transmitDelay = 45; %ms for the car to react to change in speed command
 
 clf;
 
-if (nargin <4)% Challenge A: no waypoint
+if (challengeA)% Challenge A: no waypoint
     drawMap(startpoint, endpoint, orientation); %initiation of map
     
     dist = sqrt((endpoint(2)-startpoint(2))^2+(endpoint(1)-startpoint(1))^2);
@@ -81,7 +87,7 @@ if (nargin <4)% Challenge A: no waypoint
     %actual location
     
     
-else if (nargin <5) % Challenge B: one waypoint
+elseif (challengeA ~= true) % Challenge B: one waypoint
 else %Challenge C: complete chaos
 end
 
