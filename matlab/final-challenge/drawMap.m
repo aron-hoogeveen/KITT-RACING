@@ -37,8 +37,8 @@ function [] = drawMap(startpoint, endpoint, orientation, waypoint)
     % Set limits, ratio, units and grid
     xlim([0,700]);
     ylim([0, 700]);
-    xlabel('cm');
-    ylabel('cm');
+    xlabel('X Distance [cm]');
+    ylabel('Y Distance [cm]');
     grid on;
     pbaspect([1 1 1]); %fixed square map
 
