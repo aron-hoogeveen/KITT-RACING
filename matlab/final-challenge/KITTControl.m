@@ -13,7 +13,9 @@ function [] = KITTControl(orientation, startpoint, endpoint, waypoint, obstacles
 challengeA = true;
 
 % Check for input errors
-if(abs(orientation) > 180)
+if (nargin < 3)
+    error('Minimum number of input arguments required is three!');
+elseif(abs(orientation) > 180)
     error('orientation must be between -180 and 180, with x-axis being theta = 0');
 elseif (startpoint(1) < 50 || startpoint(1) > 650 || startpoint(2) < 0 || startpoint(2) > 650)
     error('Startpoint out of bounds');
