@@ -2,7 +2,7 @@
 % 29-05-2019
 % calculateTurn() is used to calculate the turning time at a given speed
 % curve and turning radius in order to directly face a destination
-function [turntime, direction, turnEndPos, new_orientation] = calculateTurn(startpoint, destination, orientation, t_radius, v_rot)
+function [turntime, direction, turnEndPos, new_orientation] = calculateTurn(startpoint, destination, orientation, t_radius, v_rot_prime)
     % For our chosen angle(20 degrees):
     % t_radius; %cm
     % v_rot; %speed when rotating in cm per second (vector as function of t(ms);
@@ -25,10 +25,10 @@ function [turntime, direction, turnEndPos, new_orientation] = calculateTurn(star
         t_sec = t*0.001;
 
         % Formulas for the new orientation and position  
-        theta = orientation+180*direction*t_sec*v_rot(t)/(pi*t_radius);
-        displ_ang = -1*direction*90+orientation;
-        x_incr = startpoint(1)+ t_radius*(cosd(theta-orientation+displ_ang)-cosd(displ_ang));
-        y_incr = startpoint(2)+ t_radius*(sind(theta-orientation+displ_ang)-sind(displ_ang));
+        theta = orientation + 180*direction*v_rot_prime(t)/(pi*t_radius); % The new angle of KITT
+        displ_ang = -1*direction*90+orientation; % Displacement angle for driving along a circle
+        x_incr = startpoint(1)+ t_radius*(cosd(theta-orientation+displ_ang)-cosd(displ_ang)); % Calculating the new x
+        y_incr = startpoint(2)+ t_radius*(sind(theta-orientation+displ_ang)-sind(displ_ang)); % Calculating the new y
     
         if (abs(theta) > 180)
             theta_lim = theta-sign(theta)*360; %limit theta to -180:180 degrees

@@ -35,7 +35,7 @@ disp('(^.^) - No input argument errors.');
 
 % Set up vectors and parameters
 transmitDelay = 45; %ms for the car to react to change in speed command
-[v_rot, t_radius] = turningParameters();
+[v_rot_prime, t_radius] = turningParameters();
 [d_q, ang_q] = convertAngleMeasurements();
 
 
@@ -52,7 +52,7 @@ if (challengeA)% Challenge A: no waypoint
     end
     
     % Calculate the turn
-    [turntime, direction, turnEndPos, new_orientation] = calculateTurn(startpoint,endpoint,orientation, t_radius, v_rot);
+    [turntime, direction, turnEndPos, new_orientation] = calculateTurn(startpoint,endpoint,orientation, t_radius, v_rot_prime);
     disp('turning time (ms):');
     disp( turntime);
     disp('[direction (1:left, -1:right), new_orientation] = ');
