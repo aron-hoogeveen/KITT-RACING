@@ -22,7 +22,8 @@ toc % equal to drivingTime - transmitDelay(= 45)
 
 %%%% Compute the actual orientation and location
 % the new location is now:
-[x_stop, y_stop] = [x_points(end), y_points(end)];
+x_stop = x_points(end);
+y_stop = y_points(end);
 % We now trek a trend line through the points to calculate the angle
 
 
