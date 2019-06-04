@@ -38,6 +38,27 @@ transmitDelay = 45; %ms for the car to react to change in speed command
 [v_rot_prime, t_radius] = turningParameters();
 [d_q, ang_q] = convertAngleMeasurements();
 
+% Read out the current voltage of the car. This voltage will be used to
+% adjust the rotation velocity accordingly.
+voltageStr = EPOCommunications('transmit', 'Sv');
+voltage = str2double(voltageStr(6:9)); % Extract the voltage
+
+% Adjust v_rot_prime according to voltage:
+% Nominal voltage: 18.1 V
+if (voltage <= 18.4 && voltage > 18.2)
+    voltageCorrection = 1.2;
+elseif (voltage <= 18.2 && voltage > 18.0)
+    voltageCorrection = 1; % no voltage correction: nominal voltage is 18.1V
+elseif (voltage <= 18.0 && voltage > 17.8)
+    voltageCorrection = 0.9;
+elseif (voltage <= 17.8 && voltage > 17.6)
+    voltageCorrection = 0.7;
+else
+    disp("The battery voltage deviates a lot from the nominal voltage (18.1V)");
+end
+% Correct the velocity curve with voltageCorrection. 
+v_rot_prime = voltageCorrection * v_rot_prime; %scaling of the integral has the same result as scaling v_rot
+
 
 % Clear all existing figures
 clf;
