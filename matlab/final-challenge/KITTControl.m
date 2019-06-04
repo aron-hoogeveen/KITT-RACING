@@ -63,24 +63,26 @@ if (challengeA)% Challenge A: no waypoint
     plot(turnEndPos(1), turnEndPos(2), 'b.', 'MarkerSize', 10);
     hold on;
 
-    %input('Press any key to start driving','s')
+    input('Press any key to start driving','s')
 
     %%%%%%%%%%%%%%%%%%%%%% START DRIVING %%%%%%%%%%%%%%%%%%%%%%%%
     %%% A.STEP 1: Turn KITT
 
         if (direction == 1)
-            steering =  sprintf('%s%d', 'D' ,angleToCommand(20, 'left', d_q, ang_q));
+            steering =  sprintf('%s%d', 'D' ,angleToCommand(25, 'left', d_q, ang_q));
         else
-            steering =  sprintf('%s%d', 'D' ,angleToCommand(20, 'right', d_q, ang_q));
+            steering =  sprintf('%s%d', 'D' ,angleToCommand(25, 'right', d_q, ang_q));
         end
+        KITTspeed = 'M160';
 
-
-        % EPOCommunications('transmit', steering);
-        % EPOCommunications('transmit', KITTspeed);
+        EPOCommunications('transmit', steering);
+        tic
+        EPOCommunications('transmit', KITTspeed);
+        toc
         pause(turntime/1000 - transmitDelay/1000);  %let the car drive for calculated time
-        % EPOCommunications('transmit', 'D152'); % wheels straight
+        EPOCommunications('transmit', 'M150'); % rollout
+        EPOCommunications('transmit', 'D152'); % wheels straight
         % remove this later:
-        % EPOCommunications('transmit', 'M150'); % rollout
 
     %%% A.STEP 2: Accelerate and stop 100cm before point
         KITTspeed = 160;

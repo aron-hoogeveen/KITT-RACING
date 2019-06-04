@@ -50,7 +50,7 @@ function [turntime, direction, turnEndPos, new_orientation] = calculateTurn(star
             found = 1;
         end
         
-        if (t>10000)
+        if (t>9999)
             error('A suitable turn could not be found (t>10s). Perhaps the start and destination are too close.');           
         end
         t = t+1;
