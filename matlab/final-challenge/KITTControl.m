@@ -9,6 +9,8 @@ function [] = KITTControl(orientation, startpoint, endpoint, waypoint, obstacles
 %   waypoint: [x, y] location of waypoint, if nargin < 4: no waypoint
 %   obstacles: true/false, if nargin < 5: no obstacles
 
+offline = true; %Is KITT connected?
+
 % Default challenge is A
 challengeA = true;
 
@@ -18,11 +20,11 @@ if (nargin < 3)
     error('(*.*) - Minimum number of input arguments required is three!');
 elseif(abs(orientation) > 180)
     error('(*.*) - orientation must be between -180 and 180, with x-axis being theta = 0');
-elseif (startpoint(1) < 50 || startpoint(1) > 650 || startpoint(2) < 0 || startpoint(2) > 650)
+elseif (startpoint(1) < 50 || startpoint(1) > 510 || startpoint(2) < 0 || startpoint(2) > 510)
     error('(*.*) - Startpoint out of bounds');
-elseif (endpoint(1) < 50 || endpoint(1) > 650 || endpoint(2) < 50 || endpoint(2) > 650)
+elseif (endpoint(1) < 50 || endpoint(1) > 510 || endpoint(2) < 50 || endpoint(2) > 510)
     error('(*.*) - Endpoint out of bounds');
-elseif (nargin>3 && (waypoint(1) < 50 || waypoint(1) > 650 || waypoint(2) < 50 || waypoint(2) > 650))
+elseif (nargin>3 && (waypoint(1) < 50 || waypoint(1) > 510 || waypoint(2) < 50 || waypoint(2) > 510))
     error('(*.*) - Waypoint out of bounds');
 elseif (nargin > 3)
     % No waypoint
@@ -40,8 +42,8 @@ transmitDelay = 45; %ms for the car to react to change in speed command
 
 % Read out the current voltage of the car. This voltage will be used to
 % adjust the rotation velocity accordingly.
-voltageStr = EPOCommunications('transmit', 'Sv');
-voltage = str2double(voltageStr(6:9)); % Extract the voltage
+voltageStr = EPOCom(offline, 'transmit', 'Sv');
+voltage = str2double(voltageStr(9:13)); % Extract the voltage
 
 % Adjust v_rot_prime according to voltage:
 % Nominal voltage: 18.1 V
@@ -96,13 +98,13 @@ if (challengeA)% Challenge A: no waypoint
         end
         KITTspeed = 'M160';
 
-        EPOCommunications('transmit', steering);
+        EPOCom(offline, 'transmit', steering);
         tic
-        EPOCommunications('transmit', KITTspeed);
+        EPOCom(offline, 'transmit', KITTspeed);
         toc
         pause(turntime/1000 - transmitDelay/1000);  %let the car drive for calculated time
-        EPOCommunications('transmit', 'M150'); % rollout
-        EPOCommunications('transmit', 'D152'); % wheels straight
+        EPOCom(offline, 'transmit', 'M150'); % rollout
+        EPOCom(offline, 'transmit', 'D152'); % wheels straight
         % remove this later:
 
     %%% A.STEP 2: Accelerate and stop 100cm before point

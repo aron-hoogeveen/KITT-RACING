@@ -7,11 +7,11 @@ function [] = drawMap(startpoint, endpoint, orientation, waypoint)
     %figure('WindowState', 'maximized')
     
     %Draw the bounds of the field:
-    rectangle('Position', [0,0,50,700], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
+    rectangle('Position', [0,0,50,560], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
     hold on;
-    rectangle('Position', [650,0,50,700], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
-    rectangle('Position', [0,650,700,50], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
-    rectangle('Position', [0,0,700,50], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
+    rectangle('Position', [510,0,50,560], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
+    rectangle('Position', [0,510,560,50], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
+    rectangle('Position', [0,0,560,50], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
     
     % Draw the start and end points (and optionally waypoint)
     plot(startpoint(1), startpoint(2), 'b*', 'MarkerSize', 10);
@@ -29,8 +29,8 @@ function [] = drawMap(startpoint, endpoint, orientation, waypoint)
     
     %drawLine(startpoint, endpoint)
     % Set limits, ratio, units and grid
-    xlim([0,700]);
-    ylim([0, 700]);
+    xlim([0,560]);
+    ylim([0, 560]);
     xlabel('X Distance [cm]');
     ylabel('Y Distance [cm]');
     grid on;
