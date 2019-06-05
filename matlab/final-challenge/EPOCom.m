@@ -101,7 +101,7 @@ if (offline == true)
                         if (strcmp(arg1(2),'d'))
                             result = "* Dist. L 198 R 127";
                         elseif (strcmp(arg1(2), 'v'))
-                            result = "* V_batt 18.2 ";
+                            result = '* V_batt 18.2 ';
                         else
                             error('Error in <arg1> unknows status option');
                         end
