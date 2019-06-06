@@ -100,9 +100,9 @@ if (offline == true)
                         result = char(result);
                     elseif(length(arg1) == 2)
                         if (strcmp(arg1(2),'d'))
-                            result = "* Dist. L 198 R 127";
+                            result = "* Dist. L 198 R 127"; % TODO fix actual string
                         elseif (strcmp(arg1(2), 'v'))
-                            result = '* V_batt 18.1 ';
+                            result = '_batt 18.1 ';
                         else
                             error('Error in <arg1> unknows status option');
                         end
