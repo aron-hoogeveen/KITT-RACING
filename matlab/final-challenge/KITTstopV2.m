@@ -13,10 +13,12 @@ function [timeToDrive, vPoint] = KITTstopV2(distance, x_brake, v_brake, x_acc, v
     iEndSpeed = find(v_acc>turnEndSpeed);
     v_acc = v_acc(iEndSpeed:end); % FIXME it is possible that the cropping causes the v_acc to be too short. If that is the case just trek het grafiekje door
     x_acc = x_acc(iEndSpeed:end);
+    x_acc = x_acc - min(x_acc);
     figure;
-    plot(v_acc);title('vacc');
-    figure;
-    plot(x_acc);title('xacc');
+%     plot(v_acc);title('vacc');
+%     figure;
+     plot(x_acc);title('xacc');
+    plot(x_acc, v_acc);title('x - v - acc zoals kittstopv2');
     figure;
     % Get the distance that corresponds to iEndSpeed
 %     x1 = x_acc(iEndSpeed);
