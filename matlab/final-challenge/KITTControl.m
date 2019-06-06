@@ -187,7 +187,7 @@ if (challengeA)% Challenge A: no waypoint
                     y_diff = endpoint(2) - y; % y difference
                     dist = sqrt(x_diff^2 + y_diff^2); % distance between the current location and the endpoint
                     
-                    [breakPoint, speed] = KITTstopV1(dist, ydis_brake, yspeed_brake, ydis_acc, yspeed_acc, 186.5, 0);
+                    [timeToDrive, ~] = KITTstopV1(dist, ydis_brake, yspeed_brake, ydis_acc, yspeed_acc, 186.5);
                     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                     % Pseudo to MATLAB - End                              %
                     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
