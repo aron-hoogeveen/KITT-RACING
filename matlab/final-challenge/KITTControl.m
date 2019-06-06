@@ -11,9 +11,7 @@ function [] = KITTControl(orientation, startpoint, endpoint, waypoint, obstacles
 
 offline = true; %Is KITT connected?
 step2 = true;
-
-% Default challenge is A
-challengeA = true;
+challengeA = true; % Default challenge is A
 
 % Check for input errors
 disp('(O.O) - Checking input arguments for any errors...');
@@ -35,6 +33,11 @@ elseif (nargin < 5)
 end
 disp('(^.^) - No input argument errors.');
 
+% Load saved parameters
+load('acc_ploy.mat', 'ydis_acc', 'yspeed_acc'); % Acceleration curve from the midterm challenge
+load('brake_ploy_v2.mat', 'ydis_brake', 'yspeed_brake'); % Braking curve from the midterm challenge
+yspeed_acc = [yspeed_acc 156];  % fixes for a too short acceleration for version 1
+ydis_acc = [ydis_acc 500]; % fixes for a too short acceleration curve for version 1
 
 % Set up vectors and parameters
 transmitDelay = 45; %ms for the car to react to change in speed command
@@ -130,7 +133,7 @@ if (challengeA)% Challenge A: no waypoint
             doPause = true; % pause for drivingTime - time it takes for audio
             t_loc_start = tic;
             for i=1:pointsAmount
-                [x, y] = retrieveAudioLocationFIXME_exlacmationmark;%FIXMEthe duration of this computation is variable
+                [x, y] = retrieveAudioLocationFIXME_exlacmationmark(true);%FIXMEthe duration of this computation is variable
                 x_points = [x_points x]; %append the x coordinate to array
                 y_points = [y_points y]; %append the y coordinate to array
                 if(length(x_points) > floor(pointsAmount/2)) % Dit moet aangepast worden aan de hand van de lengte van het stuk met pointsAmount
@@ -161,7 +164,26 @@ if (challengeA)% Challenge A: no waypoint
                     %   helemaal stoppen nu
                     %   KITTstop toepassen en iets stoppen voor eindpunt
                     %   (30cm indien mogelijk)
+                    
+                    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                    % Pseudo to MATLAB - Begin                            %
+                    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                     doPause = false;
+                   
+                    % The car has stopped. Request the distance and use it
+                    % as input for KITTstopV1
+                    [x, y] = retrieveAudioLocationFIXME_exlacmationmark(true);
+                    
+                    % Convert the retrieved x and y coordinate to a
+                    % distance to the endpoint
+                    x_diff = endpoint(1) - x; % x difference
+                    y_diff = endpoint(2) - y; % y difference
+                    dist = sqrt(x_diff^2 + y_diff^2); % distance between the current location and the endpoint
+                    
+                    [breakPoint, speed] = KITTstopV1(dist, ydis_brake, yspeed_brake, ydis_acc, yspeed_acc, 186.5, 0);
+                    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                    % Pseudo to MATLAB - End                              %
+                    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 end
             end
             t_loc_elapsed = toc(t_loc_start);
