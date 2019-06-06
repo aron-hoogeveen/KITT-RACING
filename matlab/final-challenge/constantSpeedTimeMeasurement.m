@@ -42,7 +42,8 @@ plot(lijntje);
 %poly_part = polyfitB(samples, Xcomb(17:45), 2, 153.127450980392);
 %X_poly = polyval(poly_part, samples);
 
-
+radius = 85;
+average_constant_speed = pi*2*radius/(4*average([trend_cons_data1, trend_cons_data2, trend_cons_data3]))
 
 function ave = average(x) % x is a vector
     sum = 0;
