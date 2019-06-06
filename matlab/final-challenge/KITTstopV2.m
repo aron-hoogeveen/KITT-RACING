@@ -1,21 +1,18 @@
 % EPO-4 Group B4
 % 13-05-2019
-% Calculating the brakePoint (in driven distance, NOT distance to the wall) 
+% Calculates the time needed to drive preStopDist (cm) from the endpoint
 
-% stopdistance: desired distance driven
-% x_brake, v_brake, x_acc, v_acc: velocity-position curves
+% distance: desired distance driven
+% v_brake, v_acc: velocity-time curves
 % brakeEnd: property of braking curve where v = 0;
-% delay: optional added delay (in ms) which shifts the distance according to the speed
+% preStopDist: distance KITT needs to stop before the end point
 
-function [brakePoint, vPoint] = KITTstop(stopdistance, x_brake, v_brake, x_acc, v_acc, brakeEnd, delay)
+function [brakePoint, vPoint] = KITTstopV2(distance, v_acc, v_brake, brakeEnd, preStopDist)
 
     xPoint = CurvesIntersect(stopdistance, x_brake, v_brake, x_acc, v_acc, brakeEnd, 1);
     vPoint = CurvesIntersect(stopdistance, x_brake, v_brake, x_acc, v_acc, brakeEnd, 0);
-    
-    % Compensate for delay (ms)
-    x_comp = delay * vPoint/90;
  
-    brakePoint = CurvesIntersect(stopdistance, x_brake, v_brake, x_acc, v_acc, brakeEnd, 1)-x_comp;
+    brakePoint = CurvesIntersect(stopdistance, x_brake, v_brake, x_acc, v_acc, brakeEnd, 1);
   
 end
 
