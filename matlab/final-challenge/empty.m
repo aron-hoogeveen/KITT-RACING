@@ -1,4 +1,4 @@
-maximumLocalizationTime = 300; %Maximum computation time to receive audio location
+maximumLocalizationTime = 200; %Maximum computation time to receive audio location
 drivingTime = 3000; %Time the car must drive for step 2 in challenge A in ms (straight line)
 x_points = []; % empty array for the points
 y_points = []; % empty array for the points
