@@ -111,7 +111,7 @@ if (challengeA)% Challenge A: no waypoint
         
     %%% A.STEP 2: Accelerate and stop 100cm before point (correct if
     %%% necessary)
-    driveKITT(pointsAmount, endpoint, transmitDelay, pointsAmount, 'true', v_rot, t_radius, v_rot_prime); % recursive function (will initiate a turn if necessary)
+    driveKITT(pointsAmount, endpoint, transmitDelay, pointsAmount, v_rot, t_radius, v_rot_prime); % recursive function (will initiate a turn if necessary)
     
     %%% A.STEP 3: slowly drive the remaining (small) distance to the endpoint and stop/rollout
     EPOCom(offline, 'transmit', 'M156'); % Slow driving
@@ -135,7 +135,7 @@ if (challengeA)% Challenge A: no waypoint
     %%%%% OTHER CHALLENGES
     elseif (challengeA ~= true) % Challenge B: one waypoint
     else %Challenge C: complete chaos
-        end
+    end
 
 
 end%KITTControl

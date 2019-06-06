@@ -1,7 +1,6 @@
-function [] = driveKITT(pointsAmount, endpoint, transmitDelay, pointsAmount, straightenWheels, v_rot, t_radius, v_rot_prime)
-            if (straightenWheels) %Is only true for the first function call, wheels are already straight otherwise
-                EPOCom(offline, 'transmit', 'D152'); % wheels straight, KITt is still driving
-            end
+function [] = driveKITT(pointsAmount, endpoint, transmitDelay, pointsAmount, v_rot, t_radius, v_rot_prime)
+            % KITT is already driving when this function is called (with
+            % straight wheels)
             
             doPause = 'true'; % pause for drivingTime - time it takes for audio, will stay true if driving is not interrupted
             t_loc_start = tic; % Start timing the audio coordinates retrieval
@@ -72,7 +71,7 @@ function [] = driveKITT(pointsAmount, endpoint, transmitDelay, pointsAmount, str
                         %   Perform STEP 1 of challenge A again (do a turn)
                         turnKITT(direction, turntime, transmitDelay, d_q, ang_q);
                         % Recursive function call, drive to the end point again:
-                        driveKITT(pointsAmount, endpoint, transmitDelay);
+                        driveKITT(pointsAmount, endpoint, transmitDelay, pointsAmount, v_rot, t_radius, v_rot_prime);
                         doPause = 'false'; % the driving is interupted as KITT deviates from the cours
                     end
             end
