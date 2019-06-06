@@ -95,8 +95,7 @@ if (challengeA)% Challenge A: no waypoint
     turnEndSpeed = v_rot(turntime); % Velocity of KITT at the end of the first turn
     drivingTime = KITTstopV2(); % FIXME, %Time the car must drive for step 2 in challenge A in ms (straight line)
     maximumLocalizationTime = 200; %Maximum computation time to receive audio location
-    x_points = []; % empty array for the points
-    y_points = []; % empty array for the points
+
 
     % Compute the amount of location points that can be retrieved in driving time
     pointsAmount = floor((drivingTime-45)/maximumLocalizationTime); %45 is transmit delay
@@ -132,6 +131,8 @@ if (challengeA)% Challenge A: no waypoint
             EPOCom(offline, 'transmit', 'D152'); % wheels straight
             doPause = true; % pause for drivingTime - time it takes for audio, will stay true if driving is not interrupted
             t_loc_start = tic; % Start timing the audio coordinates retrieval
+            x_points = []; % empty array for the points
+            y_points = []; % empty array for the points
             for i=1:pointsAmount
                 [x, y] = retrieveAudioLocationFIXME_exlacmationmark(true);%FIXMEthe duration of this computation is variable
                 x_points = [x_points x]; %append the x coordinate to array
@@ -150,8 +151,6 @@ if (challengeA)% Challenge A: no waypoint
                     else % x increasing, y increasing
                         actual_orientation = phi;
                     end
-                    desired_orientation = atandWithCompensation(endpoint(2)-y_points(end),endpoint(1)-x_points(end));
-                    angle_diff = actual_orientation - desired_orientation;
                     % Extend the trend line with y = rico*x + b to calculate the endpoint difference 
                     extended_trend = rico*x_samp  +b;
                     % The distance from a point (x_p,y_p) to a line m*x +b is |m*x_p - y_p + b|/sqrt(m^2 + 1)
