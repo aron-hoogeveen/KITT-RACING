@@ -126,8 +126,8 @@ if (challengeA)% Challenge A: no waypoint
     %%% A.STEP 2: Accelerate and stop 100cm before point
 
         % EPOCommunications('transmit', KITTspeed);
-           EPOCom(offline, 'transmit', 'D152'); % wheels straight
-           doPause = true; % pause for drivingTime - time it takes for audio
+            EPOCom(offline, 'transmit', 'D152'); % wheels straight
+            doPause = true; % pause for drivingTime - time it takes for audio
             t_loc_start = tic;
             for i=1:pointsAmount
                 [x, y] = retrieveAudioLocationFIXME_exlacmationmark;%FIXMEthe duration of this computation is variable
