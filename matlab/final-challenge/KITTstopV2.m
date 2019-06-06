@@ -17,9 +17,9 @@ function [timeToDrive, vPoint] = KITTstopV2(distance, x_brake, v_brake, x_acc, v
     x_acc = x_acc(iEndSpeed:end);
     x_acc = x_acc - min(x_acc);
     figure;
-     plot(x_acc);title('xacc');
-    plot(x_acc, v_acc);title('x - v - acc zoals kittstopv2');
-    figure;
+     %plot(x_acc);title('xacc');
+    %plot(x_acc, v_acc);title('x - v - acc zoals kittstopv2');
+    %figure;
     
     xPoint = CurvesIntersect(distance, x_brake, v_brake, x_acc, v_acc, brakeEnd, 1);
     vPoint = CurvesIntersect(distance, x_brake, v_brake, x_acc, v_acc, brakeEnd, 0);
