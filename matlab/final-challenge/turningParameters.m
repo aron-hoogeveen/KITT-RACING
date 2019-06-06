@@ -1,7 +1,7 @@
 % EPO-4 Group B4
 % 29-05-2019
 % Converts measurements into velocity vector for rotation
-function [v_rot_prime, t_radius] = turningParameters()
+function [v_rot, v_rot_prime, t_radius] = turningParameters()
 
     %%%% Measurements %%%%%%%%
     % For our chosen angle (25 degrees):
