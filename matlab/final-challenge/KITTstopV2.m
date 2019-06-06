@@ -15,21 +15,18 @@ function [timeToDrive, vPoint] = KITTstopV2(distance, x_brake, v_brake, x_acc, v
     x_acc = x_acc(iEndSpeed:end);
     x_acc = x_acc - min(x_acc);
     figure;
-%     plot(v_acc);title('vacc');
-%     figure;
      plot(x_acc);title('xacc');
     plot(x_acc, v_acc);title('x - v - acc zoals kittstopv2');
     figure;
-    % Get the distance that corresponds to iEndSpeed
-%     x1 = x_acc(iEndSpeed);
-%     iSpeedZero = find(x_acc>(x1+distance)); % find the index of the point where the car should stop
-%     iSpeedZero = iSpeedZero - iEndSpeed; % Take the cropping of v_acc into account
-    
-    
     
     xPoint = CurvesIntersect(distance, x_brake, v_brake, x_acc, v_acc, brakeEnd, 1);
     vPoint = CurvesIntersect(distance, x_brake, v_brake, x_acc, v_acc, brakeEnd, 0);
- 
-    brakePoint = CurvesIntersect(distance, x_brake, v_brake, x_acc, v_acc, brakeEnd, 1);
-    timeToDrive = 2;
+
+    % Convert the xPoint to the time it takes to get to that point. 
+    i = find(abs(x_acc-xPoint) < 0.1); % Get the index of x_acc where the distance is equal to the stop distance.
+    disp("xPoint is " + string(xPoint));
+    disp("i is " + string(i));
+    disp("x_acc = ");
+    disp(x_acc);
+    timeToDrive = i * 37e-3; % 1 sample corresponds to 37 miliseconds. 
 end%KITTstopV2
