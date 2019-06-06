@@ -92,8 +92,7 @@ if (challengeA)% Challenge A: no waypoint
     turnEndSpeed = v_rot(turntime); % Velocity of KITT at the end of the first turn
     drivingTime = KITTstopV2(); % FIXME, %Time the car must drive for step 2 in challenge A in ms (straight line)
     maximumLocalizationTime = 200; %Maximum computation time to receive audio location
-    x_points = []; % empty array for the points
-    y_points = []; % empty array for the points
+
 
     % Compute the amount of location points that can be retrieved in driving time
     pointsAmount = floor((drivingTime-45)/maximumLocalizationTime); %45 is transmit delay
@@ -129,6 +128,8 @@ if (challengeA)% Challenge A: no waypoint
             EPOCom(offline, 'transmit', 'D152'); % wheels straight
             doPause = true; % pause for drivingTime - time it takes for audio, will stay true if driving is not interrupted
             t_loc_start = tic; % Start timing the audio coordinates retrieval
+            x_points = []; % empty array for the points
+            y_points = []; % empty array for the points
             for i=1:pointsAmount
                 [x, y] = retrieveAudioLocationFIXME_exlacmationmark;%FIXMEthe duration of this computation is variable
                 x_points = [x_points x]; %append the x coordinate to array
@@ -147,8 +148,6 @@ if (challengeA)% Challenge A: no waypoint
                     else % x increasing, y increasing
                         actual_orientation = phi;
                     end
-                    desired_orientation = atandWithCompensation(endpoint(2)-y_points(end),endpoint(1)-x_points(end));
-                    angle_diff = actual_orientation - desired_orientation;
                     % Extend the trend line with y = rico*x + b to calculate the endpoint difference 
                     extended_trend = rico*x_samp  +b;
                     % The distance from a point (x_p,y_p) to a line m*x +b is |m*x_p - y_p + b|/sqrt(m^2 + 1)
@@ -160,14 +159,29 @@ if (challengeA)% Challenge A: no waypoint
                         x_points = [x_points x]; %append the x coordinate to array
                         y_points = [y_points y]; %append the y coordinate to array
                         
-                    %   weer orientation bepalen (recursive functie ergens)
-                    %   Calculate desired orientation
-                    %   weer angle_diff uitrekenen
-                    %   calculateTurn([x_points(end), y_points(end],endpoint,actual_orientation, t_radius, v_rot_prime);
-                    %   weer stap 1 uitvoeren
-                    %   helemaal stoppen nu
-                    %   KITTstop toepassen en iets stoppen voor eindpunt
-                    %   (30cm indien mogelijk)
+                    %   Calculate the actual orientation again with an extra point
+                    %   Make a trend line through the audio location points and calculate the actual angle
+                        prms = polyfit(x_points,y_points,1);
+                        rico = prms(1); % Richtingscoëfficient
+                        phi = atand(rico);
+                        if (x_points(end)-x_points(1) < 0 && y_points(end)-y_points(1) < 0) %x decreasing, y decreasing
+                            actual_orientation = phi - 180;
+                        elseif(x_points(end)-x_points(1) < 0 && y_points(end)-y_points(1) > 0) %x decreasing, y increasing
+                            actual_orientation = phi+180;
+                        elseif(x_points(end)-x_points(1) > 0 && y_points(end)-y_points(1) < 0) %x increasing, y decreasing
+                            actual_orientation = phi;
+                        else % x increasing, y increasing
+                            actual_orientation = phi;
+                        end
+                        
+                        % Calculate a new turn;
+                        [turntime, direction, turnEndPos, new_orientation] = calculateTurn([x_points(end), y_points(end],endpoint,actual_orientation, t_radius, v_rot_prime);
+                    %   Perform STEP 1 of challenge A again (do a turn)
+                        turnEndSpeed = v_rot(turntime); % Velocity of KITT at the end of the new turn
+                        drivingTime = KITTstopV2(); % FIXME, %Time the car must drive in ms (straight line)
+                    %   Recursive function call here? for more robustness
+                    %   (doPause should be handled in that recursive
+                    %   process too)
                     doPause = false; % the driving is interupted as KITT deviates from the cours
                 end
             end
