@@ -10,6 +10,7 @@ function [] = KITTControl(orientation, startpoint, endpoint, waypoint, obstacles
 %   obstacles: true/false, if nargin < 5: no obstacles
 
 offline = true; %Is KITT connected?
+step2 = true;
 
 % Default challenge is A
 challengeA = true;
@@ -86,6 +87,20 @@ if (challengeA)% Challenge A: no waypoint
     plot(turnEndPos(1), turnEndPos(2), 'b.', 'MarkerSize', 10);
     hold on;
 
+    % Calculate the variables for step 2:
+    % turnEndPos = [x, y] at the end of the turn;
+    turnEndSpeed = v_rot_prime(turntime);
+    drivingTime = KITTstopV2(); % FIXME, %Time the car must drive for step 2 in challenge A in ms (straight line)
+    maximumLocalizationTime = 200; %Maximum computation time to receive audio location
+    x_points = []; % empty array for the points
+    y_points = []; % empty array for the points
+
+    % compute the amount of location points that can be retrieved in driving time
+    pointsAmount = floor((drivingTime-45)/maximumLocalizationTime); %45 is transmit delay
+    
+ 
+        
+        
     input('Press any key to start driving','s')
 
     %%%%%%%%%%%%%%%%%%%%%% START DRIVING %%%%%%%%%%%%%%%%%%%%%%%%
@@ -103,18 +118,61 @@ if (challengeA)% Challenge A: no waypoint
         EPOCom(offline, 'transmit', KITTspeed);
         toc
         pause(turntime/1000 - transmitDelay/1000);  %let the car drive for calculated time
-        EPOCom(offline, 'transmit', 'M150'); % rollout
-        EPOCom(offline, 'transmit', 'D152'); % wheels straight
-        % remove this later:
-
+        if (~step2)
+            EPOCom(offline, 'transmit', 'M150'); % rollout
+            EPOCom(offline, 'transmit', 'D152'); % wheels straight
+        else      
+        
     %%% A.STEP 2: Accelerate and stop 100cm before point
-        KITTspeed = 160;
+
         % EPOCommunications('transmit', KITTspeed);
-
-
-    %%% A.STEP 3: Turn KITT again using actual orientation by audio beacon and
-    %actual location
-
+           EPOCom(offline, 'transmit', 'D152'); % wheels straight
+           doPause = true; % pause for drivingTime - time it takes for audio
+            t_loc_start = tic;
+            for i=1:pointsAmount
+                [x, y] = retrieveAudioLocationFIXME_exlacmationmark;%FIXMEthe duration of this computation is variable
+                x_points = [x_points x]; %append the x coordinate to array
+                y_points = [y_points y]; %append the y coordinate to array
+                if(length(x_points) > floor(pointsAmount/2)) % Dit moet aangepast worden aan de hand van de lengte van het stuk met pointsAmount
+                    % make a trend and calculate the angle
+                    prms = polyfit(x_points,y_points,1);
+                    rico = prms(1);
+                    phi = atand(rico);
+                    if (x_points(end)-x_points(1) < 0 && y_points(end)-y_points(1) < 0)
+                        actual_orientation = phi - 180;
+                    elseif(x_points(end)-x_points(1) < 0 && y_points(end)-y_points(1) > 0)
+                        actual_orientation = phi+180;
+                    elseif(x_points(end)-x_points(1) > 0 && y_points(end)-y_points(1) < 0)
+                        actual_orientation = phi;
+                    else
+                        actual_orientation = phi;
+                    end
+                    desired_orientation = atandWithCompensation(endpoint(2)-y_points(end),endpoint(1)-x_points(end));
+                    angle_diff = actual_orientation - desired_orientation;
+                    % lijn doortrekken met y = rico*x + b;
+                    % nearest distance endpoint and line;
+                    % if difference > 10cm: stoppen en bijsturen
+                    %   nieuw punt ophalen
+                    %   weer orientation bepalen (recursive functie ergens)
+                    %   weer desired_orientation uitrekenen
+                    %   weer angle_diff uitrekenen
+                    %   calculateTurn([x_points(end), y_points(end],endpoint,actual_orientation, t_radius, v_rot_prime);
+                    %   weer stap 1 uitvoeren
+                    %   helemaal stoppen nu
+                    %   KITTstop toepassen en iets stoppen voor eindpunt
+                    %   (30cm indien mogelijk)
+                    doPause = false;
+                end
+            end
+            t_loc_elapsed = toc(t_loc_start);
+            if (doPause)
+                pause((drivingTime - 45)/1000 - t_loc_elapsed);
+                smoothstop; %FIXME
+            end
+            % heel rustig rijden en stoppen op het eindpunt met
+            % locatiebepaling: functie voor rustig rijden
+            % BESTEMMING BEREIKT
+        end
 
 elseif (challengeA ~= true) % Challenge B: one waypoint
 else %Challenge C: complete chaos
