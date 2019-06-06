@@ -7,6 +7,8 @@
 % brakeEnd: property of braking curve where v = 0;
 % delay: optional added delay (in ms) which shifts the distance according to the speed
 
+
+% Output in milliseconds
 function [timeToDrive, vPoint] = KITTstopV2(distance, x_brake, v_brake, x_acc, v_acc, brakeEnd, turnEndSpeed)
     % Find the index of the turnEndSpeed and crop the v_acc and x_acc
     % accordingly
@@ -28,5 +30,5 @@ function [timeToDrive, vPoint] = KITTstopV2(distance, x_brake, v_brake, x_acc, v
 %     disp("i is " + string(i));
 %     disp("x_acc = ");
 %     disp(x_acc);
-    timeToDrive = i * 37e-3; % 1 sample corresponds to 37 miliseconds. 
+    timeToDrive = i * 37; % 1 sample corresponds to 37 miliseconds. 
 end%KITTstopV2
