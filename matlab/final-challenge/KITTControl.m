@@ -152,10 +152,17 @@ if (challengeA)% Challenge A: no waypoint
                     end
                     desired_orientation = atandWithCompensation(endpoint(2)-y_points(end),endpoint(1)-x_points(end));
                     angle_diff = actual_orientation - desired_orientation;
-                    % lijn doortrekken met y = rico*x + b;
-                    % nearest distance endpoint and line;
-                    % if difference > 10cm: stoppen en bijsturen
-                    %   nieuw punt ophalen
+                    % Extend the trend line with y = rico*x + b to calculate the endpoint difference 
+                    extended_trend = rico*x_samp  +b;
+                    % The distance from a point (x_p,y_p) to a line m*x +b is |m*x_p - y_p + b|/sqrt(m^2 + 1)
+                    end_dist_difference = abs(rico*endpoint(1) - endpoint(2) + b)/sqrt(rico^2+1); % distance between endpoint and trend
+                    if (end_dist_difference > 10) %then: stoppen en bijsturen
+                        % FIXME: brake or rollout? smoothstop?
+                        % Retrieve a new point for audio location
+                        [x, y] = retrieveAudioLocationFIXME_exlacmationmark;%FIXMEthe duration of this computation is variable
+                        x_points = [x_points x]; %append the x coordinate to array
+                        y_points = [y_points y]; %append the y coordinate to array
+                        
                     %   weer orientation bepalen (recursive functie ergens)
                     %   weer desired_orientation uitrekenen
                     %   weer angle_diff uitrekenen
