@@ -43,7 +43,7 @@ transmitDelay = 45; %ms for the car to react to change in speed command
 % Read out the current voltage of the car. This voltage will be used to
 % adjust the rotation velocity accordingly.
 voltageStr = EPOCom(offline, 'transmit', 'Sv');
-voltage = str2double(voltageStr(9:13)); % Extract the voltage
+voltage = str2double(voltageStr(9:13)); % Extract the voltage.
 
 % Adjust v_rot_prime according to voltage:
 % Nominal voltage: 18.1 V
