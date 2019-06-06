@@ -97,6 +97,7 @@ if (offline == true)
                             "* Dist. L 198 R 127" + newline +...
                             "* V_batt 18.2 " + newline +...
                             "***********************";
+                        result = char(result);
                     elseif(length(arg1) == 2)
                         if (strcmp(arg1(2),'d'))
                             result = "* Dist. L 198 R 127";
