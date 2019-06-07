@@ -1,13 +1,15 @@
-function [] = driveKITT(offline,  maximumLocalizationTime, drivingTime, pointsAmount, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q)
+function [] = driveKITT(offline,  maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q)
             % KITT is already driving when this function is called (with
             % straight wheels)
-
+            callN = 1; %simulation only
+            rep = 1; %simulation only
+            
             doPause = true; % pause for drivingTime - time it takes for audio, will stay true if driving is not interrupted
             t_loc_start = tic; % Start timing the audio coordinates retrieval
             x_points = []; % empty array for the points
             y_points = []; % empty array for the points
             for i=1:pointsAmount
-                [x, y] = retrieveAudioLocationFIXME_exlacmationmark(true);%FIXMEthe duration of this computation is variable
+                [x, y, callN] = retrieveAudioLocationFIXME_exlacmationmark(offline, turnEndPos, endpoint, rep, callN);%FIXMEthe duration of this computation is variable
                 plot(x, y, 'm+', 'MarkerSize', 10, 'linewidth',6); % plot the point on the map
                 x_points = [x_points x]; %append the x coordinate to array
                 y_points = [y_points y]; %append the y coordinate to array
@@ -40,7 +42,7 @@ function [] = driveKITT(offline,  maximumLocalizationTime, drivingTime, pointsAm
                         EPOCom(offline, 'transmit', 'M150');% FIXME: brake or rollout? smoothstop?
                         pause(1) %Wait for KITT to have stopped
                         % Retrieve a new point for audio location
-                        [x, y] = retrieveAudioLocationFIXME_exlacmationmark(true);%FIXMEthe duration of this computation is variable
+                        [x, y, callN] = retrieveAudioLocationFIXME_exlacmationmark(offline, turnEndPos, endpoint, rep, callN);%FIXMEthe duration of this computation is variable
                         plot(x, y, 'm+',  'MarkerSize', 10, 'linewidth',6); % plot the point on the map
                         x_points = [x_points x]; %append the x coordinate to array
                         y_points = [y_points y]; %append the y coordinate to array
@@ -81,7 +83,7 @@ function [] = driveKITT(offline,  maximumLocalizationTime, drivingTime, pointsAm
                         %   Perform STEP 1 of challenge A again (do a turn)
                         turnKITT(offline, direction, turntime, transmitDelay, d_q, ang_q);
                         % Recursive function call, drive to the end point again:
-                        driveKITT(offline,  maximumLocalizationTime, drivingTime, pointsAmount, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q);
+                        driveKITT(offline,  maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q);
                         
                         doPause = false; % the driving is interupted as KITT deviates from the cours
                     end

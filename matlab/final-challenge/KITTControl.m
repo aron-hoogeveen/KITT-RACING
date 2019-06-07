@@ -1,7 +1,7 @@
 % EPO-4 Group B4
 % 29-05-2019
 % [] = KITTControl(argsIn) is the main control unit for the final challenge
-function [] = KITTControl(orientation, startpoint, endpoint, waypoint, obstacles)
+function [] = KITTControl(voltage, orientation, startpoint, endpoint, waypoint, obstacles)
 % Arguments:
 %   orientation: -180 to 180 degrees, x-axis is 0;
 %   startpoint: [x, y] location of startingpoint
@@ -9,26 +9,27 @@ function [] = KITTControl(orientation, startpoint, endpoint, waypoint, obstacles
 %   waypoint: [x, y] location of waypoint, if nargin < 4: no waypoint
 %   obstacles: true/false, if nargin < 5: no obstacles
 
-offline = true; %Is KITT connected?
+offlineCom = true; %Is KITT connected?
+offlineLoc = true; % Location estimation
 step2 = true;
 challengeA = true; % Default challenge is A
 
 % Check for input errors
 disp('(O.O) - Checking input arguments for any errors...');
-if (nargin < 3)
-    error('(*.*) - Minimum number of input arguments required is three!');
+if (nargin < 4)
+    error('(*.*) - Minimum number of input arguments required is four!');
 elseif(abs(orientation) > 180)
     error('(*.*) - orientation must be between -180 and 180, with x-axis being theta = 0');
 elseif (startpoint(1) < 50 || startpoint(1) > 510 || startpoint(2) < 0 || startpoint(2) > 510)
     error('(*.*) - Startpoint out of bounds');
 elseif (endpoint(1) < 50 || endpoint(1) > 510 || endpoint(2) < 50 || endpoint(2) > 510)
     error('(*.*) - Endpoint out of bounds');
-elseif (nargin>3 && (waypoint(1) < 50 || waypoint(1) > 510 || waypoint(2) < 50 || waypoint(2) > 510))
+elseif (nargin>4 && (waypoint(1) < 50 || waypoint(1) > 510 || waypoint(2) < 50 || waypoint(2) > 510))
     error('(*.*) - Waypoint out of bounds');
-elseif (nargin > 3)
+elseif (nargin > 4)
     % No waypoint
     challengeA = false; % Do challenge B or C --> one waypoint
-elseif (nargin < 5)
+elseif (nargin < 6)
     obstacles = false;
 end
 disp('(^.^) - No input argument errors.');
@@ -47,21 +48,28 @@ transmitDelay = 45; %ms for the car to react to change in speed command
 
 % Read out the current voltage of the car. This voltage will be used to
 % adjust the rotation velocity accordingly.
-voltageStr = EPOCom(offline, 'transmit', 'Sv');
-voltage = str2double(voltageStr(6:10)); % Extract the voltage.
+%voltageStr = EPOCom(offlineCom, 'transmit', 'Sv');
+%voltage = str2double(voltageStr(6:9)); % Extract the voltage.
 
 % Adjust v_rot_prime according to voltage:
 % Nominal voltage: 18.1 V
-if (voltage <= 18.4 && voltage > 18.2)
+disp(voltage);
+if (voltage == 18.4)
     voltageCorrection = 1.2;
-elseif (voltage <= 18.2 && voltage > 18.0)
-    voltageCorrection = 1; % no voltage correction: nominal voltage is 18.1V
-elseif (voltage <= 18.0 && voltage > 17.8)
-    voltageCorrection = 0.9;
+elseif (voltage == 18.3)
+    voltageCorrection = 1.18;
+elseif (voltage == 18.2)
+    voltageCorrection = 1.15;
+elseif (voltage == 18.1)
+    voltageCorrection = 1.10;
+elseif (voltage == 18.0)
+    voltageCorrection = 1; % no voltage correction: nominal voltage is 18.1V, which corresponds to this actual battery voltage
+elseif (voltage == 17.9)
+    voltageCorrection = 1;
 elseif (voltage <= 17.8 && voltage > 17.6)
-    voltageCorrection = 0.7;
+    voltageCorrection = 1;
 else
-    disp("The battery voltage deviates a lot from the nominal voltage (18.1V)");
+    error("The battery voltage deviates a lot from the nominal voltage (18.1V)");
 end
 % Correct the velocity curve with voltageCorrection.
 v_rot_prime = voltageCorrection * v_rot_prime; %scaling of the integral has the same result as scaling v_rot
@@ -103,34 +111,37 @@ if (challengeA)% Challenge A: no waypoint
     %%%%%%%%%%%%%%%%%%%%%% START DRIVING %%%%%%%%%%%%%%%%%%%%%%%%
     input('Press any key to start driving','s')
     %%% A.STEP 1: Turn KITT
-    turnKITT(offline, direction, turntime, transmitDelay, d_q, ang_q);
+    turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
 
     if (~step2) % For turning testing purposes, step2 is omitted
-        EPOCom(offline, 'transmit', 'M150'); % rollout
-        EPOCom(offline, 'transmit', 'D152'); % wheels straight
+        EPOCom(offlineCom, 'transmit', 'M150'); % rollout
+        EPOCom(offlineCom, 'transmit', 'D152'); % wheels straight
     else
 
-    %%% A.STEP 2: Accelerate and stop 100cm before point (correct if
-    %%% necessary)
-    driveKITT(offline, maximumLocalizationTime, drivingTime, pointsAmount, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q); % recursive function (will initiate a turn if necessary)
+        %%% A.STEP 2: Accelerate and stop 100cm before point (correct if
+        %%% necessary)
+        driveKITT(offlineCom, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q); % recursive function (will initiate a turn if necessary)
 
-    %%% A.STEP 3: slowly drive the remaining (small) distance to the endpoint and stop/rollout
-    EPOCom(offline, 'transmit', 'M156'); % Slow driving
-    finished = 0;
-    while (~finished)
-        % Continuously retrieve the audio location
-        [x, y] = retrieveAudioLocationFIXME_exlacmationmark;%FIXMEthe duration of this computation is variable
-        plot(x, y, 'm+',  'MarkerSize', 10, 'linewidth',6); % plot the point on the map
+        %%% A.STEP 3: slowly drive the remaining (small) distance to the endpoint and stop/rollout
+        EPOCom(offlineCom, 'transmit', 'M156'); % Slow driving
+        finished = 0;
+        
+        % FIXME DEBUG TODO
+        callN = 5;
+        while (~finished)
+            % Continuously retrieve the audio location
+            [x, y, callN] = retrieveAudioLocationFIXME_exlacmationmark(offlineLoc, turnEndPos, endpoint, 1, callN);%FIXMEthe duration of this computation is variable
+            plot(x, y, 'm+',  'MarkerSize', 10, 'linewidth',6); % plot the point on the map
 
-        dist = sqrt((endpoint(2)-y)^2+(endpoint(1)-x)^2); % distance between KITT and the endpoint
-        if (dist < 10)
-            finished = 1;
+            dist = sqrt((endpoint(2)-y)^2+(endpoint(1)-x)^2); % distance between KITT and the endpoint
+            if (dist < 10)
+                finished = 1;
+            end
+            % Perhaps extra functionality for when KITT does not drive
+            % completely straight to the endpoint; last resort option
         end
-        % Perhaps extra functionality for when KITT does not drive
-        % completely straight to the endpoint; last resort option
-    end
-    EPOCom(offline, 'transmit', 'M150'); % Rollout (can be changed to a stop)
-    disp("Destination reached!"); %Destination reached
+        EPOCom(offlineCom, 'transmit', 'M150'); % Rollout (can be changed to a stop)
+        disp("Destination reached!"); %Destination reached
     end
 
 

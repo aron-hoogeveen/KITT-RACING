@@ -7,7 +7,7 @@ function [v_rot, v_rot_prime, t_radius] = turningParameters()
     % For our chosen angle (25 degrees):
     t_radius = 85; % Turning radius (cm)
     v_rot_max =  101.4454; % Maximal speed in cm/s
-    max_speed_time = 3200; % Time (ms) after which KITT has reached constant speed
+    max_speed_time = 3500; % Time (ms) after which KITT has reached constant speed
 
 
     v_rot_max_ms = v_rot_max/1000; %Maximal speed in cm / ms;
