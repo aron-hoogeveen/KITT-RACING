@@ -11,9 +11,9 @@
 function point = CurvesIntersect(d, x_brake, v_brake, x_acc, v_acc, brakeEnding, getPosition)
  
     shift_x = shift(d); % Shift the braking curve to match distance
-    %plot(x_brake - shift_x, v_brake);
-    %hold on;
-    %plot(x_acc, v_acc);
+    plot(x_brake - shift_x, v_brake);
+    hold on;
+    plot(x_acc, v_acc);
 
     % Intersection point (m)
     if (getPosition)
