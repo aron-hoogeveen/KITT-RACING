@@ -1,4 +1,4 @@
-function [] = driveKITT(pointsAmount, endpoint, transmitDelay, pointsAmount, v_rot, t_radius, v_rot_prime)
+function [] = driveKITT(pointsAmount, endpoint, transmitDelay, pointsAmount, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc)
             % KITT is already driving when this function is called (with
             % straight wheels)
             
@@ -57,7 +57,7 @@ function [] = driveKITT(pointsAmount, endpoint, transmitDelay, pointsAmount, v_r
                         % Calculate a new turn;
                         [turntime, direction, turnEndPos, new_orientation] = calculateTurn([x_points(end), y_points(end],endpoint,actual_orientation, t_radius, v_rot_prime);
                         turnEndSpeed = v_rot(turntime); % Velocity of KITT at the end of the new turn
-                        drivingTime = KITTstopV2(); % FIXME, %Time the car must drive in ms (straight line)
+                        drivingTime = KITTstopV2(new_dist, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc,186.5,turnEndSpeed); % FIXME, %Time the car must drive in ms (straight line)
                         disp('turning time (ms):');
                         disp( turntime);
                         disp('[direction (1:left, -1:right), new_orientation] = ');
@@ -71,7 +71,7 @@ function [] = driveKITT(pointsAmount, endpoint, transmitDelay, pointsAmount, v_r
                         %   Perform STEP 1 of challenge A again (do a turn)
                         turnKITT(direction, turntime, transmitDelay, d_q, ang_q);
                         % Recursive function call, drive to the end point again:
-                        driveKITT(pointsAmount, endpoint, transmitDelay, pointsAmount, v_rot, t_radius, v_rot_prime);
+                        driveKITT(pointsAmount, endpoint, transmitDelay, pointsAmount, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc);
                         doPause = 'false'; % the driving is interupted as KITT deviates from the cours
                     end
             end
