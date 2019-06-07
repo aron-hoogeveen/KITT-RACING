@@ -2,7 +2,7 @@
 % 13-05-2019
 % Calculating the brakePoint (in driven distance, NOT distance to the wall) 
 
-% stopdistance: desired distance driven
+% distance: desired distance driven
 % x_brake, v_brake, x_acc, v_acc: velocity-position curves
 % brakeEnd: property of braking curve where v = 0;
 % delay: optional added delay (in ms) which shifts the distance according to the speed
@@ -16,7 +16,7 @@ function [timeToDrive, vPoint] = KITTstopV2(distance, x_brake, v_brake, x_acc, v
     v_acc = v_acc(iEndSpeed:end); % FIXME it is possible that the cropping causes the v_acc to be too short. If that is the case just trek het grafiekje door
     x_acc = x_acc(iEndSpeed:end);
     x_acc = x_acc - min(x_acc);
-    figure;
+    %figure;
      %plot(x_acc);title('xacc');
     %plot(x_acc, v_acc);title('x - v - acc zoals kittstopv2');
     %figure;
