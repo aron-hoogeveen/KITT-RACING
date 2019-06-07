@@ -38,6 +38,7 @@ if (offline == true)
                         else
                             error('Faulty markup for <arg1>');
                         end
+                        result = 1;
                     end
                 case 'B'
                     num = str2double(arg1(2:end));
@@ -46,12 +47,14 @@ if (offline == true)
                     else
                         disp(strcat('<offline mode> Bit frequency set to "', string(num), '".'));
                     end
+                    result = 1;
                 case 'C'
                     if (length(arg1) ~= 11)
                         error('Error in <arg1> too short for switch C');
                     else
                         disp(strcat('<offline mode> 32 bit code word set to "', arg1(2:end)));
                     end
+                    result = 1;
                 case 'D'
                     num = str2double(arg1(2:end));
                     if (num < 100 || num > 200)
@@ -102,7 +105,7 @@ if (offline == true)
                         if (strcmp(arg1(2),'d'))
                             result = "* Dist. L 198 R 127"; % TODO fix actual string
                         elseif (strcmp(arg1(2), 'v'))
-                            result = '_batt 18.1 ';
+                            result = 'VBATT18.1V';
                         else
                             error('Error in <arg1> unknows status option');
                         end
@@ -119,11 +122,101 @@ if (offline == true)
     end%switch
 else
     % Online mode
+    result = 0;
     if ((nargin) < 3)
         % Only possible command is 'close'
-        EPOCommunications(char(cmd));
+        result = EPOCommunications(char(cmd));
+         if (isempty(result))
+            result = 1;
+        end
     else
-        EPOCommunications(char(cmd), char(arg1));
+        switch arg1(1)
+                case 'A'
+                    if (length(arg1) ~= 2)
+                        error('Faulty markup for <arg1>');
+                    else
+                        if (strcmp(arg1(2), '0'))
+                            EPOCommunications(char(cmd), char(arg1));
+                        elseif(strcmp(arg1(2), '1'))
+                            EPOCommunications(char(cmd), char(arg1));
+                            error('Faulty markup for <arg1>');
+                        end
+                        result = 1;
+                    end
+                case 'B'
+                    num = str2double(arg1(2:end));
+                    if (num < 0 || num > 65535)
+                        error('Error in <arg1> option for argument B out of range');
+                    else
+                        disp(strcat('<offline mode> Bit frequency set to "', string(num), '".'));
+                    end
+                    result = 1;
+                case 'C'
+                    if (length(arg1) ~= 11)
+                        error('Error in <arg1> too short for switch C');
+                    else
+                        EPOCommunications(char(cmd), char(arg1));
+                    end
+                    result = 1;
+                case 'D'
+                    num = str2double(arg1(2:end));
+                    if (num < 100 || num > 200)
+                        error('Error in <arg1> argument out of range');
+                    else
+                       EPOCommunications(char(cmd), char(arg1));
+                    end
+                    
+                    result = 1;
+                case 'F'
+                    num = str2double(arg1(2:end));
+                    if (num < 0 || num > 65535)
+                        error('Error in <arg1> carrier frequency out of range.');
+                    else
+                        EPOCommunications(char(cmd), char(arg1));
+                    end
+                    
+                    result = 1;
+                case 'M'
+                    num = str2double(arg1(2:end));
+                    if (num < 135 || num > 165)
+                        error('Error in <arg1> argument out of range');
+                    else
+                        EPOCommunications(char(cmd), char(arg1));
+                    end
+                    
+                    result = 1;
+                case 'R'
+                    num = str2double(arg1(2:end));
+                    if (num < 32 || num > 65535)
+                        error('Error in <arg1> repetition counter out of range.');
+                    else
+                        EPOCommunications(char(cmd), char(arg1));
+                    end
+                    
+                    result = 1;
+                case 'S'
+                    if (length(arg1) == 1)
+                        result = EPOCommunications(char(cmd), char(arg1));
+                    elseif(length(arg1) == 2)
+                        if (strcmp(arg1(2),'d'))
+                            result = EPOCommunications(char(cmd), char(arg1));
+                        elseif (strcmp(arg1(2), 'v'))
+                            result = EPOCommunications(char(cmd), char(arg1));
+                        else
+                            error('Error in <arg1> unknows status option');
+                        end
+                    else
+                        error('Error in <arg1> faulty status request.');
+                    end
+                case 'V'
+                    result = EPOCommunications(char(cmd), char(arg1));
+                otherwise
+                    error('Unknown option for <arg1>');
+            end%switch
+%         result = 1;
+        if (isempty(result))
+            result = 1;
+        end
     end
 end%if(offline)
 
