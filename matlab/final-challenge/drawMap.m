@@ -35,6 +35,7 @@ function [] = drawMap(startpoint, endpoint, orientation, waypoint)
     ylabel('Y Distance [cm]');
     grid on;
     pbaspect([1 1 1]); %fixed square map
+    title("Map of the field and KITT trajectory");
 
     
     % function to draw a line between 2 points

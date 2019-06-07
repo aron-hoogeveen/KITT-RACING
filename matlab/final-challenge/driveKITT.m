@@ -8,11 +8,12 @@ function [] = driveKITT(offline,  maximumLocalizationTime, drivingTime, pointsAm
             y_points = []; % empty array for the points
             for i=1:pointsAmount
                 [x, y] = retrieveAudioLocationFIXME_exlacmationmark(true);%FIXMEthe duration of this computation is variable
+                plot(x, y, 'm+', 'MarkerSize', 10, 'linewidth',6); % plot the point on the map
                 x_points = [x_points x]; %append the x coordinate to array
                 y_points = [y_points y]; %append the y coordinate to array
 
                 
-                if(length(x_points) > floor(pointsAmount/2)) % If KITT has traveled at least half of the path to end
+                if(length(x_points) > floor(pointsAmount/2) && length(x_points) > 1) % If KITT has traveled at least half of the path to end
                     % Make a trend line through the audio location points and calculate the actual angle
                     
                     prms = polyfit(x_points,y_points,1);
@@ -29,7 +30,7 @@ function [] = driveKITT(offline,  maximumLocalizationTime, drivingTime, pointsAm
                         actual_orientation = phi;
                     end
                     
-                    x_samp = [1:460];
+                    x_samp = [50:510];
                     % Extend the trend line with y = rico*x + b to calculate the endpoint difference
                     extended_trend = rico*x_samp  +b;
                     % The distance from a point (x_p,y_p) to a line m*x +b is |m*x_p - y_p + b|/sqrt(m^2 + 1)
@@ -40,8 +41,10 @@ function [] = driveKITT(offline,  maximumLocalizationTime, drivingTime, pointsAm
                         pause(1) %Wait for KITT to have stopped
                         % Retrieve a new point for audio location
                         [x, y] = retrieveAudioLocationFIXME_exlacmationmark(true);%FIXMEthe duration of this computation is variable
+                        plot(x, y, 'm+',  'MarkerSize', 10, 'linewidth',6); % plot the point on the map
                         x_points = [x_points x]; %append the x coordinate to array
                         y_points = [y_points y]; %append the y coordinate to array
+                        
 
                     %   Calculate the actual orientation again with an extra point
                     %   Make a trend line through the audio location points and calculate the actual angle
@@ -57,6 +60,8 @@ function [] = driveKITT(offline,  maximumLocalizationTime, drivingTime, pointsAm
                         else % x increasing, y increasing
                             actual_orientation = phi;
                         end
+                        % Plot the trend line
+                        plot(x_samp, x_samp*rico+b, '--m');
 
                         % Calculate a new turn;
                         [turntime, direction, turnEndPos, new_orientation] = calculateTurn([x_points(end), y_points(end)],endpoint,actual_orientation, t_radius, v_rot_prime);

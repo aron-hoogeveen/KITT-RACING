@@ -120,6 +120,7 @@ if (challengeA)% Challenge A: no waypoint
     while (~finished)
         % Continuously retrieve the audio location
         [x, y] = retrieveAudioLocationFIXME_exlacmationmark;%FIXMEthe duration of this computation is variable
+        plot(x, y, 'm+',  'MarkerSize', 10, 'linewidth',6); % plot the point on the map
 
         dist = sqrt((endpoint(2)-y)^2+(endpoint(1)-x)^2); % distance between KITT and the endpoint
         if (dist < 10)

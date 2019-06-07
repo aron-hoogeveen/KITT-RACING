@@ -20,7 +20,7 @@ if (offline)
     % everytime the function is called. 
     % For the time being this function only returns a static [x, y] value
     % in offline mode
-    x = 255; y = 255;
+    x = 50+460*rand(1); y = 50+460*rand(1);
 else
     % Online
     warning("The real time location function has not been added yet!" + newline +...
