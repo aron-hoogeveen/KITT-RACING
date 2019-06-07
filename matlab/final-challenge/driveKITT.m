@@ -72,6 +72,7 @@ function [] = driveKITT(pointsAmount, endpoint, transmitDelay, pointsAmount, v_r
                         turnKITT(direction, turntime, transmitDelay, d_q, ang_q);
                         % Recursive function call, drive to the end point again:
                         driveKITT(pointsAmount, endpoint, transmitDelay, pointsAmount, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc);
+                        
                         doPause = 'false'; % the driving is interupted as KITT deviates from the cours
                     end
             end
