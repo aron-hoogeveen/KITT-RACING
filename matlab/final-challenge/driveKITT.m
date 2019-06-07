@@ -2,7 +2,7 @@ function [] = driveKITT(pointsAmount, endpoint, transmitDelay, pointsAmount, v_r
             % KITT is already driving when this function is called (with
             % straight wheels)
 
-            doPause = 'true'; % pause for drivingTime - time it takes for audio, will stay true if driving is not interrupted
+            doPause = true; % pause for drivingTime - time it takes for audio, will stay true if driving is not interrupted
             t_loc_start = tic; % Start timing the audio coordinates retrieval
             x_points = []; % empty array for the points
             y_points = []; % empty array for the points
@@ -73,7 +73,7 @@ function [] = driveKITT(pointsAmount, endpoint, transmitDelay, pointsAmount, v_r
                         % Recursive function call, drive to the end point again:
                         driveKITT(pointsAmount, endpoint, transmitDelay, pointsAmount, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc);
                         
-                        doPause = 'false'; % the driving is interupted as KITT deviates from the cours
+                        doPause = false; % the driving is interupted as KITT deviates from the cours
                     end
             end
             t_loc_elapsed = toc(t_loc_start);
