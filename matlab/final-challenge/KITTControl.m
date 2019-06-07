@@ -33,6 +33,7 @@ elseif (nargin < 5)
 end
 disp('(^.^) - No input argument errors.');
 
+
 % Load saved parameters
 load('acc_ploy.mat', 'ydis_acc', 'yspeed_acc'); % Acceleration curve from the midterm challenge
 load('brake_ploy_v2.mat', 'ydis_brake', 'yspeed_brake'); % Braking curve from the midterm challenge
@@ -94,7 +95,7 @@ if (challengeA)% Challenge A: no waypoint
     % turnEndPos = [x, y] at the end of the turn;
     turnEndSpeed = 1000*v_rot(turntime); % Velocity of KITT at the end of the first turn (in cm/s)
     [drivingTime, ~] = KITTstopV2(new_dist, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc,186.5,turnEndSpeed); % FIXME, %Time the car must drive for step 2 in challenge A in ms (straight line)
-    
+
     maximumLocalizationTime = 200; %Maximum computation time to receive audio location
     % Compute the amount of location points that can be retrieved in driving time
     pointsAmount = floor((drivingTime-transmitDelay)/maximumLocalizationTime); %45 is transmit delay
@@ -102,7 +103,7 @@ if (challengeA)% Challenge A: no waypoint
     %%%%%%%%%%%%%%%%%%%%%% START DRIVING %%%%%%%%%%%%%%%%%%%%%%%%
     input('Press any key to start driving','s')
     %%% A.STEP 1: Turn KITT
-    turnKITT(direction, turntime, transmitDelay, d_q, ang_q);
+    turnKITT(offline, direction, turntime, transmitDelay, d_q, ang_q);
 
     if (~step2) % For turning testing purposes, step2 is omitted
         EPOCom(offline, 'transmit', 'M150'); % rollout
@@ -111,7 +112,7 @@ if (challengeA)% Challenge A: no waypoint
 
     %%% A.STEP 2: Accelerate and stop 100cm before point (correct if
     %%% necessary)
-    driveKITT(pointsAmount, endpoint, transmitDelay, pointsAmount, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc); % recursive function (will initiate a turn if necessary)
+    driveKITT(offline, maximumLocalizationTime, drivingTime, pointsAmount, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q); % recursive function (will initiate a turn if necessary)
 
     %%% A.STEP 3: slowly drive the remaining (small) distance to the endpoint and stop/rollout
     EPOCom(offline, 'transmit', 'M156'); % Slow driving

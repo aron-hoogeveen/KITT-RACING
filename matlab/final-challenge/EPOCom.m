@@ -67,7 +67,7 @@ if (offline == true)
                         disp(strcat('<offline mode> Carrier frequency set to "', string(num), '".'));
                     end
                 case 'M'
-                    num = str2double(arg1(1:end));
+                    num = str2double(arg1(2:end));
                     if (num < 135 || num > 165)
                         error('Error in <arg1> argument out of range');
                     else
