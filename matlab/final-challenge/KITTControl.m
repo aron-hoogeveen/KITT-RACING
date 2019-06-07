@@ -62,7 +62,7 @@ elseif (voltage <= 17.8 && voltage > 17.6)
 else
     disp("The battery voltage deviates a lot from the nominal voltage (18.1V)");
 end
-% Correct the velocity curve with voltageCorrection. 
+% Correct the velocity curve with voltageCorrection.
 v_rot_prime = voltageCorrection * v_rot_prime; %scaling of the integral has the same result as scaling v_rot
 
 
@@ -97,22 +97,22 @@ if (challengeA)% Challenge A: no waypoint
     maximumLocalizationTime = 200; %Maximum computation time to receive audio location
     % Compute the amount of location points that can be retrieved in driving time
     pointsAmount = floor((drivingTime-transmitDelay)/maximumLocalizationTime); %45 is transmit delay
-    
+
 
     %%%%%%%%%%%%%%%%%%%%%% START DRIVING %%%%%%%%%%%%%%%%%%%%%%%%
     input('Press any key to start driving','s')
     %%% A.STEP 1: Turn KITT
     turnKITT(direction, turntime, transmitDelay, d_q, ang_q);
-        
+
     if (~step2) % For turning testing purposes, step2 is omitted
         EPOCom(offline, 'transmit', 'M150'); % rollout
         EPOCom(offline, 'transmit', 'D152'); % wheels straight
-    else      
-        
+    else
+
     %%% A.STEP 2: Accelerate and stop 100cm before point (correct if
     %%% necessary)
     driveKITT(pointsAmount, endpoint, transmitDelay, pointsAmount, v_rot, t_radius, v_rot_prime); % recursive function (will initiate a turn if necessary)
-    
+
     %%% A.STEP 3: slowly drive the remaining (small) distance to the endpoint and stop/rollout
     EPOCom(offline, 'transmit', 'M156'); % Slow driving
     finished = 0;
@@ -131,7 +131,7 @@ if (challengeA)% Challenge A: no waypoint
     disp("Destination reached!"); %Destination reached
     end
 
-    
+
     %%%%% OTHER CHALLENGES
     elseif (challengeA ~= true) % Challenge B: one waypoint
     else %Challenge C: complete chaos
