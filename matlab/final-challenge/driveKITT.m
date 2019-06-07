@@ -1,4 +1,4 @@
-function [] = driveKITT(pointsAmount, endpoint, transmitDelay, pointsAmount, v_rot, t_radius, v_rot_prime)
+function [] = driveKITT(pointsAmount, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime)
             % KITT is already driving when this function is called (with
             % straight wheels)
             
