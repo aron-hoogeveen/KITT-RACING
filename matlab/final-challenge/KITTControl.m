@@ -92,8 +92,9 @@ if (challengeA)% Challenge A: no waypoint
 
     % % Calculate the variables for step 2:
     % turnEndPos = [x, y] at the end of the turn;
-        turnEndSpeed = v_rot(turntime); % Velocity of KITT at the end of the first turn
+    turnEndSpeed = 1000*v_rot(turntime); % Velocity of KITT at the end of the first turn (in cm/s)
     [drivingTime, ~] = KITTstopV2(new_dist, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc,186.5,turnEndSpeed); % FIXME, %Time the car must drive for step 2 in challenge A in ms (straight line)
+    
     maximumLocalizationTime = 200; %Maximum computation time to receive audio location
     % Compute the amount of location points that can be retrieved in driving time
     pointsAmount = floor((drivingTime-transmitDelay)/maximumLocalizationTime); %45 is transmit delay
@@ -110,7 +111,7 @@ if (challengeA)% Challenge A: no waypoint
 
     %%% A.STEP 2: Accelerate and stop 100cm before point (correct if
     %%% necessary)
-    driveKITT(pointsAmount, endpoint, transmitDelay, pointsAmount, v_rot, t_radius, v_rot_prime); % recursive function (will initiate a turn if necessary)
+    driveKITT(pointsAmount, endpoint, transmitDelay, pointsAmount, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc); % recursive function (will initiate a turn if necessary)
 
     %%% A.STEP 3: slowly drive the remaining (small) distance to the endpoint and stop/rollout
     EPOCom(offline, 'transmit', 'M156'); % Slow driving
