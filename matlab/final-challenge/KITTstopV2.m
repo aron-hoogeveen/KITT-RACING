@@ -26,7 +26,7 @@ function [timeToDrive, vPoint] = KITTstopV2(distance, x_brake, v_brake, x_acc, v
 
     % Convert the xPoint to the time it takes to get to that point. 
     i = find(abs(x_acc-xPoint) < 0.1); % Get the index of x_acc where the distance is equal to the stop distance.
-    disp("xPoint is " + string(xPoint));
+    %disp("xPoint is " + string(xPoint));
 %     disp("i is " + string(i));
 %     disp("x_acc = ");
 %     disp(x_acc);
