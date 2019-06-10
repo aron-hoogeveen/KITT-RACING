@@ -215,7 +215,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     callN = 5;
     while (~finished)
         % Continuously retrieve the audio location
-        [x, y, callN] = retrieveAudioLocationFIXME_exlacmationmark(offlineLoc, turnEndPos, waypoint, 1, callN);%FIXMEthe duration of this computation is variable
+        [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, waypoint, 1, callN);%FIXMEthe duration of this computation is variable
         plot(x, y, 'm+',  'MarkerSize', 10, 'linewidth',6); % plot the point on the map
 
         dist = sqrt((waypoint(2)-y)^2+(waypoint(1)-x)^2); % distance between KITT and the endpoint
@@ -279,7 +279,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     callN = 5;
     while (~finished)
         % Continuously retrieve the audio location
-        [x, y, callN] = retrieveAudioLocationFIXME_exlacmationmark(offlineLoc, turnEndPos, endpoint, 1, callN);%FIXMEthe duration of this computation is variable
+        [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, 1, callN);%FIXMEthe duration of this computation is variable
         plot(x, y, 'm+',  'MarkerSize', 10, 'linewidth',6); % plot the point on the map
 
         dist = sqrt((endpoint(2)-y)^2+(endpoint(1)-x)^2); % distance between KITT and the endpoint
