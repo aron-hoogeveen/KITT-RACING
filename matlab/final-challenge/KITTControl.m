@@ -53,7 +53,7 @@ transmitDelay = 45; %ms for the car to react to change in speed command
 
 % Adjust v_rot_prime according to voltage:
 % Nominal voltage: 18.1 V
-disp(voltage);
+%disp(voltage);
 % if (voltage == 18.4)
 %     voltageCorrection = 1.2;
 % elseif (voltage == 18.3)
@@ -164,7 +164,8 @@ if (challengeA)% Challenge A: no waypoint
 
     %%%%% OTHER CHALLENGES
     elseif (challengeA ~= true) % Challenge B: one waypoint
-    else %Challenge C: complete chaos
+        %KITTcontrol((voltage, orientation, startpoint, endpoint, waypoint, obstacles))
+    else %Challenge C: no waypoints, with obstacle
     end
 
 
