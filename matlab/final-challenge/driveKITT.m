@@ -9,7 +9,7 @@ function [] = driveKITT(offline,  maximumLocalizationTime, drivingTime, pointsAm
             x_points = []; % empty array for the points
             y_points = []; % empty array for the points
             for i=1:pointsAmount
-                [x, y, callN] = retrieveAudioLocationFIXME_exlacmationmark(offline, turnEndPos, endpoint, rep, callN);%FIXMEthe duration of this computation is variable
+                [x, y, callN] = KITTLocation(offline, turnEndPos, endpoint, rep, callN);%FIXMEthe duration of this computation is variable
                 plot(x, y, 'm+', 'MarkerSize', 10, 'linewidth',6); % plot the point on the map
                 x_points = [x_points x]; %append the x coordinate to array
                 y_points = [y_points y]; %append the y coordinate to array
@@ -42,7 +42,7 @@ function [] = driveKITT(offline,  maximumLocalizationTime, drivingTime, pointsAm
                         EPOCom(offline, 'transmit', 'M150');% FIXME: brake or rollout? smoothstop?
                         pause(1) %Wait for KITT to have stopped
                         % Retrieve a new point for audio location
-                        [x, y, callN] = retrieveAudioLocationFIXME_exlacmationmark(offline, turnEndPos, endpoint, rep, callN);%FIXMEthe duration of this computation is variable
+                        [x, y, callN] = KITTLocation(offline, turnEndPos, endpoint, rep, callN);%FIXMEthe duration of this computation is variable
                         plot(x, y, 'm+',  'MarkerSize', 10, 'linewidth',6); % plot the point on the map
                         x_points = [x_points x]; %append the x coordinate to array
                         y_points = [y_points y]; %append the y coordinate to array

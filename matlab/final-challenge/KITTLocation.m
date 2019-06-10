@@ -1,4 +1,4 @@
-function [x, y, callN] = retrieveAudioLocationFIXME_exlacmationmark(offline, turnEndPos, endpoint, rep, callN)
+function [x, y, callN] = KITTLocation(offline, turnEndPos, endpoint, rep, callN)
 %[] = retrieveAudioLocationFIXME_exlacmationmark(argin) returns an x and y
 %    coordinate. When <offline>==true then the function will return sample
 %    data. If <offline>==false than this function calls the function that
@@ -56,4 +56,4 @@ else
     x = NaN; y = NaN;
 end
 
-end%retrieveAudioLocationFIXME_exlacmationmark
+end%KITTLocation
