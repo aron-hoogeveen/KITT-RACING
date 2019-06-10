@@ -9,7 +9,7 @@ function [] = KITTControl(voltage, orientation, startpoint, endpoint, waypoint, 
 %   waypoint: [x, y] location of waypoint, if nargin < 4: no waypoint
 %   obstacles: true/false, if nargin < 5: no obstacles
 
-offlineCom = true; %Is KITT connected?
+offlineCom = false; %Is KITT connected?
 offlineLoc = true; % Location estimation
 step2 = true;
 challengeA = true; % Default challenge is A
@@ -54,23 +54,40 @@ transmitDelay = 45; %ms for the car to react to change in speed command
 % Adjust v_rot_prime according to voltage:
 % Nominal voltage: 18.1 V
 disp(voltage);
-if (voltage == 18.4)
-    voltageCorrection = 1.2;
-elseif (voltage == 18.3)
-    voltageCorrection = 1.18;
-elseif (voltage == 18.2)
-    voltageCorrection = 1.15;
-elseif (voltage == 18.1)
-    voltageCorrection = 1.10;
-elseif (voltage == 18.0)
-    voltageCorrection = 1; % no voltage correction: nominal voltage is 18.1V, which corresponds to this actual battery voltage
-elseif (voltage == 17.9)
-    voltageCorrection = 1;
-elseif (voltage <= 17.8 && voltage > 17.6)
-    voltageCorrection = 1;
-else
-    error("The battery voltage deviates a lot from the nominal voltage (18.1V)");
+% if (voltage == 18.4)
+%     voltageCorrection = 1.2;
+% elseif (voltage == 18.3)
+%     voltageCorrection = 1.18;
+% elseif (voltage == 18.2)
+%     voltageCorrection = 1.15;
+% elseif (voltage == 18.1)
+%     voltageCorrection = 1.10;
+% elseif (voltage <= 17.60 &&)
+%     voltageCorrection = 1; % no voltage correction: nominal voltage is 18.1V, which corresponds to this actual battery voltage
+% elseif (voltage == 17.9)
+%     voltageCorrection = 1;
+% elseif (voltage <= 17.8 && voltage > 17.6)
+%     voltageCorrection = 1;
+% else
+%     error("The battery voltage deviates a lot from the nominal voltage (18.1V)");
+% end
+
+%nominal voltage:
+if (voltage <= 17.50 && voltage > 17.40)
+     voltageCorrection = 1.00;% verified
+elseif (voltage <= 17.60 && voltage > 17.40)
+     voltageCorrection = 1.03;% verified
+elseif (voltage <= 17.40 && voltage > 17.30)
+     voltageCorrection = 1.05;% verified
+elseif (voltage <= 17.30 && voltage > 17.20)
+     voltageCorrection = 1.11;% verified
+elseif (voltage <= 17.20 && voltage > 17.10)
+     voltageCorrection = 1.20;% 
+elseif (voltage <= 17.10 && voltage > 17.00)
+     voltageCorrection = 1.10;% 
 end
+
+
 % Correct the velocity curve with voltageCorrection.
 v_rot_prime = voltageCorrection * v_rot_prime; %scaling of the integral has the same result as scaling v_rot
 

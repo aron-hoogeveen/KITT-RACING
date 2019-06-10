@@ -27,12 +27,12 @@ begin_data3 = quarterCircle3(1:3);
 
 
 samples = transpose([1:3]);
-p = polyfit(samples, begin_data1, 2);
+p = polyfit(samples, begin_data2, 2);
 P = polyval(p, [1:0.1:4]);
 figure;
 plot([1:0.1:4],P);
 hold on;
-lijntje(1:5) = trend_cons_data1;
+lijntje(1:5) = trend_cons_data2;
 plot(lijntje); 
 
 %trend_cons_data1 = -b^2/4a+c;
