@@ -1,4 +1,4 @@
-function [x, y, callN] = KITTLocation(offline, turnEndPos, endpoint, rep, callN)
+function [x, y, callN] = KITTLocation(offline, turnEndPos, endpoint, rep, callN, testCase)
 %[] = retrieveAudioLocationFIXME_exlacmationmark(argin) returns an x and y
 %    coordinate. When <offline>==true then the function will return sample
 %    data. If <offline>==false than this function calls the function that
@@ -18,25 +18,49 @@ elseif (nargin > 2)
         error ('Number of repititions need to be larger than zero!');
     end
 end
+if (offline)
+    if (nargin < 6)
+        testCase = 0;
 
 if (offline)
     %TODO read out sample data from a file and output the next coordinates
     % everytime the function is called. 
-    % For the time being this function only returns a static [x, y] value
-    % in offline mode
-    if (floor(turnEndPos(1)) < endpoint(1))
-        x_samp = [floor(turnEndPos(1)):(abs(floor(turnEndPos(1))-endpoint(1))/14):endpoint(1)];
-        disp("[floor(turnEndPos(1)):(abs(floor(turnEndPos(1))-endpoint(1))/14)-1:endpoint(1)]" + newline +...
-            "[" + string(floor(turnEndPos(1))) + ":" + string(abs(floor(turnEndPos(1))-endpoint(1))/14) + ":" +...
-            string(endpoint(1)) + "]");
+    
+    if (testCase == 0)
+        % The car drives at a constant speed in a straight line to the
+        % endpoint.
+        if (floor(turnEndPos(1)) < endpoint(1))
+            x_samp = [floor(turnEndPos(1)):(abs(floor(turnEndPos(1))-endpoint(1))/14):endpoint(1)];
+            disp("[floor(turnEndPos(1)):(abs(floor(turnEndPos(1))-endpoint(1))/14)-1:endpoint(1)]" + newline +...
+                "[" + string(floor(turnEndPos(1))) + ":" + string(abs(floor(turnEndPos(1))-endpoint(1))/14) + ":" +...
+                string(endpoint(1)) + "]");
+        else
+            x_samp = fliplr([floor(endpoint(1)):(abs(floor(endpoint(1))-turnEndPos(1))/14):turnEndPos(1)]);
+        end
+        if (floor(turnEndPos(2) < endpoint(2)))
+            y_samp = [floor(turnEndPos(2)):(abs(floor(turnEndPos(2))-endpoint(2))/14):endpoint(2)];
+        else
+            y_samp = fliplr([floor(endpoint(2)):(abs(floor(endpoint(2))-turnEndPos(2))/14):turnEndPos(2)]);
+        end
+    elseif (testCase == 1)
+        % The car does not have the right angle after comming out of the
+        % turn. KITTControl should act on this info and correct the angle.
+        % Since this case will only be performed offline, it is not
+        % necessary to let the orientation of the car at the end of the
+        % turn and the next orientation be the same. So if the orientation
+        % after the turn is right (0 degrees) and in the following
+        % datapoints it is more to the north (90 degrees) it is no problem.
+
+        % The distance between the trajectory of the car and the endpoint
+        % should be greater than 10 cm to trigger a steering correction. 
+        % Set the deviation to 15 cm and calculate the new end point using
+        % Pythagoras
+        distStartEnd = floor(sqrt((turnEndPos(1) - endpoint(1))^2 + (turnEndPos(2) - endpoint(2))^2)); % Retrieve it as integer
+        deviation = 15;
+        newDist = sqrt(distStartEnd^2 - deviation^2); 
     else
-        x_samp = fliplr([floor(endpoint(1)):(abs(floor(endpoint(1))-turnEndPos(1))/14):turnEndPos(1)]);
-    end
-    if (floor(turnEndPos(2) < endpoint(2)))
-        y_samp = [floor(turnEndPos(2)):(abs(floor(turnEndPos(2))-endpoint(2))/14):endpoint(2)];
-    else
-        y_samp = fliplr([floor(endpoint(2)):(abs(floor(endpoint(2))-turnEndPos(2))/14):turnEndPos(2)]);
-    end
+        error('Invalid <testCase> option!');
+    end%testCase
     
     if (callN < length(x_samp))
         x = x_samp(callN);
