@@ -1,5 +1,6 @@
 % Convert the measured data into 
-clear all;
+% clear all;
+warning('I AM NOT GOING TO CLEAR ALL');
 load('quarterCircle.mat')
 close all
 
