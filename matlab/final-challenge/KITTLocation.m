@@ -25,15 +25,14 @@ if (offline)
 if (offline)
     %TODO read out sample data from a file and output the next coordinates
     % everytime the function is called. 
-    
     if (testCase == 0)
         % The car drives at a constant speed in a straight line to the
         % endpoint.
         if (floor(turnEndPos(1)) < endpoint(1))
             x_samp = [floor(turnEndPos(1)):(abs(floor(turnEndPos(1))-endpoint(1))/14):endpoint(1)];
-            disp("[floor(turnEndPos(1)):(abs(floor(turnEndPos(1))-endpoint(1))/14)-1:endpoint(1)]" + newline +...
-                "[" + string(floor(turnEndPos(1))) + ":" + string(abs(floor(turnEndPos(1))-endpoint(1))/14) + ":" +...
-                string(endpoint(1)) + "]");
+            %disp("[floor(turnEndPos(1)):(abs(floor(turnEndPos(1))-endpoint(1))/14)-1:endpoint(1)]" + newline +...
+            %    "[" + string(floor(turnEndPos(1))) + ":" + string(abs(floor(turnEndPos(1))-endpoint(1))/14) + ":" +...
+            %    string(endpoint(1)) + "]");
         else
             x_samp = fliplr([floor(endpoint(1)):(abs(floor(endpoint(1))-turnEndPos(1))/14):turnEndPos(1)]);
         end
@@ -42,6 +41,9 @@ if (offline)
         else
             y_samp = fliplr([floor(endpoint(2)):(abs(floor(endpoint(2))-turnEndPos(2))/14):turnEndPos(2)]);
         end
+        
+%         x = x_samp(callN);
+%         y = y_samp(callN);
     elseif (testCase == 1)
         % The car does not have the right angle after comming out of the
         % turn. KITTControl should act on this info and correct the angle.

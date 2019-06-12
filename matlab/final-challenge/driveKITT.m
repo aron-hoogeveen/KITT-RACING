@@ -1,6 +1,8 @@
 function [] = driveKITT(offline, handles, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q)
             % KITT is already driving when this function is called (with
             % straight wheels)
+            KITTspeed = 'M160';
+            EPOCom(offline, 'transmit', KITTspeed);
             callN = 1; %simulation only
             rep = 1; %simulation only
             
@@ -88,10 +90,10 @@ function [] = driveKITT(offline, handles, maximumLocalizationTime, drivingTime, 
                         doPause = false; % the driving is interupted as KITT deviates from the cours
                     end
                 end
+            end
             t_loc_elapsed = toc(t_loc_start); % Duration of audio location computing
             if (doPause)
                 pause((drivingTime - 45)/1000 - t_loc_elapsed);
-                smoothStop(160);
+                smoothStop(offline,160);
             end
-      end
 end%driveKITT

@@ -12,7 +12,7 @@ function [result] = EPOCom(offline, cmd, arg1)
 if (nargin < 2)
     error('EPOCom requires at minimum two arguments.');
 elseif (nargin < 3)
-    if (~strcpm(cmd, 'close'))
+    if (~strcmp(cmd, 'close'))
         error('Missing required argument <arg1> for option <cmd>.');
     end
 end

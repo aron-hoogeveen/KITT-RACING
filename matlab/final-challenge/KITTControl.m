@@ -13,9 +13,9 @@ function [] = KITTControl(handles, voltage, orientation, startpoint, endpoint, w
 % 180 links: KITTControl(17.18, 0, [200,200], [55,370])
 % 90 links: KITTControl(17.18, 0, [200,200], [285,400])
 
-offlineCom = false; %Is KITT connected?
+offlineCom = true; %Is KITT connected?
 offlineLoc = true; % Location estimation
-step2 = false;
+step2 = true;
 challengeA = true; % Default challenge is A
 
 % Check for input errors
@@ -129,7 +129,7 @@ if (challengeA)% Challenge A: no waypoint
     disp('turnEndPos (x, y) = ');
     disp( turnEndPos);
     new_dist = sqrt((endpoint(2)-turnEndPos(2))^2+(endpoint(1)-turnEndPos(1))^2);
-    plot(handles.LocationPlot, handles.LocationPlot,turnEndPos(1), turnEndPos(2), 'b.', 'MarkerSize', 10);
+    plot(handles.LocationPlot,turnEndPos(1), turnEndPos(2), 'b.', 'MarkerSize', 10);
 
     % % Calculate the variables for step 2:
     % turnEndPos = [x, y] at the end of the turn;
@@ -162,8 +162,8 @@ if (challengeA)% Challenge A: no waypoint
         callN = 5;
         while (~finished)
             % Continuously retrieve the audio location
-            [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, 1, callN);%FIXMEthe duration of this computation is variable
-            plot(handles.LocationPlot, handles.LocationPlot,x, y, 'm+',  'MarkerSize', 10, 'linewidth',6); % plot the point on the map
+            [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, 1, callN, 0);%FIXMEthe duration of this computation is variable
+            plot(handles.LocationPlot, x, y, 'm+',  'MarkerSize', 10, 'linewidth',6); % plot the point on the map
 
             dist = sqrt((endpoint(2)-y)^2+(endpoint(1)-x)^2); % distance between KITT and the endpoint
             if (dist < 10)
@@ -201,7 +201,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     disp('turnEndPos (x, y) = ');
     disp( turnEndPos);
     new_dist = sqrt((waypoint(2)-turnEndPos(2))^2+(waypoint(1)-turnEndPos(1))^2);
-    plot(handles.LocationPlot, handles.LocationPlot,turnEndPos(1), turnEndPos(2), 'b.', 'MarkerSize', 10);
+    plot(handles.LocationPlot,turnEndPos(1), turnEndPos(2), 'b.', 'MarkerSize', 10);
     hold on;
 
     % % Calculate the variables for step 2:
@@ -230,8 +230,8 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     callN = 5;
     while (~finished)
         % Continuously retrieve the audio location
-        [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, waypoint, 1, callN);%FIXMEthe duration of this computation is variable
-        plot(handles.LocationPlot, handles.LocationPlot,x, y, 'm+',  'MarkerSize', 10, 'linewidth',6); % plot the point on the map
+        [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, waypoint, 1, callN, 0);%FIXMEthe duration of this computation is variable
+        plot(handles.LocationPlot,x, y, 'm+',  'MarkerSize', 10, 'linewidth',6); % plot the point on the map
 
         dist = sqrt((waypoint(2)-y)^2+(waypoint(1)-x)^2); % distance between KITT and the endpoint
         if (dist < 10)
@@ -264,7 +264,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     disp('turnEndPos (x, y) = ');
     disp( turnEndPos);
     new_dist = sqrt((endpoint(2)-turnEndPos(2))^2+(endpoint(1)-turnEndPos(1))^2);
-    plot(handles.LocationPlot, handles.LocationPlot,turnEndPos(1), turnEndPos(2), 'b.', 'MarkerSize', 10);
+    plot(handles.LocationPlot,turnEndPos(1), turnEndPos(2), 'b.', 'MarkerSize', 10);
     hold on;
 
     % % Calculate the variables for step 2:
@@ -294,8 +294,8 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     callN = 5;
     while (~finished)
         % Continuously retrieve the audio location
-        [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, 1, callN);%FIXMEthe duration of this computation is variable
-        plot(handles.LocationPlot, handles.LocationPlot,x, y, 'm+',  'MarkerSize', 10, 'linewidth',6); % plot the point on the map
+        [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, 1, callN, 0);%FIXMEthe duration of this computation is variable
+        plot(handles.LocationPlot,x, y, 'm+',  'MarkerSize', 10, 'linewidth',6); % plot the point on the map
 
         dist = sqrt((endpoint(2)-y)^2+(endpoint(1)-x)^2); % distance between KITT and the endpoint
         if (dist < 10)
