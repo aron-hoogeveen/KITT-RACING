@@ -1,5 +1,9 @@
 function [timeAverage] = delayMeasurement(comPort)
-%USEFUL COMMENT
+%[timeAverage] = delayMeasurement(comPort) returns the average time it 
+%    takes requesting the distance sensor values from the KITT Racing car. 
+%
+%    EPO-4 Group B4
+%    21-05-2019
 
 % Open connection
 status = EPOCommunications('open', comPort);
@@ -16,12 +20,13 @@ n = 100;
 tic
     for i=1:n
 %         EPOCommunications('transmit', 'M150');
-        status = EPOCommunications('transmit', 'S');
+        status = EPOCommunications('transmit', 'Sd');
     end
 toc
 elapsedTime = toc;
+timeAverage = elapsedTime/n;
 
-disp(elapsedTime/n);
+disp(timeAverage);
 
 % Close the connection
 EPOCommunications('close');

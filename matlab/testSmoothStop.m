@@ -1,3 +1,4 @@
+% This script is used for testing the smoothStop function. 
 clear currentVoltage;
 try
     EPOCommunications('open', comPort);
