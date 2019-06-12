@@ -62,11 +62,17 @@ handles.EndX = 0;
 handles.EndY = 0;
 handles.MidpointX = 0;
 handles.MidpointY = 0;
-handles.RealXData = [];;
-handles.RealYData = [];;
+handles.RealXData = [];
+handles.RealYData = [];
 handles.Stop = 0;
 handles.Start = 0;
-
+rectangle(handles.LocationPlot, 'Position', [0,0,50,560], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
+hold on;
+rectangle('Position', [510,0,50,560], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
+rectangle(handles.LocationPlot,'Position', [0,510,560,50], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
+rectangle(handles.LocationPlot,'Position', [0,0,560,50], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
+pbaspect(handles.LocationPlot,[1 1 1]); %fixed square map
+grid on;
 
 % Choose default command line output for Final_GUI
 handles.output = hObject;
@@ -396,11 +402,9 @@ function BeginEndUpdate_Callback(hObject, eventdata, handles)
 % hObject    handle to BeginEndUpdate (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
-plot(str2num(handles.BeginX),str2num(handles.BeginY),'rx');
-axis([0 500 0 500]);
-hold on
-plot(str2num(handles.EndX),str2num(handles.EndY),'gx');
+plot(str2num(handles.BeginX),str2num(handles.BeginY),'b*', 'MarkerSize', 10);
+hold on;
+plot(str2num(handles.EndX),str2num(handles.EndY),'r*', 'MarkerSize', 10);
 axis manual;
 
 
@@ -409,13 +413,9 @@ function BeginMidEndUpdate_Callback(hObject, eventdata, handles)
 % hObject    handle to BeginMidEndUpdate (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-plot(str2num(handles.BeginX),str2num(handles.BeginY),'rx');
-axis([0 500 0 500]);
-hold on
-plot(str2num(handles.EndX),str2num(handles.EndY),'gx');
-axis manual;
-plot(str2num(handles.MidpointX),str2num(handles.MidpointY),'bx');
-axis manual;
+plot(str2num(handles.BeginX),str2num(handles.BeginY),'b*', 'MarkerSize', 10);
+plot(str2num(handles.EndX),str2num(handles.EndY),'r*', 'MarkerSize', 10);
+plot(str2num(handles.MidpointX),str2num(handles.MidpointY),'g*', 'MarkerSize', 10);
 
 
 % --- Executes during object creation, after setting all properties.
