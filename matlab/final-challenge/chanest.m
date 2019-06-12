@@ -28,7 +28,7 @@ hhat = ifft(Hhat);
 hhat = real(hhat);
 
 % figure
-% plot(h)
+% plot(hhat)
 % title('Channel estimation of microphone recording and reference signal')
 % xlabel('Sample number')
 % ylabel('Amplitude')

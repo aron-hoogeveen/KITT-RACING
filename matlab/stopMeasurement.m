@@ -1,6 +1,4 @@
 function [] = stopMeasurement(comPort, speed, reverseDelay)
-%MAINKITT control unit for challenge 1
-%    speed is defined as: 
 if (nargin < 3)
     error('Not enough input arguments (two required).');
 end

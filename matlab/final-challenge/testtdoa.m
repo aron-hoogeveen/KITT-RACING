@@ -9,15 +9,16 @@ close all
 %% getting recorded data
 measurement = 10;                % select measurement file
 load(['D:\OneDrive\Studie\EE2\Q4 EE2L21 EPO-4 KITT Autonomous Driving Challenge 18-19\Module 3\test_data\audiomeas_b4\audiomeas' num2str(measurement) '.mat'])
-load('datarefsig.mat')
+load('D:\OneDrive\Studie\EE2\Q4 EE2L21 EPO-4 KITT Autonomous Driving Challenge 18-19\Module 3\test_data\audiomeas_b4\datarefsig.mat')
 ref = ref2;                     % select reference signal
-
+peakn = 2;
 peakperc = 40;
 
 %% selecting 1 recorded pulse by hand
-llim = 1;
-rlim = 14400;
-micdata = Acq_data(llim:rlim,1:5);
+% llim = 10000;
+% rlim = llim + 14400;
+micdata = Acq_data;
+% micdata = Acq_data(llim:rlim,1:5);
 
 %% plot figures in time domain
 % figure
@@ -28,13 +29,13 @@ micdata = Acq_data(llim:rlim,1:5);
 % ylabel('Amplitude')
 
 tic
-disdiffprac = tdoa(micdata,ref,peakperc,Fs);
+disdiffprac = tdoa(micdata,ref,peakperc,Fs,5000,1500,peakn);
 t = toc;
 
 disdiff = 100*disdiffprac;
 load('datamicloc')
 d = 2;
-coord = loc(mic,disdiff,d)
+coord = loc(mic,disdiff,d,0)
 
 % load(['D:\OneDrive\Studie\EE2\Q4 EE2L21 EPO-4 KITT Autonomous Driving Challenge 18-19\Location\Test data\Locdata' num2str(measurement) '.mat'], 'disdiff')
 % error = disdiffprac' - disdiff;

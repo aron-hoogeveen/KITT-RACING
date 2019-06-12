@@ -32,7 +32,7 @@ try
     % Matrices to store the sensor values in
     distanceR = [];
     distanceL = [];
-    timeVector = [0];
+    timeVector = [0]; % This was used originally but timeVector should be initialized as an empty vector
     
     % Wait for user input to start
     input('Press enter to start...');
@@ -73,8 +73,6 @@ try
             
             break;%while
         end%if
-        
-        % Removed the wait statement that was here.
     end%while
     
     % Close the connection
