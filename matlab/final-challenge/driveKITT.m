@@ -1,4 +1,4 @@
-function [] = driveKITT(offline, handles, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q)
+function end_orientation = driveKITT(offline, handles, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q)
             % KITT is already driving when this function is called (with
             % straight wheels)
             KITTspeed = 'M160';
@@ -12,7 +12,7 @@ function [] = driveKITT(offline, handles, maximumLocalizationTime, drivingTime, 
             y_points = []; % empty array for the points
             for i=1:pointsAmount
                 [x, y, callN] = KITTLocation(offline, turnEndPos, endpoint, rep, callN, 0);%FIXMEthe duration of this computation is variable
-                plot(handles.LocationPlot,x, y, 'm+', 'MarkerSize', 10, 'linewidth',6); % plot the point on the map
+                plot(handles.LocationPlot,x, y, 'm+', 'MarkerSize', 5, 'linewidth',2); % plot the point on the map
                 x_points = [x_points x]; %append the x coordinate to array
                 y_points = [y_points y]; %append the y coordinate to array
 
@@ -45,7 +45,7 @@ function [] = driveKITT(offline, handles, maximumLocalizationTime, drivingTime, 
                         pause(1) %Wait for KITT to have stopped
                         % Retrieve a new point for audio location
                         [x, y, callN] = KITTLocation(offline, turnEndPos, endpoint, rep, callN, 0);%FIXMEthe duration of this computation is variable
-                        plot(handles.LocationPlot,x, y, 'm+',  'MarkerSize', 10, 'linewidth',6); % plot the point on the map
+                        plot(handles.LocationPlot,x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % plot the point on the map
                         x_points = [x_points x]; %append the x coordinate to array
                         y_points = [y_points y]; %append the y coordinate to array
                         
@@ -96,4 +96,5 @@ function [] = driveKITT(offline, handles, maximumLocalizationTime, drivingTime, 
                 pause((drivingTime - 45)/1000 - t_loc_elapsed);
                 smoothStop(offline,160);
             end
+        end_orientation = actual_orientation; %Return the new orientation when finished driving (necessary for the waypoint)
 end%driveKITT
