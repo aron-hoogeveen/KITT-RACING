@@ -37,7 +37,7 @@ function [turntime, direction, turnEndPos, new_orientation] = calculateTurn(hand
         end
         
         % Drawing points of the turning trajectory for debugging
-        if (~mod(t,100))
+        if (~mod(t,200))
                 plot(handles.LocationPlot, x_incr, y_incr, 'b.', 'MarkerSize', 5);
         end
         

@@ -13,7 +13,7 @@ function [] = KITTControl(handles, voltage, orientation, startpoint, endpoint, w
 % 180 links: KITTControl(17.18, 0, [200,200], [55,370])
 % 90 links: KITTControl(17.18, 0, [200,200], [285,400])
 
-offlineCom = false; %Is KITT connected?
+offlineCom = true; %Is KITT connected?
 offlineLoc = true; % Location estimation
 step2 = true;
 challengeA = true; % Default challenge is A
@@ -129,15 +129,12 @@ if (challengeA)% Challenge A: no waypoint
     disp('turnEndPos (x, y) = ');
     disp( turnEndPos);
     new_dist = sqrt((endpoint(2)-turnEndPos(2))^2+(endpoint(1)-turnEndPos(1))^2);
-    disp('new_dist');
-    disp(new_dist);
     plot(handles.LocationPlot,turnEndPos(1), turnEndPos(2), 'b.', 'MarkerSize', 10);
 
     % % Calculate the variables for step 2:
     % turnEndPos = [x, y] at the end of the turn;
     turnEndSpeed = 1000*v_rot(turntime); % Velocity of KITT at the end of the first turn (in cm/s)
     [drivingTime, ~] = KITTstopV2(new_dist, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc,186.5,turnEndSpeed); % FIXME, %Time the car must drive for step 2 in challenge A in ms (straight line)
-    disp("drivingTime = " + string(drivingTime));
     maximumLocalizationTime = 210; %Maximum computation time to receive audio location
     % Compute the amount of location points that can be retrieved in driving time
     pointsAmount = floor((drivingTime-transmitDelay)/maximumLocalizationTime); %45 is transmit delay
@@ -157,7 +154,7 @@ if (challengeA)% Challenge A: no waypoint
         driveKITT(offlineCom, handles, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q); % recursive function (will initiate a turn if necessary)
 
         %%% A.STEP 3: slowly drive the remaining (small) distance to the endpoint and stop/rollout
-        EPOCom(offlineCom, 'transmit', 'M156'); % Slow driving
+        EPOCom(offlineCom, 'transmit', 'M158'); % Slow driving
         finished = 0;
         
         % FIXME DEBUG TODO
