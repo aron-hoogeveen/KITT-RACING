@@ -14,23 +14,27 @@ mic = mic([1 2 3 4 5],:);   % select microphones used
 d = 2;                      % 2D or 3D location estimation
 z = 24.8;                   % heigth audio beacon of the car
 lim = 25;                   % limit of colorbar
-measerror = 0;              % error added when calculating disdiff
+measerror = 3;              % error added when calculating disdiff
 
 %% calcutate the error of the location estimation
-error = zeros(460,460,d);   % matrix containing the error with 1 cm resolution
+coordmat = zeros(460,460,d); % matrix containing the estimated location with 1 cm resolution
+locmat = zeros(460,460,d);
 
 for y = 0:460
     for x = 0:460
         location = [x y z];
         disdiff = gendisdiff(mic,location,measerror);   % generate the range difference pairs
         coord = loc(mic,disdiff,d);                     % calculate the estimated location
-        error(y+1,x+1,:) = coord - location(1:d)';      % estimated location subtracted by real location 
+        coordmat(y+1,x+1,:) = coord;
+        locmat(y+1,x+1,:) = location(1:d)';
     end
 end
 
-xerror = error(:,:,1);                      % error of x coordinate estimation
-yerror = error(:,:,2);                      % error of y coordinate estimation
-magerror = vecnorm(error(:,:,[1 2]),2,3);   % magnitude of error coordinate estimation
+errormat = coordmat - locmat;
+
+xerror = errormat(:,:,1);                      % error of x coordinate estimation
+yerror = errormat(:,:,2);                      % error of y coordinate estimation
+magerror = vecnorm(errormat(:,:,[1 2]),2,3);   % magnitude of error coordinate estimation
 
 meanxerror = mean(abs(xerror),'all');
 meanyerror = mean(abs(yerror),'all');
@@ -74,99 +78,99 @@ colorbar
 caxis([0 lim])                  % limits colorbar
 
 %% correction for 2d bias
-% [nmic,~] = size(mic);
-% 
-% if d == 2 && nmic == 5
-% xerrornoise = xerror;
-% yerrornoise = yerror;
-% 
-% load('D:\OneDrive\Studie\EE2\Q4 EE2L21 EPO-4 KITT Autonomous Driving Challenge 18-19\Module 3\test_data\locdata\noiseless2dlocerror.mat')
-% xerrorbias = xerror;
-% yerrorbias = yerror;
-% errorbias(:,:,1) = xerrorbias;
-% errorbias(:,:,2) = yerrorbias;
-% magerrorbias = vecnorm(errorbias(:,:,[1 2]),2,3);
-% 
-% meanxerrorbias = mean(abs(xerrorbias),'all');
-% meanyerrorbias = mean(abs(yerrorbias),'all');
-% meanmagerrorbias = mean(magerrorbias,'all');
-% medianxerrorbias = median(abs(xerrorbias),'all');
-% medianyerrorbias = median(abs(yerrorbias),'all');
-% medianmagerrorbias = median(magerrorbias,'all');
-% 
-% xerror = xerrornoise - xerrorbias;
-% yerror = yerrornoise - yerrorbias;
-% error(:,:,1) = xerror;
-% error(:,:,2) = yerror;
-% magerror = vecnorm(error(:,:,[1 2]),2,3);
-% 
-% meanxerrornoise = mean(abs(xerror),'all');
-% meanyerrornoise = mean(abs(yerror),'all');
-% meanmagerrornoise = mean(magerror,'all');
-% medianxerrornoise = median(abs(xerror),'all');
-% medianyerrornoise = median(abs(yerror),'all');
-% medianmagerrornoise = median(magerror,'all');
-% 
-% figure
-% imagesc(xerrorbias);                % error of x coordinate estimation
-% colormap(color1);               % set color scheme of image
-% set(gca,'YDir','normal')        % reverse y-axis
-% xlabel('x-coordinate field')
-% ylabel('y-coordinate field')
-% title(sprintf('Error of estimated x-coordinate %dD [cm]',d))
-% colorbar
-% caxis([-lim lim])               % limits colorbar
-% 
-% figure
-% imagesc(yerrorbias);                % error of y coordinate estimation
-% colormap(color1);               % set color scheme of image
-% set(gca,'YDir','normal')        % reverse y-axis
-% xlabel('x-coordinate field')
-% ylabel('y-coordinate field')
-% title(sprintf('Error of estimated y-coordinate %dD [cm]',d))
-% colorbar
-% caxis([-lim lim])               % limits colorbar
-% 
-% figure
-% imagesc(magerrorbias);              % magnitude of error coordinate estimation
-% colormap(color2);               % set color scheme of image
-% set(gca,'YDir','normal')        % reverse y-axis
-% xlabel('x-coordinate field')
-% ylabel('y-coordinate field')
-% title(sprintf('Magnitude of error of estimated coordinate %dD [cm]',d))
-% colorbar
-% caxis([0 lim])                  % limits colorbar
-% 
-% figure
-% imagesc(xerror);                % error of x coordinate estimation
-% colormap(color1);               % set color scheme of image
-% set(gca,'YDir','normal')        % reverse y-axis
-% xlabel('x-coordinate field')
-% ylabel('y-coordinate field')
-% title(sprintf('Error of estimated x-coordinate %dD [cm]',d))
-% colorbar
-% caxis([-lim lim])               % limits colorbar
-% 
-% figure
-% imagesc(yerror);                % error of y coordinate estimation
-% colormap(color1);               % set color scheme of image
-% set(gca,'YDir','normal')        % reverse y-axis
-% xlabel('x-coordinate field')
-% ylabel('y-coordinate field')
-% title(sprintf('Error of estimated y-coordinate %dD [cm]',d))
-% colorbar
-% caxis([-lim lim])               % limits colorbar
-% 
-% figure
-% imagesc(magerror);              % magnitude of error coordinate estimation
-% colormap(color2);               % set color scheme of image
-% set(gca,'YDir','normal')        % reverse y-axis
-% xlabel('x-coordinate field')
-% ylabel('y-coordinate field')
-% title(sprintf('Magnitude of error of estimated coordinate %dD [cm]',d))
-% colorbar
-% caxis([0 lim])                  % limits colorbar
-% end
+[nmic,~] = size(mic);
+
+if d == 2 && nmic == 5
+xerrornoise = xerror;
+yerrornoise = yerror;
+
+load('D:\OneDrive\Studie\EE2\Q4 EE2L21 EPO-4 KITT Autonomous Driving Challenge 18-19\Module 3\test_data\locdata\noiseless2dlocerror.mat')
+xerrorbias = xerror;
+yerrorbias = yerror;
+errorbias(:,:,1) = xerrorbias;
+errorbias(:,:,2) = yerrorbias;
+magerrorbias = vecnorm(errorbias(:,:,[1 2]),2,3);
+
+meanxerrorbias = mean(abs(xerrorbias),'all');
+meanyerrorbias = mean(abs(yerrorbias),'all');
+meanmagerrorbias = mean(magerrorbias,'all');
+medianxerrorbias = median(abs(xerrorbias),'all');
+medianyerrorbias = median(abs(yerrorbias),'all');
+medianmagerrorbias = median(magerrorbias,'all');
+
+xerror = xerrornoise - xerrorbias;
+yerror = yerrornoise - yerrorbias;
+error(:,:,1) = xerror;
+error(:,:,2) = yerror;
+magerror = vecnorm(error(:,:,[1 2]),2,3);
+
+meanxerrornoise = mean(abs(xerror),'all');
+meanyerrornoise = mean(abs(yerror),'all');
+meanmagerrornoise = mean(magerror,'all');
+medianxerrornoise = median(abs(xerror),'all');
+medianyerrornoise = median(abs(yerror),'all');
+medianmagerrornoise = median(magerror,'all');
+
+figure
+imagesc(xerrorbias);                % error of x coordinate estimation
+colormap(color1);               % set color scheme of image
+set(gca,'YDir','normal')        % reverse y-axis
+xlabel('x-coordinate field')
+ylabel('y-coordinate field')
+title(sprintf('Error of estimated x-coordinate %dD [cm]',d))
+colorbar
+caxis([-lim lim])               % limits colorbar
+
+figure
+imagesc(yerrorbias);                % error of y coordinate estimation
+colormap(color1);               % set color scheme of image
+set(gca,'YDir','normal')        % reverse y-axis
+xlabel('x-coordinate field')
+ylabel('y-coordinate field')
+title(sprintf('Error of estimated y-coordinate %dD [cm]',d))
+colorbar
+caxis([-lim lim])               % limits colorbar
+
+figure
+imagesc(magerrorbias);              % magnitude of error coordinate estimation
+colormap(color2);               % set color scheme of image
+set(gca,'YDir','normal')        % reverse y-axis
+xlabel('x-coordinate field')
+ylabel('y-coordinate field')
+title(sprintf('Magnitude of error of estimated coordinate %dD [cm]',d))
+colorbar
+caxis([0 lim])                  % limits colorbar
+
+figure
+imagesc(xerror);                % error of x coordinate estimation
+colormap(color1);               % set color scheme of image
+set(gca,'YDir','normal')        % reverse y-axis
+xlabel('x-coordinate field')
+ylabel('y-coordinate field')
+title(sprintf('Error of estimated x-coordinate %dD [cm]',d))
+colorbar
+caxis([-lim lim])               % limits colorbar
+
+figure
+imagesc(yerror);                % error of y coordinate estimation
+colormap(color1);               % set color scheme of image
+set(gca,'YDir','normal')        % reverse y-axis
+xlabel('x-coordinate field')
+ylabel('y-coordinate field')
+title(sprintf('Error of estimated y-coordinate %dD [cm]',d))
+colorbar
+caxis([-lim lim])               % limits colorbar
+
+figure
+imagesc(magerror);              % magnitude of error coordinate estimation
+colormap(color2);               % set color scheme of image
+set(gca,'YDir','normal')        % reverse y-axis
+xlabel('x-coordinate field')
+ylabel('y-coordinate field')
+title(sprintf('Magnitude of error of estimated coordinate %dD [cm]',d))
+colorbar
+caxis([0 lim])                  % limits colorbar
+end
 
 %% 2d 5 mic, bias filter
 % to find value in a matrix closed to calculated value:
