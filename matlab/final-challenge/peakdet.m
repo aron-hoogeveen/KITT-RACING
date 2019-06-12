@@ -10,14 +10,14 @@ peakboun = peakperc*max(hsq)/100;       % signal power threshold
 [pksh,locsh] = findpeaks(hsq,'MinPeakHeight',peakboun,'Npeaks',1);    % finds the first peak which is above the signal power threshold
 sampn = locsh(1);
 
-% figure()
-% hold on
-% plot(hsq)
-% yline(peakboun,'b--');
-% stem(locsh,pksh);
-% xlim([0 length(hsq)])
-% legend('Channel estimation squared',sprintf('%d%% Peak power', peakperc),'Peaks')
-% title('Channel estimation squared')
-% xlabel('Sample number')
-% ylabel('Amplitude^2')
+figure()
+hold on
+plot(hsq)
+%yline(peakboun,'b--');
+stem(locsh,pksh);
+xlim([0 length(hsq)])
+legend('Channel estimation squared',sprintf('%d%% Peak power', peakperc),'Peaks')
+title('Channel estimation squared')
+xlabel('Sample number')
+ylabel('Amplitude^2')
 end
