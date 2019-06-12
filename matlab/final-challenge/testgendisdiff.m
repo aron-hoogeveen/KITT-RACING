@@ -9,7 +9,7 @@ close all
 %% load microphone locations and data
 load('datamicloc.mat')      % microphone locations
 mic = mic([1 2 3 4 5],:);   % select microphones used
-loc = [230 50 24.8];           % location of the audio beacon of the car (z = 24.8)
+loc = [80 135 24.8];           % location of the audio beacon of the car (z = 24.8)
 error = 0;                  % maximum error added to distance between mic(i) and car
 
 %% run function and save output
