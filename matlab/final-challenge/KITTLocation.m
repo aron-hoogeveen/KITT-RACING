@@ -21,7 +21,7 @@ end
 if (offline)
     if (nargin < 6)
         testCase = 0;
-
+    end
 if (offline)
     %TODO read out sample data from a file and output the next coordinates
     % everytime the function is called. 

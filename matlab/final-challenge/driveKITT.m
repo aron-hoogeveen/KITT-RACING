@@ -9,7 +9,7 @@ function [] = driveKITT(offline, handles, maximumLocalizationTime, drivingTime, 
             x_points = []; % empty array for the points
             y_points = []; % empty array for the points
             for i=1:pointsAmount
-                [x, y, callN] = KITTLocation(offline, turnEndPos, endpoint, rep, callN);%FIXMEthe duration of this computation is variable
+                [x, y, callN] = KITTLocation(offline, turnEndPos, endpoint, rep, callN, 0);%FIXMEthe duration of this computation is variable
                 plot(handles.LocationPlot,x, y, 'm+', 'MarkerSize', 10, 'linewidth',6); % plot the point on the map
                 x_points = [x_points x]; %append the x coordinate to array
                 y_points = [y_points y]; %append the y coordinate to array
@@ -42,7 +42,7 @@ function [] = driveKITT(offline, handles, maximumLocalizationTime, drivingTime, 
                         EPOCom(offline, 'transmit', 'M150');% FIXME: brake or rollout? smoothstop?
                         pause(1) %Wait for KITT to have stopped
                         % Retrieve a new point for audio location
-                        [x, y, callN] = KITTLocation(offline, turnEndPos, endpoint, rep, callN);%FIXMEthe duration of this computation is variable
+                        [x, y, callN] = KITTLocation(offline, turnEndPos, endpoint, rep, callN, 0);%FIXMEthe duration of this computation is variable
                         plot(handles.LocationPlot,x, y, 'm+',  'MarkerSize', 10, 'linewidth',6); % plot the point on the map
                         x_points = [x_points x]; %append the x coordinate to array
                         y_points = [y_points y]; %append the y coordinate to array
@@ -91,7 +91,7 @@ function [] = driveKITT(offline, handles, maximumLocalizationTime, drivingTime, 
             t_loc_elapsed = toc(t_loc_start); % Duration of audio location computing
             if (doPause)
                 pause((drivingTime - 45)/1000 - t_loc_elapsed);
-                %smoothstop(); %FIXME
+                smoothStop(160);
             end
       end
 end%driveKITT
