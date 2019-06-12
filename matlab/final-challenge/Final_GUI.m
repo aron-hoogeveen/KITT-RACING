@@ -75,6 +75,8 @@ rectangle('Position', [510,0,50,560], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .
 rectangle(handles.LocationPlot,'Position', [0,510,560,50], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
 rectangle(handles.LocationPlot,'Position', [0,0,560,50], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
 pbaspect(handles.LocationPlot,[1 1 1]); %fixed square map
+xlim(handles.LocationPlot, [0,560]);
+ylim(handles.LocationPlot, [0,560]);
 grid on;
 
 % Choose default command line output for Final_GUI
