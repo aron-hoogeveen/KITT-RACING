@@ -3,10 +3,19 @@
 % Last modified: 01-06-19
 % Time difference of arrival
 
-function disdiff = tdoa(micdata,ref,peakperc,Fs)
+function disdiff = tdoa(micdata,ref,peakperc,Fs,B,R)
+%% first peak 
+reclength = R/B*Fs;
+mindis = 0.8*reclength;
+minheigth = 0.5*max(micdata(:,1));
+[pksh,locsh] = findpeaks(micdata(:,1),'MinPeakHeight',minheigth,'Npeaks',2,'MinPeakDistance',mindis);    % finds the first peak which is above the signal power threshold
+llim = locsh(2) - 1/3*reclength;
+rlim = locsh(2) + 2/3*reclength;
+micdata = micdata(llim:rlim,1:5);
+
 %% calculate sample number of first significant peak
 [~,nmic] = size(micdata);
-i = 2;
+
 for i = 1:nmic
 e = 4;                       % threshold [%]
 h = chanest(ref,micdata(:,i),e);
