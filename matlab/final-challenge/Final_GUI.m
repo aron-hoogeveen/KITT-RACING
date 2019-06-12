@@ -22,7 +22,7 @@ function varargout = Final_GUI(varargin)
 
 % Edit the above text to modify the response to help Final_GUI
 
-% Last Modified by GUIDE v2.5 12-Jun-2019 11:00:19
+% Last Modified by GUIDE v2.5 12-Jun-2019 18:03:45
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -539,4 +539,24 @@ function Obstacles_CreateFcn(hObject, eventdata, handles)
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
+end
+
+%saveState() saves the inputs of the gui to "state.mat"
+function saveState_Callback(hObject, eventdata, handles)
+
+
+state.Voltage = get(handles.Voltage, 'value');
+
+
+get(handles.Voltage, 'value')
+save ('state.mat', 'state');
+
+%loadState() is used to load previous instances of the gui inputs
+function loadState_Callback(hObject, eventdata, handles) 
+fileName = 'state.mat';
+
+if exist(fileName)
+    load(fileName)
+    set(handles.Voltage, 'value', state.Voltage);
+    delete(fileName)
 end
