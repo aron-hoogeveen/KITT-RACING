@@ -8,10 +8,13 @@ function [] = KITTControl(voltage, orientation, startpoint, endpoint, waypoint, 
 %   endpoint: [x, y] location of endpoint
 %   waypoint: [x, y] location of waypoint, if nargin < 4: no waypoint
 %   obstacles: true/false, if nargin < 5: no obstacles
+%
+% 180 links: KITTControl(17.18, 0, [200,200], [55,370])
+% 90 links: KITTControl(17.18, 0, [200,200], [285,400])
 
 offlineCom = false; %Is KITT connected?
 offlineLoc = true; % Location estimation
-step2 = true;
+step2 = false;
 challengeA = true; % Default challenge is A
 
 % Check for input errors
@@ -71,21 +74,30 @@ transmitDelay = 45; %ms for the car to react to change in speed command
 % else
 %     error("The battery voltage deviates a lot from the nominal voltage (18.1V)");
 % end
+voltageCorrection = 1;
 
 %nominal voltage:
-if (voltage <= 17.50 && voltage > 17.40)
-     voltageCorrection = 1.00;% verified
-elseif (voltage <= 17.60 && voltage > 17.40)
-     voltageCorrection = 1.03;% verified
-elseif (voltage <= 17.40 && voltage > 17.30)
-     voltageCorrection = 1.05;% verified
-elseif (voltage <= 17.30 && voltage > 17.20)
-     voltageCorrection = 1.11;% verified
+if (voltage <= 17.30 && voltage > 17.20)
+      voltageCorrection = 1.00;% verified 2x
 elseif (voltage <= 17.20 && voltage > 17.10)
-     voltageCorrection = 1.20;% 
-elseif (voltage <= 17.10 && voltage > 17.00)
-     voltageCorrection = 1.10;% 
+      voltageCorrection = 0.83;% verified 2x
 end
+% if (voltage <= 17.50 && voltage > 17.40)
+%      voltageCorrection = 1.00;% verified 2x
+% elseif (voltage <= 17.60 && voltage > 17.50)
+%      voltageCorrection = 1.03;% verified 2x
+% elseif (voltage <= 17.40 && voltage > 17.30)
+%      voltageCorrection = 1.04;% verified 2x
+% elseif (voltage <= 17.30 && voltage > 17.20)
+%      voltageCorrection = 1.11;% Unpredictable
+% elseif (voltage <= 17.20 && voltage > 17.10)
+%      voltageCorrection = 1.20;% Unpredictable
+% elseif (voltage <= 17.10 && voltage > 17.00)
+%      voltageCorrection = 1.10;% Unpredictable
+% end
+
+% TODO: correct for slightly incorrect acceleration curve.
+% Additional voltageCorrection for different angles
 
 
 % Correct the velocity curve with voltageCorrection.

@@ -9,7 +9,7 @@ input('Press enter to start driving','s')
 tic
 EPOCommunications('transmit', steering);
 pause(0.1);
-EPOCommunications('transmit', 'M160');
+EPOCommunications('transmit', 'M158');
 input('Press enter to stop driving','s')
 EPOCommunications('transmit', 'M150');
 toc

@@ -1,6 +1,7 @@
 % Convert the measured data into 
-clear all;
-load('quarterCircle.mat')
+% clear all;
+warning('I AM NOT GOING TO CLEAR ALL');
+load('quarterCircleV2.mat')
 close all
 
 
