@@ -22,7 +22,7 @@ function varargout = Final_GUI(varargin)
 
 % Edit the above text to modify the response to help Final_GUI
 
-% Last Modified by GUIDE v2.5 11-Jun-2019 10:03:53
+% Last Modified by GUIDE v2.5 12-Jun-2019 11:00:19
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -62,11 +62,22 @@ handles.EndX = 0;
 handles.EndY = 0;
 handles.MidpointX = 0;
 handles.MidpointY = 0;
-handles.RealXData = [];;
-handles.RealYData = [];;
+handles.RealXData = [];
+handles.RealYData = [];
 handles.Stop = 0;
 handles.Start = 0;
-
+handles.Orientation = 0;
+handles.Obstacle = 0;
+handles.Voltage = 0;
+rectangle(handles.LocationPlot, 'Position', [0,0,50,560], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
+hold on;
+rectangle('Position', [510,0,50,560], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
+rectangle(handles.LocationPlot,'Position', [0,510,560,50], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
+rectangle(handles.LocationPlot,'Position', [0,0,560,50], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
+pbaspect(handles.LocationPlot,[1 1 1]); %fixed square map
+xlim(handles.LocationPlot, [0,560]);
+ylim(handles.LocationPlot, [0,560]);
+grid on;
 
 % Choose default command line output for Final_GUI
 handles.output = hObject;
@@ -396,11 +407,9 @@ function BeginEndUpdate_Callback(hObject, eventdata, handles)
 % hObject    handle to BeginEndUpdate (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
-plot(str2num(handles.BeginX),str2num(handles.BeginY),'rx');
-axis([0 500 0 500]);
-hold on
-plot(str2num(handles.EndX),str2num(handles.EndY),'gx');
+plot(str2num(handles.BeginX),str2num(handles.BeginY),'b*', 'MarkerSize', 10);
+hold on;
+plot(str2num(handles.EndX),str2num(handles.EndY),'r*', 'MarkerSize', 10);
 axis manual;
 
 
@@ -409,13 +418,9 @@ function BeginMidEndUpdate_Callback(hObject, eventdata, handles)
 % hObject    handle to BeginMidEndUpdate (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-plot(str2num(handles.BeginX),str2num(handles.BeginY),'rx');
-axis([0 500 0 500]);
-hold on
-plot(str2num(handles.EndX),str2num(handles.EndY),'gx');
-axis manual;
-plot(str2num(handles.MidpointX),str2num(handles.MidpointY),'bx');
-axis manual;
+plot(str2num(handles.BeginX),str2num(handles.BeginY),'b*', 'MarkerSize', 10);
+plot(str2num(handles.EndX),str2num(handles.EndY),'r*', 'MarkerSize', 10);
+plot(str2num(handles.MidpointX),str2num(handles.MidpointY),'g*', 'MarkerSize', 10);
 
 
 % --- Executes during object creation, after setting all properties.
@@ -455,3 +460,83 @@ function Close_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
  EPOCommunications('close');
  disp('Connection closed');
+
+
+
+function orientation_Callback(hObject, eventdata, handles)
+% hObject    handle to orientation (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of orientation as text
+%        str2double(get(hObject,'String')) returns contents of orientation as a double
+handles.Orientation = str2double(get(hObject,'String'));
+guidata(hObject,handles);
+
+
+
+% --- Executes during object creation, after setting all properties.
+function orientation_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to orientation (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function Voltage_Callback(hObject, eventdata, handles)
+% hObject    handle to Voltage (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of Voltage as text
+%        str2double(get(hObject,'String')) returns contents of Voltage as a double
+handles.Voltage = str2double(get(hObject,'String'));
+guidata(hObject,handles);
+
+
+
+% --- Executes during object creation, after setting all properties.
+function Voltage_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to Voltage (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in Obstacles.
+function Obstacles_Callback(hObject, eventdata, handles)
+% hObject    handle to Obstacles (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns Obstacles contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from Obstacles
+contents = cellstr(get(hObject,'String'));
+Obstacle = contents{get(hObject,'Value')};
+handles.Obstacle = strcmp(Obstacle,'Obstacles');
+guidata(hObject,handles);
+
+
+
+% --- Executes during object creation, after setting all properties.
+function Obstacles_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to Obstacles (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

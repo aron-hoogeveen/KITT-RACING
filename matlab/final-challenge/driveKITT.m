@@ -1,4 +1,4 @@
-function [] = driveKITT(offline,  maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q)
+function [] = driveKITT(offline, handles, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q)
             % KITT is already driving when this function is called (with
             % straight wheels)
             callN = 1; %simulation only
@@ -10,7 +10,7 @@ function [] = driveKITT(offline,  maximumLocalizationTime, drivingTime, pointsAm
             y_points = []; % empty array for the points
             for i=1:pointsAmount
                 [x, y, callN] = KITTLocation(offline, turnEndPos, endpoint, rep, callN);%FIXMEthe duration of this computation is variable
-                plot(x, y, 'm+', 'MarkerSize', 10, 'linewidth',6); % plot the point on the map
+                plot(handles.LocationPlot,x, y, 'm+', 'MarkerSize', 10, 'linewidth',6); % plot the point on the map
                 x_points = [x_points x]; %append the x coordinate to array
                 y_points = [y_points y]; %append the y coordinate to array
 
@@ -43,7 +43,7 @@ function [] = driveKITT(offline,  maximumLocalizationTime, drivingTime, pointsAm
                         pause(1) %Wait for KITT to have stopped
                         % Retrieve a new point for audio location
                         [x, y, callN] = KITTLocation(offline, turnEndPos, endpoint, rep, callN);%FIXMEthe duration of this computation is variable
-                        plot(x, y, 'm+',  'MarkerSize', 10, 'linewidth',6); % plot the point on the map
+                        plot(handles.LocationPlot,x, y, 'm+',  'MarkerSize', 10, 'linewidth',6); % plot the point on the map
                         x_points = [x_points x]; %append the x coordinate to array
                         y_points = [y_points y]; %append the y coordinate to array
                         
@@ -63,10 +63,10 @@ function [] = driveKITT(offline,  maximumLocalizationTime, drivingTime, pointsAm
                             actual_orientation = phi;
                         end
                         % Plot the trend line
-                        plot(x_samp, x_samp*rico+b, '--m');
+                        plot(handles.LocationPlot,x_samp, x_samp*rico+b, '--m');
 
                         % Calculate a new turn;
-                        [turntime, direction, turnEndPos, new_orientation] = calculateTurn([x_points(end), y_points(end)],endpoint,actual_orientation, t_radius, v_rot_prime);
+                        [turntime, direction, turnEndPos, new_orientation] = calculateTurn(handles, [x_points(end), y_points(end)],endpoint,actual_orientation, t_radius, v_rot_prime);
                         turnEndSpeed = v_rot(turntime); % Velocity of KITT at the end of the new turn
                         new_dist = sqrt((endpoint(2)-y_points(end))^2+(endpoint(1)-x_points(end))^2);
                         [drivingTime, ~] = KITTstopV2(new_dist, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc,186.5,turnEndSpeed); % FIXME, %Time the car must drive in ms (straight line)
@@ -83,7 +83,7 @@ function [] = driveKITT(offline,  maximumLocalizationTime, drivingTime, pointsAm
                         %   Perform STEP 1 of challenge A again (do a turn)
                         turnKITT(offline, direction, turntime, transmitDelay, d_q, ang_q);
                         % Recursive function call, drive to the end point again:
-                        driveKITT(offline,  maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q);
+                        driveKITT(offline, handles, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q);
                         
                         doPause = false; % the driving is interupted as KITT deviates from the cours
                     end
