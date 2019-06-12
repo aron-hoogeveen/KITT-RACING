@@ -11,7 +11,7 @@ measurement = 10;                % select measurement file
 load(['D:\OneDrive\Studie\EE2\Q4 EE2L21 EPO-4 KITT Autonomous Driving Challenge 18-19\Module 3\test_data\audiomeas_b4\audiomeas' num2str(measurement) '.mat'])
 load('D:\OneDrive\Studie\EE2\Q4 EE2L21 EPO-4 KITT Autonomous Driving Challenge 18-19\Module 3\test_data\audiomeas_b4\datarefsig.mat')
 ref = ref2;                     % select reference signal
-
+peakn = 2;
 peakperc = 40;
 
 %% selecting 1 recorded pulse by hand
@@ -29,7 +29,7 @@ micdata = Acq_data;
 % ylabel('Amplitude')
 
 tic
-disdiffprac = tdoa(micdata,ref,peakperc,Fs,5000,1500);
+disdiffprac = tdoa(micdata,ref,peakperc,Fs,5000,1500,peakn);
 t = toc;
 
 disdiff = 100*disdiffprac;
