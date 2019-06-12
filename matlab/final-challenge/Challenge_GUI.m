@@ -14,7 +14,6 @@ endpoint = [str2double(handles.EndX) str2double(handles.EndY)];
 waypoint = [str2double(handles.MidpointX) str2double(handles.MidpointY)];
 voltage = handles.Voltage;
 obstacles = handles.Obstacle;
-disp('startkjdfkdjlfdskjflsdfjskj');
 if (waypoint(1) == -1 || waypoint(2) == -1)
     KITTControl(handles, voltage,orientation, startpoint, endpoint);
 else

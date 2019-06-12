@@ -22,6 +22,7 @@ if (offline)
     if (nargin < 6)
         testCase = 0;
     end
+end
 if (offline)
     %TODO read out sample data from a file and output the next coordinates
     % everytime the function is called. 
@@ -80,6 +81,7 @@ else
     warning("The real time location function has not been added yet!" + newline +...
         "    The value of the returned <x> and <y> is NaN.");
     x = NaN; y = NaN;
+    callN = callN + 1;
 end
 
 end%KITTLocation
