@@ -78,14 +78,50 @@ transmitDelay = 45; %ms for the car to react to change in speed command
 %     error("The battery voltage deviates a lot from the nominal voltage (18.1V)");
 % end
 voltageCorrection = 1;
-
-%nominal voltage:
-if (voltage <= 17.30 && voltage > 17.20)
-      voltageCorrection = 1.00;
-      
+if     (voltage <= 18.60 && voltage > 18.50)
+      voltageCorrection = 0.83;
+elseif (voltage <= 18.50 && voltage > 18.40)
+      voltageCorrection = 0.83;
+elseif (voltage <= 18.40 && voltage > 18.30)
+      voltageCorrection = 0.83;
+elseif (voltage <= 18.30 && voltage > 18.20)
+      voltageCorrection = 0.83;
+elseif (voltage <= 18.20 && voltage > 18.10)
+      voltageCorrection = 0.83;
+elseif (voltage <= 18.10 && voltage > 18.00)
+      voltageCorrection = 0.83;
+elseif (voltage <= 18.00 && voltage > 17.90)
+      voltageCorrection = 0.83;
+elseif (voltage <= 17.90 && voltage > 17.80)
+      voltageCorrection = 0.83;
+elseif (voltage <= 17.80 && voltage > 17.70)
+      voltageCorrection = 0.83;
+elseif (voltage <= 17.70 && voltage > 17.60)
+      voltageCorrection = 0.83;
+elseif (voltage <= 17.60 && voltage > 17.50)
+      voltageCorrection = 0.83;
+elseif (voltage <= 17.50 && voltage > 17.40)
+      voltageCorrection = 0.83;
+elseif (voltage <= 17.40 && voltage > 17.30)
+      voltageCorrection = 1;
+elseif (voltage <= 17.30 && voltage > 17.20) %nominal voltage
+      voltageCorrection = 1.00; % fixed value for nominal voltage = (17.2-17.3V)
 elseif (voltage <= 17.20 && voltage > 17.10)
       voltageCorrection = 0.83;
+elseif (voltage <= 17.10 && voltage > 17.00)
+      voltageCorrection = 0.83;
+elseif (voltage <= 17.00 && voltage > 16.90)
+      voltageCorrection = 0.83;
+elseif (voltage <= 16.90 && voltage > 16.80)
+      voltageCorrection = 0.83;
+elseif (voltage <= 16.80 && voltage > 16.70)
+      voltageCorrection = 0.83;
+elseif (voltage <= 16.70 && voltage > 16.60)
+      voltageCorrection = 0.83;
+else
+    warning('Voltage is out of range! < 16.6 V or > 18.6 V');
 end
+
 % if (voltage <= 17.50 && voltage > 17.40)
 %      voltageCorrection = 1.00;% verified 2x
 % elseif (voltage <= 17.60 && voltage > 17.50)
@@ -99,10 +135,6 @@ end
 % elseif (voltage <= 17.10 && voltage > 17.00)
 %      voltageCorrection = 1.10;% Unpredictable
 % end
-
-% TODO: correct for slightly incorrect acceleration curve.
-% Additional voltageCorrection for different angles
-
 
 % Correct the velocity curve with voltageCorrection.
 v_rot_prime = voltageCorrection * v_rot_prime; %scaling of the integral has the same result as scaling v_rot

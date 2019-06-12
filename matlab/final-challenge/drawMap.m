@@ -22,13 +22,7 @@ function [] = drawMap(handles, startpoint, endpoint, orientation, waypoint)
     else
         %legend(handles.LocationPlot,'Startpoint', 'Endpoint', 'Starting orientation','Location','best'); 
     end
-    
-    %drawLine(startpoint, endpoint)
-    % Set limits, ratio, units and grid
-    
-    title(handles.LocationPlot, "Map of the field and KITT trajectory");
-
-    
+     
     % function to draw a line between 2 points
     function [] = drawLine(p1, p2)
         theta = atan2( p2(2) - p1(2), p2(1) - p1(1));
