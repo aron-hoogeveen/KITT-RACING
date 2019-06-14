@@ -20,6 +20,9 @@ function end_orientation = driveKITT(offlineCom, offlineLoc, handles, testCase, 
                 if(length(x_points) > floor(pointsAmount/2) && length(x_points) > 1) % If KITT has traveled at least half of the path to end
                     % Make a trend line through the audio location points and calculate the actual angle
                     
+                    figure();
+                    stem(x_points, y_points);
+ 
                     prms = polyfit(x_points,y_points,1);
                     rico = prms(1); % Richtingsco�fficient
                     b = prms(2); %intersection of y-axis (y = mx +b)
@@ -42,6 +45,7 @@ function end_orientation = driveKITT(offlineCom, offlineLoc, handles, testCase, 
                      
                     dist = sqrt((y-endpoint(2))^2+(x-endpoint(1))^2); %distance from endpoint at current location
                     
+ 
                     if (end_dist_difference > 10) %then: stop and make a corrective turn
                         EPOCom(offlineCom, 'transmit', 'M150');% FIXME: brake or rollout? smoothstop?
                         pause(1) %Wait for KITT to have stopped
@@ -91,6 +95,7 @@ function end_orientation = driveKITT(offlineCom, offlineLoc, handles, testCase, 
                         
                         doPause = false; % the driving is interupted as KITT deviates from the cours
                     end
+                    disp('Heading towards the end point');
                 end
             end
             t_loc_elapsed = toc(t_loc_start); % Duration of audio location computing
