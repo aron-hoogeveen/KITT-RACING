@@ -1,7 +1,7 @@
 % EPO-4 Group B4
 % 29-05-2019
 % [] = KITTControl(argsIn) is the main control unit for the final challenge
-function [] = KITTControl(handles, voltage, orientation, startpoint, endpoint, recordArgs, devId, waypoint, obstacles)
+function [] = KITTControl(handles, voltage, orientation, startpoint, endpoint, recordArgs, Fs, waypoint, obstacles)
 
 % Arguments:
 %   orientation: -180 to 180 degrees, x-axis is 0;
@@ -181,7 +181,7 @@ if (challengeA)% Challenge A: no waypoint
         callN = 5;
         while (~finished)
             % Continuously retrieve the audio location
-            [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, 1, callN, testCase, recordArgs, devId);%the duration of this computation is variable
+            [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, 1, callN, testCase, recordArgs, Fs);%the duration of this computation is variable
             plot(handles.LocationPlot, x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % plot the location point on the map
 
             dist = sqrt((endpoint(2)-y)^2+(endpoint(1)-x)^2); % distance between KITT and the endpoint
@@ -242,7 +242,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     callN = 5;
     while (~finished)
         % Continuously retrieve the audio location
-        [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, waypoint, 1, callN, testCase, recordArgs);% The duration of this computation is variable
+        [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, waypoint, 1, callN, testCase, recordArgs, Fs);% The duration of this computation is variable
         plot(handles.LocationPlot, x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % Plot the location point on the map
 
         dist = sqrt((waypoint(2)-y)^2+(waypoint(1)-x)^2); % distance between KITT and the endpoint
@@ -254,7 +254,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     disp("Waypoint reached!"); %Waypoint reached
     
     % Retrieve actual location (as this is more accurate than waypoint itself)
-    current_loc = KITTLocation(offlineLoc, turnEndPos, waypoint, 1, callN, testCase, recordArgs);
+    current_loc = KITTLocation(offlineLoc, turnEndPos, waypoint, 1, callN, testCase, recordArgs, Fs);
     current_loc = waypoint; % Remove this later
     
     
@@ -291,7 +291,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     callN = 5;
     while (~finished)
         % Continuously retrieve the audio location
-        [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, 1, callN, testCase, recordArgs);% The duration of this computation is variable
+        [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, 1, callN, testCase, recordArgs, Fs);% The duration of this computation is variable
         plot(handles.LocationPlot, x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % Plot the location point on the map
 
         dist = sqrt((endpoint(2)-y)^2+(endpoint(1)-x)^2); % distance between KITT and the endpoint
