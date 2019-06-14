@@ -15,7 +15,7 @@ function [] = KITTControl(handles, voltage, orientation, startpoint, endpoint, r
 % 180 links: KITTControl(17.18, 0, [200,200], [55,370])
 % 90 links: KITTControl(17.18, 0, [200,200], [285,400])
 
-testCase = 1; %KITTlocation simulation
+testCase = 1; %KITTlocation simulation with a deviated path from ideal
 offlineCom = true; %Is KITT connected?
 offlineLoc = true; % Location estimation
 step2 = true;
@@ -139,7 +139,7 @@ if (challengeA)% Challenge A: no waypoint
 
         %%% A.STEP 2: Accelerate and stop 100cm before point (correct if
         %%% necessary)
-        driveKITT(offlineCom, offlineLoc, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q, recordArgs, Fs); % recursive function (will initiate a turn if necessary)
+        [~, lastTurnPos] = driveKITT(offlineCom, offlineLoc, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q, recordArgs, Fs); % recursive function (will initiate a turn if necessary)
 
         %%% A.STEP 3: slowly drive the remaining (small) distance to the endpoint and stop/rollout
         EPOCom(offlineCom, 'transmit', 'M158'); % Slow driving
@@ -149,7 +149,7 @@ if (challengeA)% Challenge A: no waypoint
         callN = 5;
         while (~finished)
             % Continuously retrieve the audio location
-            [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, 1, callN, testCase, recordArgs, Fs);%the duration of this computation is variable
+            [x, y, callN] = KITTLocation(offlineLoc, lastTurnPos, endpoint, 1, callN, testCase, recordArgs, Fs);%the duration of this computation is variable
             plot(handles.LocationPlot, x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % plot the location point on the map
 
             dist = sqrt((endpoint(2)-y)^2+(endpoint(1)-x)^2); % distance between KITT and the endpoint
@@ -201,7 +201,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
 
     %%% B.STEP 2: Accelerate and stop 100cm before point (correct if necessary)
-    waypoint_orientation = driveKITT(offlineCom, offlineLoc, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, waypoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q, recordArgs, Fs); % recursive function (will initiate a turn if necessary)
+    [waypoint_orientation, lastTurnPos] = driveKITT(offlineCom, offlineLoc, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, waypoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q, recordArgs, Fs); % recursive function (will initiate a turn if necessary)
 
     %%% B.STEP 3: slowly drive the remaining (small) distance to the waypoint and stop/rollout
     EPOCom(offlineCom, 'transmit', 'M158'); % Slow driving
@@ -210,22 +210,23 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     callN = 5;
     while (~finished)
         % Continuously retrieve the audio location
-        [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, waypoint, 1, callN, testCase, recordArgs, Fs);% The duration of this computation is variable
+        [x, y, callN] = KITTLocation(offlineLoc, lastTurnPos, waypoint, 1, callN, testCase, recordArgs, Fs);% The duration of this computation is variable
         plot(handles.LocationPlot, x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % Plot the location point on the map
 
         dist = sqrt((waypoint(2)-y)^2+(waypoint(1)-x)^2); % distance between KITT and the endpoint
         if (dist < 10)
             finished = 1;
+            current_loc = [x, y];
         end
     end
     EPOCom(offlineCom, 'transmit', 'M150'); % Rollout (can be changed to a stop)
     disp("Waypoint reached!"); %Waypoint reached
     
     % Retrieve actual location (as this is more accurate than waypoint itself)
-    current_loc = KITTLocation(offlineLoc, turnEndPos, waypoint, 1, callN, testCase, recordArgs, Fs);
-    current_loc = waypoint; % Remove this later
-    
-    
+%     callN = 14; % Last point in the simulated location vector
+%     [x, y] = KITTLocation(offlineLoc, turnEndPos, waypoint, 1, callN, testCase, recordArgs, Fs);
+%    
+%     
     % Calculate the second turn to the startpoint
     [turntime, direction, turnEndPos, new_orientation] = calculateTurn(handles, current_loc, endpoint,waypoint_orientation, t_radius, v_rot_prime);
     disp('turning time (ms):');
@@ -250,7 +251,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
 
     %%% B.STEP 5: Accelerate and stop 100cm before endpoint (correct if necessary)
-    driveKITT(offlineCom, offlineLoc,handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q, recordArgs, Fs); % recursive function (will initiate a turn if necessary)
+    [~, lastTurnPos] = driveKITT(offlineCom, offlineLoc,handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q, recordArgs, Fs); % recursive function (will initiate a turn if necessary)
 
     %%% B.STEP 6: slowly drive the remaining (small) distance to the waypoint and stop/rollout
     EPOCom(offlineCom, 'transmit', 'M158'); % Slow driving
@@ -259,11 +260,11 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     callN = 5;
     while (~finished)
         % Continuously retrieve the audio location
-        [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, 1, callN, testCase, recordArgs, Fs);% The duration of this computation is variable
+        [x, y, callN] = KITTLocation(offlineLoc, lastTurnPos, endpoint, 1, callN, testCase, recordArgs, Fs);% The duration of this computation is variable
         plot(handles.LocationPlot, x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % Plot the location point on the map
-
+        
         dist = sqrt((endpoint(2)-y)^2+(endpoint(1)-x)^2); % distance between KITT and the endpoint
-        if (dist < 10)
+        if (dist < 12)
             finished = 1;
         end
     end

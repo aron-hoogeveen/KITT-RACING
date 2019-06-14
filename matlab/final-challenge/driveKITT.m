@@ -1,4 +1,4 @@
-function end_orientation = driveKITT(offlineCom, offlineLoc, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q, recordArgs, Fs)
+function [end_orientation, lastTurnPos] = driveKITT(offlineCom, offlineLoc, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q, recordArgs, Fs)
             % KITT is already driving when this function is called (with
             % straight wheels)
             KITTspeed = 'M160';
@@ -10,19 +10,17 @@ function end_orientation = driveKITT(offlineCom, offlineLoc, handles, testCase, 
             t_loc_start = tic; % Start timing the audio coordinates retrieval
             x_points = []; % empty array for the points
             y_points = []; % empty array for the points
+            actualPathIsChecked = false; % if the next if-statement is true, then this value will become 'true' (to prevent multiple iterations of the if-statement)
             for i=1:pointsAmount
                 [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, rep, callN, testCase, recordArgs, Fs);%FIXMEthe duration of this computation is variable
                 plot(handles.LocationPlot,x, y, 'm+', 'MarkerSize', 5, 'linewidth',2); % plot the point on the map
                 x_points = [x_points x]; %append the x coordinate to array
                 y_points = [y_points y]; %append the y coordinate to array
-
                 
-                if(length(x_points) > floor(pointsAmount/2) && length(x_points) > 1) % If KITT has traveled at least half of the path to end
+                if(length(x_points) > floor(pointsAmount/2) && length(x_points) > 1 && ~actualPathIsChecked) % If KITT has traveled at least half of the path to end
                     % Make a trend line through the audio location points and calculate the actual angle
-                    
-                    figure();
-                    stem(x_points, y_points);
- 
+                    actualPathIsChecked = true;
+                        
                     prms = polyfit(x_points,y_points,1);
                     rico = prms(1); % Richtingsco�fficient
                     b = prms(2); %intersection of y-axis (y = mx +b)
@@ -45,7 +43,6 @@ function end_orientation = driveKITT(offlineCom, offlineLoc, handles, testCase, 
                      
                     dist = sqrt((y-endpoint(2))^2+(x-endpoint(1))^2); %distance from endpoint at current location
                     
- 
                     if (end_dist_difference > 10) %then: stop and make a corrective turn
                         EPOCom(offlineCom, 'transmit', 'M150');% FIXME: brake or rollout? smoothstop?
                         pause(1) %Wait for KITT to have stopped
@@ -60,6 +57,7 @@ function end_orientation = driveKITT(offlineCom, offlineLoc, handles, testCase, 
                     %   Make a trend line through the audio location points and calculate the actual angle
                         prms = polyfit(x_points,y_points,1);
                         rico = prms(1); % Richtingsco�fficient
+                        b = prms(2);
                         phi = atand(rico);
                         if (x_points(end)-x_points(1) < 0 && y_points(end)-y_points(1) < 0) %x decreasing, y decreasing
                             actual_orientation = phi - 180;
@@ -91,17 +89,22 @@ function end_orientation = driveKITT(offlineCom, offlineLoc, handles, testCase, 
                         %   Perform STEP 1 of challenge A again (do a turn)
                         turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
                         % Recursive function call, drive to the end point again:
-                        driveKITT(offlineCom, offlineLoc, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q, recordArgs, Fs);
+                        [end_orientation, lastTurnPos] = driveKITT(offlineCom, offlineLoc, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q, recordArgs, Fs);
+                        
                         
                         doPause = false; % the driving is interupted as KITT deviates from the cours
+                        break
+                    else
+                        disp('path is good!');
                     end
-                    disp('Heading towards the end point');
                 end
             end
             t_loc_elapsed = toc(t_loc_start); % Duration of audio location computing
             if (doPause)
                 pause((drivingTime - 45)/1000 - t_loc_elapsed);
                 smoothStop(offlineCom,160);
+                disp('heading towards end! with slow speed');
+                end_orientation = actual_orientation; %Return the new orientation when finished driving (necessary for the waypoint)
+                lastTurnPos = turnEndPos;
             end
-        end_orientation = actual_orientation; %Return the new orientation when finished driving (necessary for the waypoint)
 end%driveKITT
