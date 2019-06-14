@@ -64,25 +64,7 @@ transmitDelay = 45; %ms for the car to react to change in speed command
 %voltage = str2double(voltageStr(6:9)); % Extract the voltage.
 
 % Adjust v_rot_prime according to voltage:
-% Nominal voltage: 18.1 V
-%disp(voltage);
-% if (voltage == 18.4)
-%     voltageCorrection = 1.2;
-% elseif (voltage == 18.3)
-%     voltageCorrection = 1.18;
-% elseif (voltage == 18.2)
-%     voltageCorrection = 1.15;
-% elseif (voltage == 18.1)
-%     voltageCorrection = 1.10;
-% elseif (voltage <= 17.60 &&)
-%     voltageCorrection = 1; % no voltage correction: nominal voltage is 18.1V, which corresponds to this actual battery voltage
-% elseif (voltage == 17.9)
-%     voltageCorrection = 1;
-% elseif (voltage <= 17.8 && voltage > 17.6)
-%     voltageCorrection = 1;
-% else
-%     error("The battery voltage deviates a lot from the nominal voltage (18.1V)");
-% end
+% Nominal voltage: 17.1-17.2 [V]
 voltageCorrection = 1;
 if (voltage <= 18.00 && voltage > 17.90)
       voltageCorrection = 1.25;
@@ -109,20 +91,6 @@ elseif (voltage <= 17.00 && voltage > 16.90)
 else
     warning('Voltage is out of range! < 16.9 V or > 18.0 V');
 end
-
-% if (voltage <= 17.50 && voltage > 17.40)
-%      voltageCorrection = 1.00;% verified 2x
-% elseif (voltage <= 17.60 && voltage > 17.50)
-%      voltageCorrection = 1.03;% verified 2x
-% elseif (voltage <= 17.40 && voltage > 17.30)
-%      voltageCorrection = 1.04;% verified 2x
-% elseif (voltage <= 17.30 && voltage > 17.20)
-%      voltageCorrection = 1.11;% Unpredictable
-% elseif (voltage <= 17.20 && voltage > 17.10)
-%      voltageCorrection = 1.20;% Unpredictable
-% elseif (voltage <= 17.10 && voltage > 17.00)
-%      voltageCorrection = 1.10;% Unpredictable
-% end
 
 % Correct the velocity curve with voltageCorrection.
 v_rot_prime = voltageCorrection * v_rot_prime; %scaling of the integral has the same result as scaling v_rot
@@ -233,7 +201,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
 
     %%% B.STEP 2: Accelerate and stop 100cm before point (correct if necessary)
-    waypoint_orientation = driveKITT(offlineCom, offlineLoc, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, waypoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q, recordArgs); % recursive function (will initiate a turn if necessary)
+    waypoint_orientation = driveKITT(offlineCom, offlineLoc, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, waypoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q, recordArgs, Fs); % recursive function (will initiate a turn if necessary)
 
     %%% B.STEP 3: slowly drive the remaining (small) distance to the waypoint and stop/rollout
     EPOCom(offlineCom, 'transmit', 'M158'); % Slow driving
@@ -282,7 +250,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
 
     %%% B.STEP 5: Accelerate and stop 100cm before endpoint (correct if necessary)
-    driveKITT(offlineCom, offlineLoc,handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q, recordArgs); % recursive function (will initiate a turn if necessary)
+    driveKITT(offlineCom, offlineLoc,handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q, recordArgs, Fs); % recursive function (will initiate a turn if necessary)
 
     %%% B.STEP 6: slowly drive the remaining (small) distance to the waypoint and stop/rollout
     EPOCom(offlineCom, 'transmit', 'M158'); % Slow driving
