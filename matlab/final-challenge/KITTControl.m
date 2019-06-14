@@ -16,7 +16,7 @@ function [] = KITTControl(handles, voltage, orientation, startpoint, endpoint, r
 % 90 links: KITTControl(17.18, 0, [200,200], [285,400])
 
 testCase = 1; %KITTlocation simulation
-offlineCom = false; %Is KITT connected?
+offlineCom = true; %Is KITT connected?
 offlineLoc = true; % Location estimation
 step2 = true;
 challengeA = true; % Default challenge is A

@@ -58,7 +58,12 @@ if (offline)
         % should be greater than 10 cm to trigger a steering correction. 
         % Set the deviation to 15 cm and calculate the new end point using
         % Pythagoras
-        fakeendpoint = [105, 200];
+        dist  = sqrt((endpoint(1)-turnEndPos(1))^2 + (endpoint(2)-turnEndPos(2))^2);
+        deviation = dist/10;
+        if (dist < 100) 
+            deviation = 0;
+        end
+        fakeendpoint = [endpoint(1)-deviation, endpoint(2)]; %the endpoint deviation is dependent on the distance from the endpoint
         endpoint = fakeendpoint;
         if (floor(turnEndPos(1)) < endpoint(1))
             x_samp = [floor(turnEndPos(1)):(abs(floor(turnEndPos(1))-endpoint(1))/14):endpoint(1)];
