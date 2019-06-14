@@ -1,10 +1,23 @@
 H = Final_GUI;
 handles = guidata(H);
-peakperc = 40;
+peakperc = 60;
 load('datamicloc.mat', 'mic');
 load('refsignal.mat', 'refsignal');
 d = 2;
 peakn = 2;
+
+if playrec('isInitialised')
+    playrec('reset');
+end
+
+devs = playrec('getDevices');
+for id=1:size(devs,2)
+    if(strcmp('ASIO4ALL v2', devs(id).name))
+        break;
+    end
+end
+devId=devs(id).deviceID;
+
 % Argument struct for Record_TDOA(ref,peakperc,mic,d,peakn)
 recordArgs.ref = refsignal;
 recordArgs.peakperc = peakperc;

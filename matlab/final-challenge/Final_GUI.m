@@ -251,6 +251,7 @@ EPOCommunications('transmit',convertStringsToChars((strcat('F', string(handles.F
 EPOCommunications('transmit',convertStringsToChars((strcat('B', string(handles.Fbit)))));
 EPOCommunications('transmit',convertStringsToChars((strcat('R', string(handles.RepCount)))));
 EPOCommunications('transmit',convertStringsToChars((strcat('C0x', string(handles.Bitcode)))));
+disp('Beacon updated');
 
 
 

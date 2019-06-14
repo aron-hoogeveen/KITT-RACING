@@ -1,7 +1,7 @@
 % EPO-4 Group B4
 % 29-05-2019
 % [] = KITTControl(argsIn) is the main control unit for the final challenge
-function [] = KITTControl(handles, voltage, orientation, startpoint, endpoint, recordArgs, waypoint, obstacles)
+function [] = KITTControl(handles, voltage, orientation, startpoint, endpoint, recordArgs, devId, waypoint, obstacles)
 
 % Arguments:
 %   orientation: -180 to 180 degrees, x-axis is 0;
@@ -16,13 +16,13 @@ function [] = KITTControl(handles, voltage, orientation, startpoint, endpoint, r
 % 90 links: KITTControl(17.18, 0, [200,200], [285,400])
 
 offlineCom = false; %Is KITT connected?
-offlineLoc = true; % Location estimation
-step2 = false;
+offlineLoc = false; % Location estimation
+step2 = true;
 challengeA = true; % Default challenge is A
 
 % Check for input errors
 disp('(O.O) - Checking input arguments for any errors...');
-if (nargin < 5)
+if (nargin < 6)
     error('(*.*) - Minimum number of input arguments required is four!');
 elseif(abs(orientation) > 180)
     error('(*.*) - orientation must be between -180 and 180, with x-axis being theta = 0');
@@ -30,12 +30,12 @@ elseif (startpoint(1) < 50 || startpoint(1) > 510 || startpoint(2) < 0 || startp
     error('(*.*) - Startpoint out of bounds');
 elseif (endpoint(1) < 50 || endpoint(1) > 510 || endpoint(2) < 50 || endpoint(2) > 510)
     error('(*.*) - Endpoint out of bounds');
-elseif (nargin>6 && (waypoint(1) < 50 || waypoint(1) > 510 || waypoint(2) < 50 || waypoint(2) > 510))
+elseif (nargin>7 && (waypoint(1) < 50 || waypoint(1) > 510 || waypoint(2) < 50 || waypoint(2) > 510))
     error('(*.*) - Waypoint out of bounds');
-elseif (nargin > 6)
+elseif (nargin > 7)
     % No waypoint
     challengeA = false; % Do challenge B or C --> one waypoint
-elseif (nargin < 8)
+elseif (nargin < 9)
     obstacles = false;
 end
 disp('(^.^) - No input argument errors.');
@@ -180,7 +180,7 @@ if (challengeA)% Challenge A: no waypoint
         callN = 5;
         while (~finished)
             % Continuously retrieve the audio location
-            [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, 1, callN, 0, recordArgs);%the duration of this computation is variable
+            [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, 1, callN, 0, recordArgs, devId);%the duration of this computation is variable
             plot(handles.LocationPlot, x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % plot the location point on the map
 
             dist = sqrt((endpoint(2)-y)^2+(endpoint(1)-x)^2); % distance between KITT and the endpoint

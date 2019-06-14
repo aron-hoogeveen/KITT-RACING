@@ -30,6 +30,6 @@ for n = 1:nmic-1
     g = g + 1;
     end
 end
-vsound = 340;
+vsound = 34000;
 disdiff = sampdiff./Fs.*vsound;
 end
