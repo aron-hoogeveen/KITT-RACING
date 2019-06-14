@@ -27,6 +27,7 @@ if (offline)
     %TODO read out sample data from a file and output the next coordinates
     % everytime the function is called. 
     if (testCase == 0)
+        
         % The car drives at a constant speed in a straight line to the
         % endpoint.
         if (floor(turnEndPos(1)) < endpoint(1))
@@ -48,6 +49,7 @@ if (offline)
 %         x = x_samp(callN);
 %         y = y_samp(callN);
     elseif (testCase == 1)
+        
         % The car does not have the right angle after comming out of the
         % turn. KITTControl should act on this info and correct the angle.
         % Since this case will only be performed offline, it is not
@@ -56,18 +58,37 @@ if (offline)
         % after the turn is right (0 degrees) and in the following
         % datapoints it is more to the north (90 degrees) it is no problem.
 
+        turnMoreLeft = true; % KITT's turns end in a path left to the endpoint, if false: KITT is headed more to the right of endpoint
+        
         % The distance between the trajectory of the car and the endpoint
         % should be greater than 10 cm to trigger a steering correction. 
-        % Set the deviation to 15 cm and calculate the new end point using
-        % Pythagoras
-        dist  = sqrt((endpoint(1)-turnEndPos(1))^2 + (endpoint(2)-turnEndPos(2))^2);
-        deviation = dist/10;
-
-        if (dist < 100) 
-            deviation = 0;
+        dist  = sqrt((endpoint(1)-turnEndPos(1))^2 + (endpoint(2)-turnEndPos(2))^2); %Distance between KITT and endpoint
+        deviation = dist/8; %The deviation of the endpoint of the simulated path is dependent on the distance
+        
+        % Calculate at what location the deviated endpoint must be to be perpendicular to the start-end line
+        prms = polyfit([turnEndPos(1), endpoint(1)],[turnEndPos(2), endpoint(2)],1);
+        rico = prms(1); % Richtingscoëfficient
+        m = (-1/rico); % m_idealpath * m_perpendicular = -1 (m = m_perpendicular on this line)
+        b = endpoint(2) - m * endpoint(1); % follows from y = mx+b
+        
+        % The calculation that leads to these equations for the A*X^2 + BX + C
+        % formula can be found in the report
+        A = m^2 + 1;
+        B = (2*b*m - 2*endpoint(1)-2*endpoint(2)*m);
+        C = b^2 + -2*b*endpoint(2) + endpoint(1)^2 + endpoint(2)^2 - deviation^2;
+        D = B^2 - 4*A*C;
+         
+        % The fake endpoint can be located on two sides of the actual endpoint:
+        if (turnMoreLeft)
+         x_deviation = floor((-B - sqrt(D))/(2*A)); %new fake endpoint (X)
+        else
+         x_deviation = floor((-B + sqrt(D))/(2*A)); %new fake endpoint (X)
         end
-        fakeendpoint = [endpoint(1)-deviation, endpoint(2)]; %the endpoint deviation is dependent on the distance from the endpoint
+        y_deviation = floor(m*x_deviation+b); %new fake endpoint (Y)
+             
+        fakeendpoint = [x_deviation, y_deviation];
         endpoint = fakeendpoint;
+        
         if (floor(turnEndPos(1)) < endpoint(1))
             x_samp = [floor(turnEndPos(1)):(abs(floor(turnEndPos(1))-endpoint(1))/14):endpoint(1)];
             %disp("[floor(turnEndPos(1)):(abs(floor(turnEndPos(1))-endpoint(1))/14)-1:endpoint(1)]" + newline +...
@@ -85,7 +106,7 @@ if (offline)
         error('Invalid <testCase> option!');
     end%testCase
     
-    if (callN < length(x_samp))
+    if (callN <= length(x_samp))
         x = x_samp(callN);
         y = y_samp(callN);
     else
