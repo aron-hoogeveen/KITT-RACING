@@ -27,11 +27,11 @@ if (nargin < 6)
     error('(*.*) - Minimum number of input arguments required is four!');
 elseif(abs(orientation) > 180)
     error('(*.*) - orientation must be between -180 and 180, with x-axis being theta = 0');
-elseif (startpoint(1) < 50 || startpoint(1) > 510 || startpoint(2) < 0 || startpoint(2) > 510)
+elseif (startpoint(1) < 0 || startpoint(1) > 460 || startpoint(2) < 0 || startpoint(2) > 460)
     error('(*.*) - Startpoint out of bounds');
-elseif (endpoint(1) < 50 || endpoint(1) > 510 || endpoint(2) < 50 || endpoint(2) > 510)
+elseif (endpoint(1) < 0 || endpoint(1) > 460 || endpoint(2) < 0 || endpoint(2) > 460)
     error('(*.*) - Endpoint out of bounds');
-elseif (nargin>7 && (waypoint(1) < 50 || waypoint(1) > 510 || waypoint(2) < 50 || waypoint(2) > 510))
+elseif (nargin>7 && (waypoint(1) < 0 || waypoint(1) > 460 || waypoint(2) < 0 || waypoint(2) > 460))
     error('(*.*) - Waypoint out of bounds');
 elseif (nargin > 7)
     % No waypoint

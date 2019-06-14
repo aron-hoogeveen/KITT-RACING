@@ -69,16 +69,20 @@ handles.Start = 0;
 handles.Orientation = 0;
 handles.Obstacle = 0;
 handles.Voltage = 0;
-rectangle(handles.LocationPlot, 'Position', [0,0,50,560], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
-hold on;
-rectangle('Position', [510,0,50,560], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
-rectangle(handles.LocationPlot,'Position', [0,510,560,50], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
-rectangle(handles.LocationPlot,'Position', [0,0,560,50], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
+% rectangle(handles.LocationPlot, 'Position', [0,0,50,560], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
+% hold on;
+% rectangle('Position', [510,0,50,560], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
+% rectangle(handles.LocationPlot,'Position', [0,510,560,50], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
+% rectangle(handles.LocationPlot,'Position', [0,0,560,50], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
 pbaspect(handles.LocationPlot,[1 1 1]); %fixed square map
-xlim(handles.LocationPlot, [0,560]);
-ylim(handles.LocationPlot, [0,560]);
+xlim(handles.LocationPlot, [0,460]);
+hold on;
+ylim(handles.LocationPlot, [0,460]);
+xticks(handles.LocationPlot, [50 100 150 200 250 300 350 400 450]);
+yticks(handles.LocationPlot, [50 100 150 200 250 300 350 400 450]);
 title(handles.LocationPlot, "Field Map");
 grid on;
+box on;
 
 % Choose default command line output for Final_GUI
 handles.output = hObject;

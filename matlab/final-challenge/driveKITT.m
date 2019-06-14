@@ -38,7 +38,7 @@ function end_orientation = driveKITT(offlineCom, offlineLoc, handles, testCase, 
                     % Extend the trend line with y = rico*x + b to calculate the endpoint difference
                     extended_trend = rico*x_samp  +b;
                     % The distance from a point (x_p,y_p) to a line m*x +b is |m*x_p - y_p + b|/sqrt(m^2 + 1)
-                    end_dist_difference = abs(rico*endpoint(1) - endpoint(2) + b)/sqrt(rico^2+1); % distance between endpoint and trend
+                    end_dist_difference = abs(rico*endpoint(1) - endpoint(2) + b)/sqrt(rico^2+1) % distance between endpoint and trend
                      
                     dist = sqrt((y-endpoint(2))^2+(x-endpoint(1))^2); %distance from endpoint at current location
                     
@@ -83,7 +83,7 @@ function end_orientation = driveKITT(offlineCom, offlineLoc, handles, testCase, 
 
                         % Compute the amount of location points that can be retrieved in driving time
                         pointsAmount = floor((drivingTime-transmitDelay)/maximumLocalizationTime); %45 is transmit delay
-                        
+
                         %   Perform STEP 1 of challenge A again (do a turn)
                         turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
                         % Recursive function call, drive to the end point again:

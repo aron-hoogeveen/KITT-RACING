@@ -43,6 +43,8 @@ if (offline)
             y_samp = fliplr([floor(endpoint(2)):(abs(floor(endpoint(2))-turnEndPos(2))/14):turnEndPos(2)]);
         end
         
+        pause(0.1) % simulate duration of computation time
+        
 %         x = x_samp(callN);
 %         y = y_samp(callN);
     elseif (testCase == 1)
@@ -60,6 +62,7 @@ if (offline)
         % Pythagoras
         dist  = sqrt((endpoint(1)-turnEndPos(1))^2 + (endpoint(2)-turnEndPos(2))^2);
         deviation = dist/10;
+
         if (dist < 100) 
             deviation = 0;
         end
@@ -91,6 +94,7 @@ if (offline)
     end
     
     callN = callN+1;
+    pause(0.1) % simulate duration of computation time
     
     
 else
@@ -105,6 +109,7 @@ else
     x = coord(1);
     y = coord(2);
     callN = callN;
+    pause(0.1) % simulate duration of computation time
 end
 
 end%KITTLocation
