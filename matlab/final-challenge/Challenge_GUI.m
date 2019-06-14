@@ -19,13 +19,13 @@ Fs = 48000;
 %end
 %devId=devs(id).deviceID;
 
-setpref('dsp','portaudioHostApi',3)
+% setpref('dsp','portaudioHostApi',3)
 
-playrec('init', Fs, -1, devId);
+% playrec('init', Fs, -1, devId);
 
-if ~playrec('isInitialised')
-    error ('Failed to initialise device at any sample rate');      %%Check if the connection is opened correctly
-end
+% if ~playrec('isInitialised')
+%     error ('Failed to initialise device at any sample rate');      %%Check if the connection is opened correctly
+% end
 
 % Argument struct for Record_TDOA(ref,peakperc,mic,d,peakn)
 recordArgs.ref = refsignal;
@@ -33,6 +33,7 @@ recordArgs.peakperc = peakperc;
 recordArgs.mic = mic;
 recordArgs.d = d;
 recordArgs.peakn = peakn;
+% recordArgs.Fs = Fs; FIXME PUT IN ARGS
 
 while(true)
     uiwait(handles.figure1);
