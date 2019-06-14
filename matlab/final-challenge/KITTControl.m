@@ -1,21 +1,23 @@
 % EPO-4 Group B4
 % 29-05-2019
 % [] = KITTControl(argsIn) is the main control unit for the final challenge
-function [] = KITTControl(handles, voltage, orientation, startpoint, endpoint, waypoint, obstacles)
+function [] = KITTControl(handles, voltage, orientation, startpoint, endpoint, recordArgs, waypoint, obstacles)
 
 % Arguments:
 %   orientation: -180 to 180 degrees, x-axis is 0;
 %   startpoint: [x, y] location of startingpoint
 %   endpoint: [x, y] location of endpoint
+%   recordArgs: struct with all the input arguments for the function
+%     Record_TDOA.
 %   waypoint: [x, y] location of waypoint, if nargin < 4: no waypoint
 %   obstacles: true/false, if nargin < 5: no obstacles
 %
 % 180 links: KITTControl(17.18, 0, [200,200], [55,370])
 % 90 links: KITTControl(17.18, 0, [200,200], [285,400])
 
-offlineCom = true; %Is KITT connected?
+offlineCom = false; %Is KITT connected?
 offlineLoc = true; % Location estimation
-step2 = true;
+step2 = false;
 challengeA = true; % Default challenge is A
 
 % Check for input errors
@@ -28,12 +30,12 @@ elseif (startpoint(1) < 50 || startpoint(1) > 510 || startpoint(2) < 0 || startp
     error('(*.*) - Startpoint out of bounds');
 elseif (endpoint(1) < 50 || endpoint(1) > 510 || endpoint(2) < 50 || endpoint(2) > 510)
     error('(*.*) - Endpoint out of bounds');
-elseif (nargin>5 && (waypoint(1) < 50 || waypoint(1) > 510 || waypoint(2) < 50 || waypoint(2) > 510))
+elseif (nargin>6 && (waypoint(1) < 50 || waypoint(1) > 510 || waypoint(2) < 50 || waypoint(2) > 510))
     error('(*.*) - Waypoint out of bounds');
-elseif (nargin > 5)
+elseif (nargin > 6)
     % No waypoint
     challengeA = false; % Do challenge B or C --> one waypoint
-elseif (nargin < 7)
+elseif (nargin < 8)
     obstacles = false;
 end
 disp('(^.^) - No input argument errors.');
@@ -47,10 +49,7 @@ for i=1:20
     yspeed_acc = [yspeed_acc (yspeed_acc(lastIndex) + (yspeed_acc(lastIndex) - yspeed_acc(lastIndex - 1)))];
     ydis_acc = [ydis_acc 800];
 end%i=1:20
-plot(ydis_acc, yspeed_acc);
-% yspeed_acc = [yspeed_acc yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end) yspeed_acc(end)];  % fixes for a too short acceleration for version 1
-% ydis_acc = [ydis_acc ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end) ydis_acc(end)]; % fixes for a too short acceleration curve for version 1, first was '500' now it is 'ydis_acc(end)'
-
+% plot(ydis_acc, yspeed_acc);
 
 % Set up vectors and parameters
 transmitDelay = 45; %ms for the car to react to change in speed command
@@ -84,48 +83,30 @@ transmitDelay = 45; %ms for the car to react to change in speed command
 %     error("The battery voltage deviates a lot from the nominal voltage (18.1V)");
 % end
 voltageCorrection = 1;
-if     (voltage <= 18.60 && voltage > 18.50)
-      voltageCorrection = 0.83;
-elseif (voltage <= 18.50 && voltage > 18.40)
-      voltageCorrection = 0.83;
-elseif (voltage <= 18.40 && voltage > 18.30)
-      voltageCorrection = 0.83;
-elseif (voltage <= 18.30 && voltage > 18.20)
-      voltageCorrection = 0.83;
-elseif (voltage <= 18.20 && voltage > 18.10)
-      voltageCorrection = 0.83;
-elseif (voltage <= 18.10 && voltage > 18.00)
-      voltageCorrection = 0.83;
-elseif (voltage <= 18.00 && voltage > 17.90)
-      voltageCorrection = 0.83;
+if (voltage <= 18.00 && voltage > 17.90)
+      voltageCorrection = 1.25;
 elseif (voltage <= 17.90 && voltage > 17.80)
-      voltageCorrection = 0.83;
+      voltageCorrection = 1.20;
 elseif (voltage <= 17.80 && voltage > 17.70)
-      voltageCorrection = 0.83;
+      voltageCorrection = 1.15;
 elseif (voltage <= 17.70 && voltage > 17.60)
-      voltageCorrection = 0.83;
+      voltageCorrection = 1.10;
 elseif (voltage <= 17.60 && voltage > 17.50)
-      voltageCorrection = 0.83;
+      voltageCorrection = 1.04;
 elseif (voltage <= 17.50 && voltage > 17.40)
-      voltageCorrection = 0.83;
+      voltageCorrection = 1.03; % verified
 elseif (voltage <= 17.40 && voltage > 17.30)
-      voltageCorrection = 1;
-elseif (voltage <= 17.30 && voltage > 17.20) %nominal voltage
-      voltageCorrection = 1.00; % fixed value for nominal voltage = (17.2-17.3V)
-elseif (voltage <= 17.20 && voltage > 17.10)
-      voltageCorrection = 0.83;
+      voltageCorrection = 1.00; % probably verified
+elseif (voltage <= 17.30 && voltage > 17.20) 
+      voltageCorrection = 0.95; % verified
+elseif (voltage <= 17.20 && voltage > 17.10)%nominal voltage
+      voltageCorrection = 0.87; % probably ok, fixed value for nominal voltage = (17.2-17.3V)
 elseif (voltage <= 17.10 && voltage > 17.00)
-      voltageCorrection = 0.83;
+      voltageCorrection = 0.84;
 elseif (voltage <= 17.00 && voltage > 16.90)
-      voltageCorrection = 0.83;
-elseif (voltage <= 16.90 && voltage > 16.80)
-      voltageCorrection = 0.83;
-elseif (voltage <= 16.80 && voltage > 16.70)
-      voltageCorrection = 0.83;
-elseif (voltage <= 16.70 && voltage > 16.60)
-      voltageCorrection = 0.83;
+      voltageCorrection = 0.75;
 else
-    warning('Voltage is out of range! < 16.6 V or > 18.6 V');
+    warning('Voltage is out of range! < 16.9 V or > 18.0 V');
 end
 
 % if (voltage <= 17.50 && voltage > 17.40)
@@ -189,7 +170,7 @@ if (challengeA)% Challenge A: no waypoint
 
         %%% A.STEP 2: Accelerate and stop 100cm before point (correct if
         %%% necessary)
-        driveKITT(offlineCom, handles, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q); % recursive function (will initiate a turn if necessary)
+        driveKITT(offlineCom, handles, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q, recordArgs); % recursive function (will initiate a turn if necessary)
 
         %%% A.STEP 3: slowly drive the remaining (small) distance to the endpoint and stop/rollout
         EPOCom(offlineCom, 'transmit', 'M158'); % Slow driving
@@ -199,7 +180,7 @@ if (challengeA)% Challenge A: no waypoint
         callN = 5;
         while (~finished)
             % Continuously retrieve the audio location
-            [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, 1, callN, 0);%the duration of this computation is variable
+            [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, 1, callN, 0, recordArgs);%the duration of this computation is variable
             plot(handles.LocationPlot, x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % plot the location point on the map
 
             dist = sqrt((endpoint(2)-y)^2+(endpoint(1)-x)^2); % distance between KITT and the endpoint
@@ -251,7 +232,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
 
     %%% B.STEP 2: Accelerate and stop 100cm before point (correct if necessary)
-    waypoint_orientation = driveKITT(offlineCom, handles, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, waypoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q); % recursive function (will initiate a turn if necessary)
+    waypoint_orientation = driveKITT(offlineCom, handles, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, waypoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q, recordArgs); % recursive function (will initiate a turn if necessary)
 
     %%% B.STEP 3: slowly drive the remaining (small) distance to the waypoint and stop/rollout
     EPOCom(offlineCom, 'transmit', 'M158'); % Slow driving
@@ -260,7 +241,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     callN = 5;
     while (~finished)
         % Continuously retrieve the audio location
-        [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, waypoint, 1, callN, 0);% The duration of this computation is variable
+        [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, waypoint, 1, callN, 0, recordArgs);% The duration of this computation is variable
         plot(handles.LocationPlot, x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % Plot the location point on the map
 
         dist = sqrt((waypoint(2)-y)^2+(waypoint(1)-x)^2); % distance between KITT and the endpoint
@@ -272,7 +253,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     disp("Waypoint reached!"); %Waypoint reached
     
     % Retrieve actual location (as this is more accurate than waypoint itself)
-    current_loc = KITTLocation(offlineLoc, turnEndPos, waypoint, 1, callN, 0);
+    current_loc = KITTLocation(offlineLoc, turnEndPos, waypoint, 1, callN, 0, recordArgs);
     current_loc = waypoint; % Remove this later
     
     
@@ -300,7 +281,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
 
     %%% B.STEP 5: Accelerate and stop 100cm before endpoint (correct if necessary)
-    driveKITT(offlineCom, handles, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q); % recursive function (will initiate a turn if necessary)
+    driveKITT(offlineCom, handles, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q, recordArgs); % recursive function (will initiate a turn if necessary)
 
     %%% B.STEP 6: slowly drive the remaining (small) distance to the waypoint and stop/rollout
     EPOCom(offlineCom, 'transmit', 'M158'); % Slow driving
@@ -309,7 +290,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     callN = 5;
     while (~finished)
         % Continuously retrieve the audio location
-        [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, 1, callN, 0);% The duration of this computation is variable
+        [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, 1, callN, 0, recordArgs);% The duration of this computation is variable
         plot(handles.LocationPlot, x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % Plot the location point on the map
 
         dist = sqrt((endpoint(2)-y)^2+(endpoint(1)-x)^2); % distance between KITT and the endpoint

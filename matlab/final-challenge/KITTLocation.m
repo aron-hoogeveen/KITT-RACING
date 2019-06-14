@@ -1,4 +1,4 @@
-function [x, y, callN] = KITTLocation(offline, turnEndPos, endpoint, rep, callN, testCase)
+function [x, y, callN] = KITTLocation(offline, turnEndPos, endpoint, rep, callN, testCase, recordArgs)
 %[] = retrieveAudioLocationFIXME_exlacmationmark(argin) returns an x and y
 %    coordinate. When <offline>==true then the function will return sample
 %    data. If <offline>==false than this function calls the function that
@@ -78,10 +78,16 @@ if (offline)
     
 else
     % Online
-    warning("The real time location function has not been added yet!" + newline +...
-        "    The value of the returned <x> and <y> is NaN.");
-    x = NaN; y = NaN;
-    callN = callN + 1;
+%     warning("The real time location function has not been added yet!" + newline +...
+%         "    The value of the returned <x> and <y> is NaN.");
+%     x = NaN; y = NaN;
+%     callN = callN + 1;
+    % Retrieve the coordinates of the KITT car
+    
+    [coord] = Record_TDOA(recordArgs.ref, recordArgs.peakperc, recordArgs.mic, recordArgs.d, recordArgs.peakn);
+    x = coord(1); 
+    y = coord(2);
+    callN = callN;
 end
 
 end%KITTLocation
