@@ -5,6 +5,7 @@ load('datamicloc.mat', 'mic');
 load('refsignal.mat', 'refsignal');
 d = 2;
 peakn = 2;
+Fs = 48000;
 
 if playrec('isInitialised')
     playrec('reset');
@@ -17,6 +18,14 @@ for id=1:size(devs,2)
     end
 end
 devId=devs(id).deviceID;
+
+setpref('dsp','portaudioHostApi',3)
+
+playrec('init', Fs, -1, devId);
+
+if ~playrec('isInitialised')
+    error ('Failed to initialise device at any sample rate');      %%Check if the connection is opened correctly
+end
 
 % Argument struct for Record_TDOA(ref,peakperc,mic,d,peakn)
 recordArgs.ref = refsignal;
@@ -35,8 +44,8 @@ while(true)
     voltage = handles.Voltage;
     obstacles = handles.Obstacle;
     if (waypoint(1) == -1 || waypoint(2) == -1)
-        KITTControl(handles, voltage,orientation, startpoint, endpoint, recordArgs);
+        KITTControl(handles, voltage,orientation, startpoint, endpoint, recordArgs, Fs);
     else
-        KITTControl(handles, voltage,orientation, startpoint, endpoint, recordArgs, waypoint, obstacles);
+        KITTControl(handles, voltage,orientation, startpoint, endpoint, recordArgs, Fs, waypoint, obstacles);
     end
 end%while(true)
