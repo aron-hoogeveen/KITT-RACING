@@ -58,9 +58,21 @@ if (offline)
         % should be greater than 10 cm to trigger a steering correction. 
         % Set the deviation to 15 cm and calculate the new end point using
         % Pythagoras
-        distStartEnd = floor(sqrt((turnEndPos(1) - endpoint(1))^2 + (turnEndPos(2) - endpoint(2))^2)); % Retrieve it as integer
-        deviation = 15;
-        newDist = sqrt(distStartEnd^2 - deviation^2); 
+        fakeendpoint = [105, 200];
+        endpoint = fakeendpoint;
+        if (floor(turnEndPos(1)) < endpoint(1))
+            x_samp = [floor(turnEndPos(1)):(abs(floor(turnEndPos(1))-endpoint(1))/14):endpoint(1)];
+            %disp("[floor(turnEndPos(1)):(abs(floor(turnEndPos(1))-endpoint(1))/14)-1:endpoint(1)]" + newline +...
+            %    "[" + string(floor(turnEndPos(1))) + ":" + string(abs(floor(turnEndPos(1))-endpoint(1))/14) + ":" +...
+            %    string(endpoint(1)) + "]");
+        else
+            x_samp = fliplr([floor(endpoint(1)):(abs(floor(endpoint(1))-turnEndPos(1))/14):turnEndPos(1)]);
+        end
+        if (floor(turnEndPos(2) < endpoint(2)))
+            y_samp = [floor(turnEndPos(2)):(abs(floor(turnEndPos(2))-endpoint(2))/14):endpoint(2)];
+        else
+            y_samp = fliplr([floor(endpoint(2)):(abs(floor(endpoint(2))-turnEndPos(2))/14):turnEndPos(2)]);
+        end
     else
         error('Invalid <testCase> option!');
     end%testCase
@@ -84,7 +96,7 @@ else
 %     callN = callN + 1;
     % Retrieve the coordinates of the KITT car
     
-    [coord] = Record_TDOA(recordArgs.ref, recordArgs.peakperc, recordArgs.mic, recordArgs.d, recordArgs.peakn, devId);
+    [coord, ~] = Record_TDOA(recordArgs.ref, recordArgs.peakperc, recordArgs.mic, recordArgs.d, recordArgs.peakn, devId);
     x = coord(1); 
     y = coord(2);
     callN = callN;
