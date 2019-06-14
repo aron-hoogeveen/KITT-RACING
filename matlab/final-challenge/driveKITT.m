@@ -34,7 +34,7 @@ function end_orientation = driveKITT(offlineCom, offlineLoc, handles, testCase, 
                         actual_orientation = phi;
                     end
                     
-                    x_samp = [50:510];
+                    x_samp = [1:460];
                     % Extend the trend line with y = rico*x + b to calculate the endpoint difference
                     extended_trend = rico*x_samp  +b;
                     % The distance from a point (x_p,y_p) to a line m*x +b is |m*x_p - y_p + b|/sqrt(m^2 + 1)
