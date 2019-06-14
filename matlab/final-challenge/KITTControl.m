@@ -171,7 +171,7 @@ if (challengeA)% Challenge A: no waypoint
 
         %%% A.STEP 2: Accelerate and stop 100cm before point (correct if
         %%% necessary)
-        driveKITT(offlineCom, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q, recordArgs); % recursive function (will initiate a turn if necessary)
+        driveKITT(offlineCom, offlineLoc, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q, recordArgs, Fs); % recursive function (will initiate a turn if necessary)
 
         %%% A.STEP 3: slowly drive the remaining (small) distance to the endpoint and stop/rollout
         EPOCom(offlineCom, 'transmit', 'M158'); % Slow driving
@@ -233,7 +233,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
 
     %%% B.STEP 2: Accelerate and stop 100cm before point (correct if necessary)
-    waypoint_orientation = driveKITT(offlineCom, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, waypoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q, recordArgs); % recursive function (will initiate a turn if necessary)
+    waypoint_orientation = driveKITT(offlineCom, offlineLoc, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, waypoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q, recordArgs); % recursive function (will initiate a turn if necessary)
 
     %%% B.STEP 3: slowly drive the remaining (small) distance to the waypoint and stop/rollout
     EPOCom(offlineCom, 'transmit', 'M158'); % Slow driving
@@ -282,7 +282,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
 
     %%% B.STEP 5: Accelerate and stop 100cm before endpoint (correct if necessary)
-    driveKITT(offlineCom, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q, recordArgs); % recursive function (will initiate a turn if necessary)
+    driveKITT(offlineCom, offlineLoc,handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q, recordArgs); % recursive function (will initiate a turn if necessary)
 
     %%% B.STEP 6: slowly drive the remaining (small) distance to the waypoint and stop/rollout
     EPOCom(offlineCom, 'transmit', 'M158'); % Slow driving
