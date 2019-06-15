@@ -147,18 +147,31 @@ if (challengeA)% Challenge A: no waypoint
         
         % FIXME DEBUG TODO
         callN = 5;
+        distlist = []; %list of distances from the endpoint to KITT's location
+        % A failsafe is implemented if KITT is not driving sufficiently close
+        % to the endpoint (to prevent it from never stopping)
+        failsafeN = 0; %number of times it was found to be driving away from the endpoint
         while (~finished)
             % Continuously retrieve the audio location
             [x, y, callN] = KITTLocation(offlineLoc, lastTurnPos, endpoint, 1, callN, testCase, recordArgs, Fs);%the duration of this computation is variable
             plot(handles.LocationPlot, x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % plot the location point on the map
 
             dist = sqrt((endpoint(2)-y)^2+(endpoint(1)-x)^2); % distance between KITT and the endpoint
+            distlist = [distlist dist]; %append dist to distlist
+            mindist = min(distlist); %minimal value of the distance
+        
             if (dist < 10)
                 finished = 1;
+            elseif (dist > mindist) % If KITT is driving away from the endpoint
+                failsafeN = failsafeN + 1;
+                if (failsafeN > 2) % If dist>mindist occurs 3 times, failsafe is activated
+                    disp("FAILSAFE STOP: endpoint was not within reach");
+                    finished = 1;
+                end
             end
         end
         EPOCom(offlineCom, 'transmit', 'M150'); % Rollout (can be changed to a stop)
-        disp("Destination reached!"); %Destination reached
+        disp("Endpoint reached!"); %Destination reached
     end
 
 
@@ -208,15 +221,29 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     finished = 0;
 
     callN = 5;
+    distlist = []; %list of distances from the endpoint to KITT's location
+    % A failsafe is implemented if KITT is not driving sufficiently close
+    % to the waypoint (to prevent it from never stopping)
+    failsafeN = 0; %number of times it was found to be driving away from the endpoint
     while (~finished)
         % Continuously retrieve the audio location
         [x, y, callN] = KITTLocation(offlineLoc, lastTurnPos, waypoint, 1, callN, testCase, recordArgs, Fs);% The duration of this computation is variable
         plot(handles.LocationPlot, x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % Plot the location point on the map
 
         dist = sqrt((waypoint(2)-y)^2+(waypoint(1)-x)^2); % distance between KITT and the endpoint
+        distlist = [distlist dist]; %append dist to distlist
+        mindist = min(distlist); %minimal value of the distance
+        
         if (dist < 10)
             finished = 1;
             current_loc = [x, y];
+        elseif (dist > mindist) % If KITT is driving away from the endpoint
+            failsafeN = failsafeN + 1;
+            if (failsafeN > 2) % If dist>mindist occurs 3 times, failsafe is activated
+                disp("FAILSAFE STOP: waypoint was not within reach");
+                finished = 1;
+                current_loc = [x, y];
+            end
         end
     end
     EPOCom(offlineCom, 'transmit', 'M150'); % Rollout (can be changed to a stop)
@@ -258,18 +285,31 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     finished = 0;
     
     callN = 5;
+    distlist = []; %list of distances from the endpoint to KITT's location
+    % A failsafe is implemented if KITT is not driving sufficiently close
+    % to the endpoint (to prevent it from never stopping)
+    failsafeN = 0; %number of times it was found to be driving away from the endpoint
     while (~finished)
         % Continuously retrieve the audio location
         [x, y, callN] = KITTLocation(offlineLoc, lastTurnPos, endpoint, 1, callN, testCase, recordArgs, Fs);% The duration of this computation is variable
         plot(handles.LocationPlot, x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % Plot the location point on the map
         
         dist = sqrt((endpoint(2)-y)^2+(endpoint(1)-x)^2); % distance between KITT and the endpoint
+        distlist = [distlist dist]; %append dist to distlist
+        mindist = min(distlist); %minimal value of the distance
+        
         if (dist < 12)
             finished = 1;
+        elseif (dist > mindist) % If KITT is driving away from the endpoint
+            failsafeN = failsafeN + 1;
+            if (failsafeN > 2) % If dist>mindist occurs 3 times, failsafe is activated
+                disp("FAILSAFE STOP: endpoint was not within reach");
+                finished = 1;
+            end
         end
     end
     EPOCom(offlineCom, 'transmit', 'M150'); % Rollout (can be changed to a stop)
-    disp("Endpoint reached!"); %Waypoint reached
+    disp("Endpoint reached!"); % Endpoint reached
     
     
 else %Challenge C: no waypoints, with obstacle
