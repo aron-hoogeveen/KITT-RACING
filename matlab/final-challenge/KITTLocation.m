@@ -65,6 +65,7 @@ if (offline)
         dist  = sqrt((endpoint(1)-turnEndPos(1))^2 + (endpoint(2)-turnEndPos(2))^2); %Distance between KITT and endpoint
         deviation = dist/8; %The deviation of the endpoint of the simulated path is dependent on the distance
         
+        % shifts a lot with small changes in x, due to a high value of m in y = mx+b
         % Calculate at what location the deviated endpoint must be to be perpendicular to the start-end line
         prms = polyfit([turnEndPos(1), endpoint(1)],[turnEndPos(2), endpoint(2)],1);
         rico = prms(1); % Richtingscoëfficient
@@ -80,11 +81,12 @@ if (offline)
          
         % The fake endpoint can be located on two sides of the actual endpoint:
         if (turnMoreLeft)
-         x_deviation = floor((-B - sqrt(D))/(2*A)); %new fake endpoint (X)
+         x_deviation = (-B - sqrt(D))/(2*A); %new fake endpoint (X)
         else
-         x_deviation = floor((-B + sqrt(D))/(2*A)); %new fake endpoint (X)
+         x_deviation = (-B + sqrt(D))/(2*A); %new fake endpoint (X)
         end
         y_deviation = floor(m*x_deviation+b); %new fake endpoint (Y)
+        x_deviation = floor(x_deviation);
              
         fakeendpoint = [x_deviation, y_deviation];
         endpoint = fakeendpoint;
