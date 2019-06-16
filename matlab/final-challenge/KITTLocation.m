@@ -132,7 +132,6 @@ else
     x = coord(1);
     y = coord(2);
     callN = callN;
-    pause(0.1) % simulate duration of computation time
 end
 
 end%KITTLocation
