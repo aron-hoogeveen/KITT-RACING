@@ -43,12 +43,23 @@ disp('(^.^) - No input argument errors.');
 
 
 % Load saved parameters
+curves = struct();
 load('acc_ploy.mat', 'ydis_acc', 'yspeed_acc'); % Acceleration curve from the midterm challenge
 load('brake_ploy_v2.mat', 'ydis_brake', 'yspeed_brake'); % Braking curve from the midterm challenge
-lastIndex = length(yspeed_acc);
+curves.ydis_acc = ydis_acc; clear ydis_acc;
+curves.yspeed_acc = yspeed_acc; clear yspeed_acc;
+curves.ydis_brake = ydis_brake; clear ydis_brake;
+curves.yspeed_brake = yspeed_brake; clear yspeed_brake;
+curves.brakeEnd = 186.5; % Predefined value. FIXME add explanation what this brakeEnd means.
+% curves.ydis_acc = ydis_acc;
+% curves.yspeed_acc = yspeed_acc;
+% curves.ydis_brake = ydis_brake;
+% curves.yspeed_brake = yspeed_brake;
+
+lastIndex = length(curves.yspeed_acc);
 for i=1:20
-    yspeed_acc = [yspeed_acc (yspeed_acc(lastIndex) + (yspeed_acc(lastIndex) - yspeed_acc(lastIndex - 1)))];
-    ydis_acc = [ydis_acc 800];
+    curves.yspeed_acc = [curves.yspeed_acc (curves.yspeed_acc(lastIndex) + (curves.yspeed_acc(lastIndex) - curves.yspeed_acc(lastIndex - 1)))];
+    curves.ydis_acc = [curves.ydis_acc 800];
 end%i=1:20
 % plot(ydis_acc, yspeed_acc);
 
@@ -122,7 +133,7 @@ if (challengeA)% Challenge A: no waypoint
     % % Calculate the variables for step 2:
     % turnEndPos = [x, y] at the end of the turn;
     turnEndSpeed = 1000*v_rot(turntime); % Velocity of KITT at the end of the first turn (in cm/s)
-    [drivingTime, ~] = KITTstopV2(new_dist, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc,186.5,turnEndSpeed); % FIXME, %Time the car must drive for step 2 in challenge A in ms (straight line)
+    [drivingTime, ~] = KITTstopV2(new_dist, curves.ydis_brake, curves.yspeed_brake, curves.ydis_acc, curves.yspeed_acc, curves.brakeEnd, turnEndSpeed); % FIXME, %Time the car must drive for step 2 in challenge A in ms (straight line)
     maximumLocalizationTime = 210; %Maximum computation time to receive audio location
     % Compute the amount of location points that can be retrieved in driving time
     pointsAmount = floor((drivingTime-transmitDelay)/maximumLocalizationTime); %45 is transmit delay
@@ -139,7 +150,7 @@ if (challengeA)% Challenge A: no waypoint
 
         %%% A.STEP 2: Accelerate and stop 100cm before point (correct if
         %%% necessary)
-        [~, lastTurnPos] = driveKITT(offlineCom, offlineLoc, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q, recordArgs); % recursive function (will initiate a turn if necessary)
+        [~, lastTurnPos] = driveKITT(offlineCom, offlineLoc, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, curves, d_q, ang_q, recordArgs); % recursive function (will initiate a turn if necessary)
 
         %%% A.STEP 3: slowly drive the remaining (small) distance to the endpoint and stop/rollout
         EPOCom(offlineCom, 'transmit', 'M158'); % Slow driving
@@ -214,7 +225,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
 
     %%% B.STEP 2: Accelerate and stop 100cm before point (correct if necessary)
-    [waypoint_orientation, lastTurnPos] = driveKITT(offlineCom, offlineLoc, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, waypoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q, recordArgs); % recursive function (will initiate a turn if necessary)
+    [waypoint_orientation, lastTurnPos] = driveKITT(offlineCom, offlineLoc, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, waypoint, transmitDelay, v_rot, t_radius, v_rot_prime, curves, d_q, ang_q, recordArgs); % recursive function (will initiate a turn if necessary)
 
     %%% B.STEP 3: slowly drive the remaining (small) distance to the waypoint and stop/rollout
     EPOCom(offlineCom, 'transmit', 'M158'); % Slow driving
@@ -278,7 +289,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
 
     %%% B.STEP 5: Accelerate and stop 100cm before endpoint (correct if necessary)
-    [~, lastTurnPos] = driveKITT(offlineCom, offlineLoc,handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q, recordArgs); % recursive function (will initiate a turn if necessary)
+    [~, lastTurnPos] = driveKITT(offlineCom, offlineLoc,handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, curves, d_q, ang_q, recordArgs); % recursive function (will initiate a turn if necessary)
 
     %%% B.STEP 6: slowly drive the remaining (small) distance to the waypoint and stop/rollout
     EPOCom(offlineCom, 'transmit', 'M158'); % Slow driving
