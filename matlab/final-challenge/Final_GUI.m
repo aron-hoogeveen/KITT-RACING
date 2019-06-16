@@ -413,9 +413,13 @@ function BeginEndUpdate_Callback(hObject, eventdata, handles)
 % hObject    handle to BeginEndUpdate (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-plot(str2num(handles.BeginX),str2num(handles.BeginY),'b*', 'MarkerSize', 10);
+
+% Convert the input argument of str2double first to a string, because there
+% are cases where the input argument is already a number and str2double will
+% give an error.
+plot(str2double(string(handles.BeginX)),str2double(string(handles.BeginY)),'b*', 'MarkerSize', 10);
 hold on;
-plot(str2num(handles.EndX),str2num(handles.EndY),'r*', 'MarkerSize', 10);
+plot(str2double(string(handles.EndX)),str2double(string(handles.EndY)),'r*', 'MarkerSize', 10);
 axis manual;
 
 
@@ -424,9 +428,9 @@ function BeginMidEndUpdate_Callback(hObject, eventdata, handles)
 % hObject    handle to BeginMidEndUpdate (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-plot(str2num(handles.BeginX),str2num(handles.BeginY),'b*', 'MarkerSize', 10);
-plot(str2num(handles.EndX),str2num(handles.EndY),'r*', 'MarkerSize', 10);
-plot(str2num(handles.MidpointX),str2num(handles.MidpointY),'g*', 'MarkerSize', 10);
+plot(str2double(string(handles.BeginX)),str2double(string(handles.BeginY)),'b*', 'MarkerSize', 10);
+plot(str2double(string(handles.EndX)),str2double(string(handles.EndY)),'r*', 'MarkerSize', 10);
+plot(str2double(string(handles.MidpointX)),str2double(string(handles.MidpointY)),'g*', 'MarkerSize', 10);
 
 
 % --- Executes during object creation, after setting all properties.

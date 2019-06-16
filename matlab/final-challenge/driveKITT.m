@@ -1,4 +1,4 @@
-function [end_orientation, lastTurnPos] = driveKITT(offlineCom, offlineLoc, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q, recordArgs)
+function [end_orientation, lastTurnPos] = driveKITT(offlineCom, offlineLoc, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, curves, d_q, ang_q, recordArgs)
             % KITT is already driving when this function is called (with
             % straight wheels)
             KITTspeed = 'M160';
@@ -75,7 +75,7 @@ function [end_orientation, lastTurnPos] = driveKITT(offlineCom, offlineLoc, hand
                         [turntime, direction, turnEndPos, new_orientation] = calculateTurn(handles, [x_points(end), y_points(end)],endpoint,actual_orientation, t_radius, v_rot_prime);
                         turnEndSpeed = v_rot(turntime); % Velocity of KITT at the end of the new turn
                         new_dist = sqrt((endpoint(2)-y_points(end))^2+(endpoint(1)-x_points(end))^2);
-                        [drivingTime, ~] = KITTstopV2(new_dist, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc,186.5,turnEndSpeed); % FIXME, %Time the car must drive in ms (straight line)
+                        [drivingTime, ~] = KITTstopV2(new_dist, curves.ydis_brake, curves.yspeed_brake, curves.ydis_acc, curves.yspeed_acc, curves.brakeEnd, turnEndSpeed); % FIXME, %Time the car must drive in ms (straight line)
                         disp('turning time (ms):');
                         disp( turntime);
                         disp('[direction (1:left, -1:right), new_orientation] = ');
@@ -89,7 +89,7 @@ function [end_orientation, lastTurnPos] = driveKITT(offlineCom, offlineLoc, hand
                         %   Perform STEP 1 of challenge A again (do a turn)
                         turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
                         % Recursive function call, drive to the end point again:
-                        [end_orientation, lastTurnPos] = driveKITT(offlineCom, offlineLoc, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, ydis_brake,yspeed_brake,ydis_acc,yspeed_acc, d_q, ang_q, recordArgs);
+                        [end_orientation, lastTurnPos] = driveKITT(offlineCom, offlineLoc, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, curves, d_q, ang_q, recordArgs);
                         
                         
                         doPause = false; % the driving is interupted as KITT deviates from the cours

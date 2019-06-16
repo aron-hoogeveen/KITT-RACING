@@ -38,12 +38,12 @@ recordArgs.Fs = Fs;
 while(true)
     uiwait(handles.figure1);
     handles = guidata(H);
-    orientation = handles.Orientation;
-    startpoint = [str2double(handles.BeginX) str2double(handles.BeginY)];
-    endpoint = [str2double(handles.EndX) str2double(handles.EndY)];
-    waypoint = [str2double(handles.MidpointX) str2double(handles.MidpointY)];
-    voltage = handles.Voltage;
-    obstacles = handles.Obstacle;
+    orientation = str2double(string(handles.Orientation));
+    startpoint = [str2double(string(handles.BeginX)) str2double(string(handles.BeginY))];
+    endpoint = [str2double(string(handles.EndX)) str2double(string(handles.EndY))];
+    waypoint = [str2double(string(handles.MidpointX)) str2double(string(handles.MidpointY))];
+    voltage = str2double(string(handles.Voltage));
+    obstacles = str2double(string(handles.Obstacle));
     if (waypoint(1) == -1 || waypoint(2) == -1)
         KITTControl(handles, voltage,orientation, startpoint, endpoint, recordArgs);
     else
