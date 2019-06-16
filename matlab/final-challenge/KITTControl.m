@@ -15,6 +15,20 @@ function [] = KITTControl(handles, voltage, orientation, startpoint, endpoint, r
 % 180 links: KITTControl(17.18, 0, [200,200], [55,370])
 % 90 links: KITTControl(17.18, 0, [200,200], [285,400])
 
+% FIXME DEBUG the following code will display all input arguments of this
+% function
+% disp("%%%%%_____ ALL INPUT PARAMETERS OF KITTControl _____%%%%%");
+% 
+% disp("-----handles-----"); disp(handles);
+% disp("-----voltage-----"); disp(voltage);
+% disp("-----orientation-----"); disp(orientation);
+% disp("-----startpoint-----"); disp(startpoint);
+% disp("-----endpoint-----"); disp(endpoint);
+% disp("-----recordArgs-----"); disp(recordArgs);
+% % disp("-----waypoints-----"); disp(waypoints);
+% % disp("-----obstacles-----"); disp(obstacles);
+% disp("%%%%%_____ END OF DISPLAYING PARAMETERS _____%%%%%");
+
 testCase = 1; %KITTlocation simulation with a deviated path from ideal
 offlineCom = true; %Is KITT connected?
 offlineLoc = true; % Location estimation
