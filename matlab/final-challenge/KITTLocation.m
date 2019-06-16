@@ -1,4 +1,4 @@
-function [x, y, callN] = KITTLocation(offline, turnEndPos, endpoint, rep, callN, testCase, recordArgs, Fs)
+function [x, y, callN] = KITTLocation(offline, turnEndPos, endpoint, rep, callN, testCase, recordArgs)
 %[] = retrieveAudioLocationFIXME_exlacmationmark(argin) returns an x and y
 %    coordinate. When <offline>==true then the function will return sample
 %    data. If <offline>==false than this function calls the function that
@@ -128,7 +128,7 @@ else
 %     callN = callN + 1;
     % Retrieve the coordinates of the KITT car
     
-    [coord, ~] = Record_TDOA(recordArgs.ref, recordArgs.peakperc, recordArgs.mic, recordArgs.d, recordArgs.peakn, Fs);
+    [coord, ~] = Record_TDOA(recordArgs.ref, recordArgs.peakperc, recordArgs.mic, recordArgs.d, recordArgs.peakn, recordArgs.Fs);
     x = coord(1);
     y = coord(2);
     callN = callN;

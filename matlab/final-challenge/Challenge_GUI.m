@@ -33,7 +33,7 @@ recordArgs.peakperc = peakperc;
 recordArgs.mic = mic;
 recordArgs.d = d;
 recordArgs.peakn = peakn;
-% recordArgs.Fs = Fs; FIXME PUT IN ARGS
+recordArgs.Fs = Fs;
 
 while(true)
     uiwait(handles.figure1);
@@ -45,8 +45,8 @@ while(true)
     voltage = handles.Voltage;
     obstacles = handles.Obstacle;
     if (waypoint(1) == -1 || waypoint(2) == -1)
-        KITTControl(handles, voltage,orientation, startpoint, endpoint, recordArgs, Fs);
+        KITTControl(handles, voltage,orientation, startpoint, endpoint, recordArgs);
     else
-        KITTControl(handles, voltage,orientation, startpoint, endpoint, recordArgs, Fs, waypoint, obstacles);
+        KITTControl(handles, voltage,orientation, startpoint, endpoint, recordArgs, waypoint, obstacles);
     end
 end%while(true)
