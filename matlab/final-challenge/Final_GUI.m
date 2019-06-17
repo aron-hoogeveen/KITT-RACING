@@ -599,7 +599,7 @@ state.EndLocY = get(handles.EndLocY, 'String');
 state.MidpointLocX = get(handles.MidpointLocX, 'String');
 state.MidpointLocY = get(handles.MidpointLocY, 'String');
 state.orientation = get(handles.orientation, 'String');
-save ('state.mat', 'state');
+uisave('state'); % Let the user save multiple configurations
 
 
 % --- Executes on button press in LoadState.
@@ -607,7 +607,7 @@ function LoadState_Callback(hObject, eventdata, handles)
 % hObject    handle to LoadState (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-fileName = 'state.mat';
+fileName = uigetfile(); % Let the user specify the configuration to load
 GUI = findobj('Tag', 'figure1');
 handles = guidata(GUI);
 Out = handles.Out;
