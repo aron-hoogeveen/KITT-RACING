@@ -19,6 +19,7 @@ function [turntime, direction, turnEndPos, new_orientation] = calculateTurn(hand
     direction = sign(angle_diff); % 1 is left, -1 is right
     
     % Track along a circle until both new location and new theta match for t
+    optimizeWrongTurn = false;
     found = 0;
     t = 1;
     while found == 0
@@ -30,6 +31,19 @@ function [turntime, direction, turnEndPos, new_orientation] = calculateTurn(hand
         x_incr = startpoint(1)+ t_radius*(cosd(theta-orientation+displ_ang)-cosd(displ_ang)); % Calculating the new x
         y_incr = startpoint(2)+ t_radius*(sind(theta-orientation+displ_ang)-sind(displ_ang)); % Calculating the new y
     
+        if (optimizeWrongTurn)
+           dist = sqrt((x_incr-destination(1))^2 + (y_incr-destination(2))^2);
+           if (dist < minDist(1))
+               minDist = [dist, t, x_incr, y_incr, theta];
+           elseif (dist > minDist(1) + 40)
+               t = minDist(2);
+               x_incr = minDist(3);
+               y_incr = minDist(4);
+               theta = minDist(5);
+               found = 1;
+           end
+        end
+        
         if (abs(theta) > 180)
             theta_lim = theta-sign(theta)*360; %limit theta to -180:180 degrees
         else
@@ -52,10 +66,12 @@ function [turntime, direction, turnEndPos, new_orientation] = calculateTurn(hand
             found = 1;
         end
         
-        
-        if (t>9999)
-            
-            error('A suitable turn could not be found (t>10s). Perhaps the start and destination are too close.');           
+        if (t>14999 && ~optimizeWrongTurn)    
+            warning('A suitable turn could not be found (t>10s). Perhaps the start and destination are too close.');           
+            disp("A turn as close as possible to the endpoint will now be performed");
+            optimizeWrongTurn = true;
+            minDist = [1000, 0]; % initialize minDist with big distance
+            t = 0; % reset the time
         end
         t = t+1;
     end
