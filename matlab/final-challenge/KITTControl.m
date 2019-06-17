@@ -323,7 +323,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
         distlist = [distlist dist]; %append dist to distlist
         mindist = min(distlist); %minimal value of the distance
         
-        if (dist < 12)
+        if (dist < 10)
             finished = 1;
         elseif (dist > mindist) % If KITT is driving away from the endpoint
             failsafeN = failsafeN + 1;
