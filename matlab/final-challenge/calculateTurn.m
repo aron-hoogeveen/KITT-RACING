@@ -44,12 +44,17 @@ function [turntime, direction, turnEndPos, new_orientation] = calculateTurn(hand
         % Calculate the new alfa for the change position
         alfa_new = atandWithCompensation((destination(2)-y_incr),(destination(1)-x_incr)); 
         
+        if (x_incr > 460 || x_incr < 0 || y_incr > 460 || y_incr < 0)
+            %disp('turn is out of field');
+        end
         % If the angles match, stop the turning
         if (abs(theta_lim - alfa_new) < 0.1)
             found = 1;
         end
         
+        
         if (t>9999)
+            
             error('A suitable turn could not be found (t>10s). Perhaps the start and destination are too close.');           
         end
         t = t+1;
