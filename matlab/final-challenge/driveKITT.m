@@ -44,7 +44,8 @@ function [end_orientation, lastTurnPos] = driveKITT(offlineCom, offlineLoc, hand
                     dist = sqrt((y-endpoint(2))^2+(x-endpoint(1))^2); %distance from endpoint at current location
                     
                     if (end_dist_difference > 10) %then: stop and make a corrective turn
-                        EPOCom(offlineCom, 'transmit', 'M150');% FIXME: brake or rollout? smoothstop?
+%                         EPOCom(offlineCom, 'transmit', 'M150');% FIXME: brake or rollout? smoothstop?
+                        smoothStop(offlineCom, 666); % 666 is the switch case for short breaking when the real speed is not very accurately known. Like in this case
                         pause(1) %Wait for KITT to have stopped
                         % Retrieve a new point for audio location
                         [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, rep, callN, testCase, recordArgs);%FIXMEthe duration of this computation is variable

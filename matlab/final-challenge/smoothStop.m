@@ -34,6 +34,12 @@ switch speed
         EPOCom(offline,'transmit', stopSpeed);
         pause(stopTime);
         EPOCom(offline,'transmit', 'M150');
+    case 666
+        stopSpeed = 'M135';
+        stopTime = 0.2;
+        EPOCom(offline,'transmit', stopSpeed);
+        pause(stopTime);
+        EPOCom(offline,'transmit', 'M150');
     otherwise
         warning('smoothStop: the provided speed setting could not be processed. Trying to slow down the car now...');
         % Brake for a short time to avoid major crashes.
