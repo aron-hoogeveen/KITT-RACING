@@ -11,13 +11,31 @@ function [end_orientation, lastTurnPos] = driveKITT(offlineCom, offlineLoc, hand
             x_points = []; % empty array for the points
             y_points = []; % empty array for the points
             actualPathIsChecked = false; % if the next if-statement is true, then this value will become 'true' (to prevent multiple iterations of the if-statement)
+            halfOfPoints = floor(pointsAmount/2);
+            disp('halfofpoints:');
+            disp(halfOfPoints);
             for i=1:pointsAmount
                 [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, rep, callN, testCase, recordArgs); %the duration of this computation is variable
                 plot(handles.LocationPlot,x, y, 'm+', 'MarkerSize', 5, 'linewidth',2); % plot the point on the map
-                x_points = [x_points x]; %append the x coordinate to array
-                y_points = [y_points y]; %append the y coordinate to array
                 
-                if(length(x_points) > floor(pointsAmount/2) && length(x_points) > 1 && ~actualPathIsChecked) % If KITT has traveled at least half of the path to end
+                % FIXME (location discreperencies filteren)
+                if (i > 1) 
+                    dist_prev_locpoint = sqrt((x-x_points(end))^2+(y-y_points(end))^2);
+                    if  (dist_prev_locpoint > 100) % Then the value of x or y deviates a lot from the last point (not realistic)
+                        disp('dit is fout');
+                        halfOfPoints = halfOfPoints -1;
+                    else
+                        x_points = [x_points x]; %append the x coordinate to array
+                        y_points = [y_points y]; %append the y coordinate to array
+                    end
+                else
+                    x_points = [x_points x]; %append the x coordinate to array
+                    y_points = [y_points y]; %append the y coordinate to array
+                end
+                
+                % END of FIXME
+                
+                if(length(x_points) > halfOfPoints && length(x_points) > 1 && ~actualPathIsChecked) % If KITT has traveled at least half of the path to end
                     % Make a trend line through the audio location points and calculate the actual angle
                     actualPathIsChecked = true;
                         
@@ -49,6 +67,8 @@ function [end_orientation, lastTurnPos] = driveKITT(offlineCom, offlineLoc, hand
                         % Retrieve a new point for audio location
                         [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, rep, callN, testCase, recordArgs);% the duration of this computation is variable
                         plot(handles.LocationPlot,x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % plot the point on the map
+                        
+
                         x_points = [x_points x]; %append the x coordinate to array
                         y_points = [y_points y]; %append the y coordinate to array
                         
