@@ -612,7 +612,7 @@ GUI = findobj('Tag', 'figure1');
 handles = guidata(GUI);
 Out = handles.Out;
 if exist(fileName)
-    load(fileName)
+    load(fileName, 'state')
     set(handles.Voltage, 'String', state.Voltage);
     set(handles.Com_Port, 'String', state.Com_Port);
     set(handles.Fcarrier, 'String', state.Fcarrier);
