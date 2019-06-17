@@ -22,7 +22,7 @@ function varargout = Final_GUI(varargin)
 
 % Edit the above text to modify the response to help Final_GUI
 
-% Last Modified by GUIDE v2.5 16-Jun-2019 22:39:11
+% Last Modified by GUIDE v2.5 17-Jun-2019 16:13:54
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -644,3 +644,13 @@ if exist(fileName)
   
 end
 guidata(hObject,handles);
+
+
+% --- Executes on button press in pushbutton11.
+function pushbutton11_Callback(hObject, eventdata, handles)
+    children = get(handles.LocationPlot, 'children');
+    delete(children);
+    %clf(handles.LocationPlot);
+% hObject    handle to pushbutton11 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
