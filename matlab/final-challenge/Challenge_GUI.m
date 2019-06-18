@@ -7,25 +7,25 @@ d = 2;
 peakn = 2;
 Fs = 48000;
 
-if playrec('isInitialised')
-   playrec('reset');
-end
-
-devs = playrec('getDevices');
-for id=1:size(devs,2)
-   if(strcmp('ASIO4ALL v2', devs(id).name))
-       break;
-   end
-end
-devId=devs(id).deviceID;
-
-setpref('dsp','portaudioHostApi',3)
-
-playrec('init', Fs, -1, devId);
-
-if ~playrec('isInitialised')
-    error ('Failed to initialise device at any sample rate');      %%Check if the connection is opened correctly
-end
+% if playrec('isInitialised')
+%    playrec('reset');
+% end
+% 
+% devs = playrec('getDevices');
+% for id=1:size(devs,2)
+%    if(strcmp('ASIO4ALL v2', devs(id).name))
+%        break;
+%    end
+% end
+% devId=devs(id).deviceID;
+% 
+% setpref('dsp','portaudioHostApi',3)
+% 
+% playrec('init', Fs, -1, devId);
+% 
+% if ~playrec('isInitialised')
+%     error ('Failed to initialise device at any sample rate');      %%Check if the connection is opened correctly
+% end
 
 % Argument struct for Record_TDOA(ref,peakperc,mic,d,peakn)
 recordArgs.ref = refsignal;

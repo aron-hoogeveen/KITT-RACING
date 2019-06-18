@@ -30,8 +30,8 @@ function [] = KITTControl(handles, voltage, orientation, startpoint, endpoint, r
 % disp("%%%%%_____ END OF DISPLAYING PARAMETERS _____%%%%%");
 
 testCase = 1; %KITTlocation simulation with a deviated path from ideal
-offlineCom = false; %Is KITT connected?
-offlineLoc = false; % Location estimation
+offlineCom = true; %Is KITT connected?
+offlineLoc = true; % Location estimation
 step2 = true;
 challengeA = true; % Default challenge is A
 
@@ -156,6 +156,7 @@ if (challengeA)% Challenge A: no waypoint
     input('Challenge A: Press any key to start driving','s')
     %%% A.STEP 1: Turn KITT
     turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
+    pause(turnEndSpeed/100); % Pause for the rollout of complete (dependent on turnEndSpeed)
 
     if (~step2) % For turning testing purposes, step2 is omitted
         EPOCom(offlineCom, 'transmit', 'M150'); % rollout
@@ -164,7 +165,33 @@ if (challengeA)% Challenge A: no waypoint
 
         %%% A.STEP 2: Accelerate and stop 100cm before point (correct if
         %%% necessary)
-        [~, lastTurnPos] = driveKITT(offlineCom, offlineLoc, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, curves, d_q, ang_q, recordArgs); % recursive function (will initiate a turn if necessary)
+        x_averaged = [];
+        y_averaged = [];
+        
+        % First request of location (6 times)
+        x_points = [];
+        y_points = [];
+        for i = 1:5
+           [x, y] = KITTlocation(offlineLoc, recordArgs);
+           
+           % Check for validity 
+           distToTurnEndPos = sqrt((x-turnEndPos(1))^2+(y-turnEndPos(2))^2);
+           if(distToTurnEndPos < 100)
+            x_points = [x_points x];
+            y_points = [y_points y];
+           else 
+               i = i -1;
+           end
+        end
+        [x_averaged(1), y_averaged(1)] = averageLocation(x_points, y_points); % store correct actual location in averaged vector
+        distToEnd = sqrt((x_averaged(1)-endpoint(1))^2+(y_averaged(1)-endpoint(2))^2);
+        % Drive a small distance
+        drivingDistance = driveKITTv2(offlineCom, distToEnd, transmitDelay, curves, d_q, ang_q); 
+        
+        [x_averaged, y_averaged] = evaluateLocation(offlineLoc, current_orienation, x_averaged, y_averaged, drivingDistance, recordArgs);
+        
+        
+        %[~, lastTurnPos] = driveKITT(offlineCom, offlineLoc, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, curves, d_q, ang_q, recordArgs); % recursive function (will initiate a turn if necessary)
 
         %%% A.STEP 3: slowly drive the remaining (small) distance to the endpoint and stop/rollout
         EPOCom(offlineCom, 'transmit', 'M158'); % Slow driving

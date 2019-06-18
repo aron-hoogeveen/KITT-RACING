@@ -96,7 +96,7 @@ function [end_orientation, lastTurnPos, optimizeWrongTurn] = driveKITT(offlineCo
                         % Calculate a new turn;
                         [turntime, direction, turnEndPos, new_orientation, optimizeWrongTurn] = calculateTurn(handles, [x_points(end), y_points(end)],endpoint,actual_orientation, t_radius, v_rot_prime);
                         turnEndSpeed = v_rot(turntime); % Velocity of KITT at the end of the new turn
-                        new_dist = sqrt((endpoint(2)-y_points(end))^2+(endpoint(1)-x_points(end))^2);
+                        new_dist = sqrt((endpoint(2)-turnEndPos(2))^2+(endpoint(1)-turnEndPos(1))^2);
                         [drivingTime, ~] = KITTstopV2(new_dist, curves.ydis_brake, curves.yspeed_brake, curves.ydis_acc, curves.yspeed_acc, curves.brakeEnd, turnEndSpeed); %Time the car must drive in ms (straight line)
                         disp('turning time (ms):');
                         disp( turntime);
@@ -128,8 +128,6 @@ function [end_orientation, lastTurnPos, optimizeWrongTurn] = driveKITT(offlineCo
             end
             t_loc_elapsed = toc(t_loc_start); % Duration of audio location computing
             if (doPause && ~optimizeWrongTurn)
-                disp("wrongturn:");
-                disp(optimizeWrongTurn);
                 pause((drivingTime - 45)/1000 - t_loc_elapsed);
                 smoothStop(offlineCom, KITTspeedNum);
                 disp('heading towards end! with slow speed');
