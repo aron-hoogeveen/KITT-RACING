@@ -7,6 +7,8 @@ function [turntime, direction, turnEndPos, new_orientation] = calculateTurn(hand
     % t_radius; %cm
     % v_rot; %speed when rotating in cm per second (vector as function of t(ms);
     
+    outOfField = false; % Will become true if the calculated turn is out of the field 
+    
     % Calculate the angle of the points and compare to orientation to
     % determine the best turning direction
     alfa_begin = atandWithCompensation(destination(2)-startpoint(2),destination(1)-startpoint(1));
@@ -30,19 +32,6 @@ function [turntime, direction, turnEndPos, new_orientation] = calculateTurn(hand
         displ_ang = -1*direction*90+orientation; % Displacement angle for driving along a circle
         x_incr = startpoint(1)+ t_radius*(cosd(theta-orientation+displ_ang)-cosd(displ_ang)); % Calculating the new x
         y_incr = startpoint(2)+ t_radius*(sind(theta-orientation+displ_ang)-sind(displ_ang)); % Calculating the new y
-    
-        if (optimizeWrongTurn)
-           dist = sqrt((x_incr-destination(1))^2 + (y_incr-destination(2))^2);
-           if (dist < minDist(1))
-               minDist = [dist, t, x_incr, y_incr, theta];
-           elseif (dist > minDist(1) + 40)
-               t = minDist(2);
-               x_incr = minDist(3);
-               y_incr = minDist(4);
-               theta = minDist(5);
-               found = 1;
-           end
-        end
         
         if (abs(theta) > 180)
             theta_lim = theta-sign(theta)*360; %limit theta to -180:180 degrees
@@ -50,6 +39,21 @@ function [turntime, direction, turnEndPos, new_orientation] = calculateTurn(hand
             theta_lim = theta;
         end
         
+        
+        if (optimizeWrongTurn)
+           dist = sqrt((x_incr-destination(1))^2 + (y_incr-destination(2))^2);
+           if (dist < minDist(1))
+               minDist = [dist, t, x_incr, y_incr, theta_lim];
+           elseif (dist > minDist(1) + 40)
+               t = minDist(2);
+               x_incr = minDist(3);
+               y_incr = minDist(4);
+               theta_lim = minDist(5);
+               found = 1;
+           end
+        end
+        
+
         % Drawing points of the turning trajectory for debugging
         if (~mod(t,200))
                 plot(handles.LocationPlot, x_incr, y_incr, 'b.', 'MarkerSize', 5);
@@ -58,8 +62,15 @@ function [turntime, direction, turnEndPos, new_orientation] = calculateTurn(hand
         % Calculate the new alfa for the change position
         alfa_new = atandWithCompensation((destination(2)-y_incr),(destination(1)-x_incr)); 
         
-        if (x_incr > 460 || x_incr < 0 || y_incr > 460 || y_incr < 0)
-            %disp('turn is out of field');
+        if (x_incr > 460-10 || x_incr < 0+10 || y_incr > 460-10 || y_incr < 0+10) % Can occur when turning at waypoint
+            outOfField = true;
+            %disp('Turn is out of field, driving backwards...');
+            
+            % Calculate how much kitt should drive backwards to make the
+            % turn within reach
+           %FIXME
+            
+            
         end
         % If the angles match, stop the turning
         if (abs(theta_lim - alfa_new) < 0.1)
@@ -79,5 +90,5 @@ function [turntime, direction, turnEndPos, new_orientation] = calculateTurn(hand
     % Return variables (direction was determined earlier)
     turntime = t; %ms
     turnEndPos = [x_incr, y_incr];
-    new_orientation = theta;
+    new_orientation = theta_lim;
 end%turningTime

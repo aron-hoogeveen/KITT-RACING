@@ -240,7 +240,9 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
 
     %%% B.STEP 2: Accelerate and stop 100cm before point (correct if necessary)
     [waypoint_orientation, lastTurnPos] = driveKITT(offlineCom, offlineLoc, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, waypoint, transmitDelay, v_rot, t_radius, v_rot_prime, curves, d_q, ang_q, recordArgs); % recursive function (will initiate a turn if necessary)
-
+    % FIXME: waypoint_orientation differs if calculateTurn results in a
+    % wrong turn
+    
     %%% B.STEP 3: slowly drive the remaining (small) distance to the waypoint and stop/rollout
     EPOCom(offlineCom, 'transmit', 'M158'); % Slow driving
     finished = 0;
