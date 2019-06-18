@@ -1,6 +1,6 @@
 function [x, y] = averageLocation(x_vector, y_vector)
     
-  if (length(x_vector) != length(y_vector))
+  if (length(x_vector) ~= length(y_vector))
       error('Vectors are not of same length');
   end
   

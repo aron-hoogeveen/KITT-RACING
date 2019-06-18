@@ -29,7 +29,7 @@ function [] = KITTControl(handles, voltage, orientation, startpoint, endpoint, r
 % % disp("-----obstacles-----"); disp(obstacles);
 % disp("%%%%%_____ END OF DISPLAYING PARAMETERS _____%%%%%");
 
-testCase = 1; %KITTlocation simulation with a deviated path from ideal
+testCase = 1; %KITTLocation simulation with a deviated path from ideal
 offlineCom = true; %Is KITT connected?
 offlineLoc = true; % Location estimation
 step2 = true;
@@ -155,7 +155,9 @@ if (challengeA)% Challenge A: no waypoint
     %%%%%%%%%%%%%%%%%%%%%% START DRIVING %%%%%%%%%%%%%%%%%%%%%%%%
     input('Challenge A: Press any key to start driving','s')
     %%% A.STEP 1: Turn KITT
+    finished = 0;
     turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
+    EPOCom(offlineCom, 'transmit', 'M150'); % rollout
     pause(turnEndSpeed/100); % Pause for the rollout of complete (dependent on turnEndSpeed)
 
     if (~step2) % For turning testing purposes, step2 is omitted
@@ -171,59 +173,58 @@ if (challengeA)% Challenge A: no waypoint
         % First request of location (6 times)
         x_points = [];
         y_points = [];
-        for i = 1:5
-           [x, y] = KITTlocation(offlineLoc, recordArgs);
+        i = 1;
+        while i < 6
+           [x, y] = KITTLocation(offlineLoc, recordArgs);
            
            % Check for validity 
            distToTurnEndPos = sqrt((x-turnEndPos(1))^2+(y-turnEndPos(2))^2);
            if(distToTurnEndPos < 100)
             x_points = [x_points x];
             y_points = [y_points y];
-           else 
-               i = i -1;
+            disp('added');
+            i = i +1;
+            plot(handles.LocationPlot, x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % plot the location point on the map
+           else  
+               disp('i want one more');
+               plot(handles.LocationPlot, x, y, 'k+',  'MarkerSize', 5, 'linewidth',2); % plot the wrong location point on the map
            end
         end
         [x_averaged(1), y_averaged(1)] = averageLocation(x_points, y_points); % store correct actual location in averaged vector
-        distToEnd = sqrt((x_averaged(1)-endpoint(1))^2+(y_averaged(1)-endpoint(2))^2);
-        % Drive a small distance
-        drivingDistance = driveKITTv2(offlineCom, handles, distToEnd, transmitDelay, curves, d_q, ang_q); 
+        disp("Current loc:")
+        disp(string(x_averaged(end)) + " and " + string (y_averaged(end)));
         
-        current_orientation = new_orientation; %Orientation from the end of the first curve
-        [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, current_orientation, x_averaged, y_averaged, drivingDistance, recordArgs);
-        trendCorrect(handles, x_averaged, y_averaged, endPoint,  t_radius, v_rot_prime);
-        
-        %[~, lastTurnPos] = driveKITT(offlineCom, offlineLoc, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, curves, d_q, ang_q, recordArgs); % recursive function (will initiate a turn if necessary)
-
-        %%% A.STEP 3: slowly drive the remaining (small) distance to the endpoint and stop/rollout
-        EPOCom(offlineCom, 'transmit', 'M158'); % Slow driving
-        finished = 0;
-        
-        callN = 5;
-        distlist = []; %list of distances from the endpoint to KITT's location
-        % A failsafe is implemented if KITT is not driving sufficiently close
-        % to the endpoint (to prevent it from never stopping)
-        failsafeN = 0; %number of times it was found to be driving away from the endpoint
-        while (~finished)
-            % Continuously retrieve the audio location
-            [x, y, callN] = KITTLocation(offlineLoc, lastTurnPos, endpoint, 1, callN, testCase, recordArgs);%the duration of this computation is variable
-            plot(handles.LocationPlot, x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % plot the location point on the map
-
-            dist = sqrt((endpoint(2)-y)^2+(endpoint(1)-x)^2); % distance between KITT and the endpoint
-            distlist = [distlist dist]; %append dist to distlist
-            mindist = min(distlist); %minimal value of the distance
-        
-            if (dist < 10)
+        while finished == 0
+            % Drive a small distance
+            distToEnd = sqrt((x_averaged(end)-endpoint(1))^2+(y_averaged(end)-endpoint(2))^2);
+            drivingDistance = driveKITTv2(offlineCom, handles, distToEnd, transmitDelay, curves, d_q, ang_q); 
+            current_orientation = new_orientation; %Orientation from the end of the first turn
+            % Retrieve new location
+            [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, current_orientation, x_averaged, y_averaged, drivingDistance, recordArgs);
+            disp("Current loc:")
+            disp(string(x_averaged(end)) + " and " + string (y_averaged(end)));
+            % Check if endpoint is reached
+            dist = sqrt((endpoint(2)-y_averaged(end))^2+(endpoint(1)-x_averaged(end))^2); % distance between KITT and the endpoint
+       
+            if (dist < 10)  % Car is withing reach of endpoint
                 finished = 1;
-            elseif (dist > mindist) % If KITT is driving away from the endpoint
-                failsafeN = failsafeN + 1;
-                if (failsafeN > 1) % If dist>mindist occurs 3 times, failsafe is activated
-                    disp("FAILSAFE STOP: endpoint was not within reach");
-                    finished = 1;
+            end
+                      
+            
+            % Check if the path is good and if not:make a turn (pathIsGood =
+            % false)
+            [pathIsGood, turntime, direction, turnEndPos, new_orientation, optimizeWrongTurn] = trendCorrect(handles, x_averaged, y_averaged, endpoint,  t_radius, v_rot_prime, v_rot);
+            if (~pathIsGood)
+                turnEndSpeed = 1000*v_rot(turntime); % Velocity of KITT at the end of corrective turn (in cm/s)
+                turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
+                EPOCom(offlineCom, 'transmit', 'M150'); % rollout
+                pause(turnEndSpeed/100);
+                if (optimizeWrongTurn)
+                    finished = 1;              
                 end
             end
-        end
-        EPOCom(offlineCom, 'transmit', 'M150'); % Rollout (can be changed to a stop)
-        disp("Endpoint reached!"); %Destination reached
+        end%while finished
+        disp("Endpoint reached!"); %Destination reached  
     end
 
 
