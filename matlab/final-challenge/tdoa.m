@@ -6,9 +6,10 @@
 function disdiff = tdoa(micdata,ref,peakperc,Fs,B,R,peakn)
 %% first peak 
 reclength = R/B*Fs;
-mindis = 0.8*reclength;
+mindis = 0.9*reclength;
 minheigth = 0.5*max(micdata(:,1));
 [pksh,locsh] = findpeaks(micdata(:,1),'MinPeakHeight',minheigth,'Npeaks',peakn,'MinPeakDistance',mindis);    % finds the first peak which is above the signal power threshold
+
 llim = locsh(peakn) - 1/4*reclength;
 rlim = locsh(peakn) + 3/4*reclength;
 micdata = micdata(llim:rlim,1:5);
@@ -30,6 +31,6 @@ for n = 1:nmic-1
     g = g + 1;
     end
 end
-vsound = 340;
+vsound = 34000;
 disdiff = sampdiff./Fs.*vsound;
 end

@@ -1,6 +1,7 @@
 % refsignal
 % Author: Rik van der Hoorn - 4571150
 % Last modified: 01-06-19
+%
 % Generate multiple reference signals:
 % complete pulse, 10% max amplitude and 25% max amplitude
 

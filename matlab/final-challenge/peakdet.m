@@ -13,7 +13,7 @@ sampn = locsh(1);
 figure()
 hold on
 plot(hsq)
-%yline(peakboun,'b--');
+yline(peakboun,'b--');
 stem(locsh,pksh);
 xlim([0 length(hsq)])
 legend('Channel estimation squared',sprintf('%d%% Peak power', peakperc),'Peaks')

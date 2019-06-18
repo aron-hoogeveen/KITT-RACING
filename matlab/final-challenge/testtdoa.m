@@ -32,7 +32,7 @@ tic
 disdiffprac = tdoa(micdata,ref,peakperc,Fs,5000,1500,peakn);
 t = toc;
 
-disdiff = 100*disdiffprac;
+disdiff = disdiffprac;
 load('datamicloc')
 d = 2;
 coord = loc(mic,disdiff,d,0)
