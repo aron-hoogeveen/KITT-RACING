@@ -18,21 +18,23 @@ function [end_orientation, lastTurnPos, optimizeWrongTurn] = driveKITT(offlineCo
             disp(halfOfPoints);
             for i=1:pointsAmount
                 [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, rep, callN, testCase, recordArgs, pointsAmount); %the duration of this computation is variable
-                plot(handles.LocationPlot,x, y, 'm+', 'MarkerSize', 5, 'linewidth',2); % plot the point on the map
+               
                 
                 % FIXME (location discreperencies filteren)
                 if (i > 1) 
                     dist_prev_locpoint = sqrt((x-x_points(end))^2+(y-y_points(end))^2);
                     if  (dist_prev_locpoint > 200) % Then the value of x or y deviates a lot from the last point (not realistic)
-                        disp('dit is fout');
                         halfOfPoints = halfOfPoints -1;
+                        plot(handles.LocationPlot,x, y, 'k+', 'MarkerSize', 5, 'linewidth',2); % plot the point on the map
                     else
                         x_points = [x_points x]; %append the x coordinate to array
                         y_points = [y_points y]; %append the y coordinate to array
+                        plot(handles.LocationPlot,x, y, 'm+', 'MarkerSize', 5, 'linewidth',2); % plot the point on the map
                     end
                 else
                     x_points = [x_points x]; %append the x coordinate to array
                     y_points = [y_points y]; %append the y coordinate to array
+                    plot(handles.LocationPlot,x, y, 'm+', 'MarkerSize', 5, 'linewidth',2); % plot the point on the map
                 end
                 
                 % END of FIXME
@@ -70,11 +72,9 @@ function [end_orientation, lastTurnPos, optimizeWrongTurn] = driveKITT(offlineCo
                         [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, rep, callN, testCase, recordArgs, pointsAmount);% the duration of this computation is variable
                         plot(handles.LocationPlot,x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % plot the point on the map
                         
-
                         x_points = [x_points x]; %append the x coordinate to array
                         y_points = [y_points y]; %append the y coordinate to array
                         
-
                     %   Calculate the actual orientation again with an extra point
                     %   Make a trend line through the audio location points and calculate the actual angle
                         prms = polyfit(x_points,y_points,1);
