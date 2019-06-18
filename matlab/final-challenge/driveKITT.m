@@ -11,13 +11,31 @@ function [end_orientation, lastTurnPos] = driveKITT(offlineCom, offlineLoc, hand
             x_points = []; % empty array for the points
             y_points = []; % empty array for the points
             actualPathIsChecked = false; % if the next if-statement is true, then this value will become 'true' (to prevent multiple iterations of the if-statement)
+            halfOfPoints = floor(pointsAmount/2);
+            disp('halfofpoints:');
+            disp(halfOfPoints);
             for i=1:pointsAmount
-                [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, rep, callN, testCase, recordArgs);%FIXMEthe duration of this computation is variable
+                [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, rep, callN, testCase, recordArgs); %the duration of this computation is variable
                 plot(handles.LocationPlot,x, y, 'm+', 'MarkerSize', 5, 'linewidth',2); % plot the point on the map
-                x_points = [x_points x]; %append the x coordinate to array
-                y_points = [y_points y]; %append the y coordinate to array
                 
-                if(length(x_points) > floor(pointsAmount/2) && length(x_points) > 1 && ~actualPathIsChecked) % If KITT has traveled at least half of the path to end
+                % FIXME (location discreperencies filteren)
+                if (i > 1) 
+                    dist_prev_locpoint = sqrt((x-x_points(end))^2+(y-y_points(end))^2);
+                    if  (dist_prev_locpoint > 100) % Then the value of x or y deviates a lot from the last point (not realistic)
+                        disp('dit is fout');
+                        halfOfPoints = halfOfPoints -1;
+                    else
+                        x_points = [x_points x]; %append the x coordinate to array
+                        y_points = [y_points y]; %append the y coordinate to array
+                    end
+                else
+                    x_points = [x_points x]; %append the x coordinate to array
+                    y_points = [y_points y]; %append the y coordinate to array
+                end
+                
+                % END of FIXME
+                
+                if(length(x_points) > halfOfPoints && length(x_points) > 1 && ~actualPathIsChecked) % If KITT has traveled at least half of the path to end
                     % Make a trend line through the audio location points and calculate the actual angle
                     actualPathIsChecked = true;
                         
@@ -44,12 +62,13 @@ function [end_orientation, lastTurnPos] = driveKITT(offlineCom, offlineLoc, hand
                     dist = sqrt((y-endpoint(2))^2+(x-endpoint(1))^2); %distance from endpoint at current location
                     
                     if (end_dist_difference > 10) %then: stop and make a corrective turn
-%                         EPOCom(offlineCom, 'transmit', 'M150');% FIXME: brake or rollout? smoothstop?
                         smoothStop(offlineCom, 666); % 666 is the switch case for short breaking when the real speed is not very accurately known. Like in this case
-                        pause(1) %Wait for KITT to have stopped
+                        pause(0.5) %Wait for KITT to have stopped
                         % Retrieve a new point for audio location
-                        [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, rep, callN, testCase, recordArgs);%FIXMEthe duration of this computation is variable
+                        [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, rep, callN, testCase, recordArgs);% the duration of this computation is variable
                         plot(handles.LocationPlot,x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % plot the point on the map
+                        
+
                         x_points = [x_points x]; %append the x coordinate to array
                         y_points = [y_points y]; %append the y coordinate to array
                         
@@ -76,7 +95,7 @@ function [end_orientation, lastTurnPos] = driveKITT(offlineCom, offlineLoc, hand
                         [turntime, direction, turnEndPos, new_orientation] = calculateTurn(handles, [x_points(end), y_points(end)],endpoint,actual_orientation, t_radius, v_rot_prime);
                         turnEndSpeed = v_rot(turntime); % Velocity of KITT at the end of the new turn
                         new_dist = sqrt((endpoint(2)-y_points(end))^2+(endpoint(1)-x_points(end))^2);
-                        [drivingTime, ~] = KITTstopV2(new_dist, curves.ydis_brake, curves.yspeed_brake, curves.ydis_acc, curves.yspeed_acc, curves.brakeEnd, turnEndSpeed); % FIXME, %Time the car must drive in ms (straight line)
+                        [drivingTime, ~] = KITTstopV2(new_dist, curves.ydis_brake, curves.yspeed_brake, curves.ydis_acc, curves.yspeed_acc, curves.brakeEnd, turnEndSpeed); %Time the car must drive in ms (straight line)
                         disp('turning time (ms):');
                         disp( turntime);
                         disp('[direction (1:left, -1:right), new_orientation] = ');
