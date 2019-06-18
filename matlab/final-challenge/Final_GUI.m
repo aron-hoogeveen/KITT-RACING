@@ -22,7 +22,7 @@ function varargout = Final_GUI(varargin)
 
 % Edit the above text to modify the response to help Final_GUI
 
-% Last Modified by GUIDE v2.5 17-Jun-2019 16:13:54
+% Last Modified by GUIDE v2.5 18-Jun-2019 10:05:00
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -65,6 +65,7 @@ Out.MidpointY = 0;
 Out.Orientation = 0;
 Out.Voltage = 0;
 Out.Obstacle = 0;
+Out.RecTime = 0;
 handles.Out = Out;
 % rectangle(handles.LocationPlot, 'Position', [0,0,50,560], 'EdgeColor',[.9 .9 .9], 'FaceColor', [.9 .9 .9])
 % hold on;
@@ -114,6 +115,7 @@ if result == 0
     error('No connection established');
 else
     disp('Connection established');
+   
 end
 guidata(hObject,handles);
 
@@ -262,6 +264,7 @@ EPOCommunications('transmit',convertStringsToChars((strcat('F', string(handles.O
 EPOCommunications('transmit',convertStringsToChars((strcat('B', string(handles.Out.Fbit)))));
 EPOCommunications('transmit',convertStringsToChars((strcat('R', string(handles.Out.RepCount)))));
 EPOCommunications('transmit',convertStringsToChars((strcat('C0x', string(handles.Out.Bitcode)))));
+EPOCommunications('transmit', 'A1');
 disp('Beacon updated');
 
 
@@ -487,6 +490,7 @@ function Close_Callback(hObject, eventdata, handles)
 % hObject    handle to Close (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+ EPOCommunications('transmit', 'A0');
  EPOCommunications('close');
  disp('Connection closed');
 
@@ -599,6 +603,7 @@ state.EndLocY = get(handles.EndLocY, 'String');
 state.MidpointLocX = get(handles.MidpointLocX, 'String');
 state.MidpointLocY = get(handles.MidpointLocY, 'String');
 state.orientation = get(handles.orientation, 'String');
+state.RecTime = get(handles.RecTime, 'String');
 uisave('state'); % Let the user save multiple configurations
 
 
@@ -626,6 +631,7 @@ if exist(fileName)
     set(handles.MidpointLocX, 'String', state.MidpointLocX);
     set(handles.MidpointLocY, 'String', state.MidpointLocY);
     set(handles.orientation, 'String', state.orientation);
+    set(handles.RecTime, 'String', state.RecTime);
    
     Out.ComPort = state.Com_Port;
     Out.Fcarrier = state.Fcarrier;
@@ -640,6 +646,7 @@ if exist(fileName)
     Out.MidpointY = state.MidpointLocY;
     Out.Orientation = state.orientation;
     Out.Voltage = state.Voltage;
+    Out.RecTime = state.RecTime;
     handles.Out = Out;
   
 end
@@ -654,3 +661,33 @@ function pushbutton11_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton11 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+
+function RecTime_Callback(hObject, eventdata, handles)
+% hObject    handle to RecTime (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of RecTime as text
+%        str2double(get(hObject,'String')) returns contents of RecTime as a double
+
+Out = handles.Out;
+Out.RecTime = str2double(get(hObject,'String'));
+handles.Out = Out;
+guidata(hObject,handles);
+
+
+
+
+% --- Executes during object creation, after setting all properties.
+function RecTime_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to RecTime (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
