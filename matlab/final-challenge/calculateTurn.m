@@ -2,10 +2,12 @@
 % 29-05-2019
 % calculateTurn() is used to calculate the turning time at a given speed
 % curve and turning radius in order to directly face a destination
-function [turntime, direction, turnEndPos, new_orientation] = calculateTurn(handles, startpoint, destination, orientation, t_radius, v_rot_prime)
+function [turntime, direction, turnEndPos, new_orientation, optimizeWrongTurn] = calculateTurn(handles, startpoint, destination, orientation, t_radius, v_rot_prime)
     % For our chosen angle(20 degrees):
     % t_radius; %cm
     % v_rot; %speed when rotating in cm per second (vector as function of t(ms);
+    
+    outOfField = false; % Will become true if the calculated turn is out of the field 
     
     % Calculate the angle of the points and compare to orientation to
     % determine the best turning direction
@@ -19,6 +21,7 @@ function [turntime, direction, turnEndPos, new_orientation] = calculateTurn(hand
     direction = sign(angle_diff); % 1 is left, -1 is right
     
     % Track along a circle until both new location and new theta match for t
+    optimizeWrongTurn = false;
     found = 0;
     t = 1;
     while found == 0
@@ -29,13 +32,28 @@ function [turntime, direction, turnEndPos, new_orientation] = calculateTurn(hand
         displ_ang = -1*direction*90+orientation; % Displacement angle for driving along a circle
         x_incr = startpoint(1)+ t_radius*(cosd(theta-orientation+displ_ang)-cosd(displ_ang)); % Calculating the new x
         y_incr = startpoint(2)+ t_radius*(sind(theta-orientation+displ_ang)-sind(displ_ang)); % Calculating the new y
-    
+
         if (abs(theta) > 180)
             theta_lim = theta-sign(theta)*360; %limit theta to -180:180 degrees
         else
             theta_lim = theta;
         end
         
+        
+        if (optimizeWrongTurn)
+           dist = sqrt((x_incr-destination(1))^2 + (y_incr-destination(2))^2);
+           if (dist < minDist(1))
+               minDist = [dist, t, x_incr, y_incr, theta_lim];
+           elseif (dist > minDist(1) + 40)
+               t = minDist(2);
+               x_incr = minDist(3);
+               y_incr = minDist(4);
+               theta_lim = minDist(5);
+               found = 1;
+           end
+        end
+        
+
         % Drawing points of the turning trajectory for debugging
         if (~mod(t,200))
                 plot(handles.LocationPlot, x_incr, y_incr, 'b.', 'MarkerSize', 5);
@@ -44,13 +62,27 @@ function [turntime, direction, turnEndPos, new_orientation] = calculateTurn(hand
         % Calculate the new alfa for the change position
         alfa_new = atandWithCompensation((destination(2)-y_incr),(destination(1)-x_incr)); 
         
+        if (x_incr > 460-10 || x_incr < 0+10 || y_incr > 460-10 || y_incr < 0+10) % Can occur when turning at waypoint
+            outOfField = true;
+            %disp('Turn is out of field, driving backwards...');
+            
+            % Calculate how much kitt should drive backwards to make the
+            % turn within reach
+           %FIXME
+            
+            
+        end
         % If the angles match, stop the turning
         if (abs(theta_lim - alfa_new) < 0.1)
             found = 1;
         end
         
-        if (t>9999)
-            error('A suitable turn could not be found (t>10s). Perhaps the start and destination are too close.');           
+        if (t>14999 && ~optimizeWrongTurn)    
+            warning('A suitable turn could not be found (t>10s). Perhaps the start and destination are too close.');           
+            disp("A turn as close as possible to the endpoint will now be performed");
+            optimizeWrongTurn = true;
+            minDist = [1000, 0]; % initialize minDist with big distance
+            t = 0; % reset the time
         end
         t = t+1;
     end
@@ -58,5 +90,5 @@ function [turntime, direction, turnEndPos, new_orientation] = calculateTurn(hand
     % Return variables (direction was determined earlier)
     turntime = t; %ms
     turnEndPos = [x_incr, y_incr];
-    new_orientation = theta;
+    new_orientation = theta_lim;
 end%turningTime
