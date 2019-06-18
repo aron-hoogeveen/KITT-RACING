@@ -46,7 +46,7 @@ while(true)
     obstacles = str2double(string(handles.Out.Obstacle));
     recordArgs.RepCount = str2double(string(handles.Out.RepCount));
     recordArgs.Fbit = str2double(string(handles.Out.Fbit));
-    recordArgs.RecTime = handles.Out.RecTime;
+    recordArgs.RecTime = str2double(string(handles.Out.RecTime));
     if (waypoint(1) == -1 || waypoint(2) == -1)
         KITTControl(handles, voltage,orientation, startpoint, endpoint, recordArgs);
     else
