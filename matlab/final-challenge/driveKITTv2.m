@@ -1,4 +1,4 @@
-function drivingDistance = driveKITTv2(offlineCom, distToEnd, transmitDelay, curves, d_q, ang_q)
+function drivingDistance = driveKITTv2(offlineCom, handles, distToEnd, transmitDelay, curves, d_q, ang_q)
 
     % Determine time KITT drives (small distance, dependent on distToEnd);
     drivingDistance = distToEnd/5;

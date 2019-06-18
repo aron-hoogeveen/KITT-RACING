@@ -186,10 +186,11 @@ if (challengeA)% Challenge A: no waypoint
         [x_averaged(1), y_averaged(1)] = averageLocation(x_points, y_points); % store correct actual location in averaged vector
         distToEnd = sqrt((x_averaged(1)-endpoint(1))^2+(y_averaged(1)-endpoint(2))^2);
         % Drive a small distance
-        drivingDistance = driveKITTv2(offlineCom, distToEnd, transmitDelay, curves, d_q, ang_q); 
+        drivingDistance = driveKITTv2(offlineCom, handles, distToEnd, transmitDelay, curves, d_q, ang_q); 
         
-        [x_averaged, y_averaged] = evaluateLocation(offlineLoc, current_orienation, x_averaged, y_averaged, drivingDistance, recordArgs);
-        
+        current_orientation = new_orientation; %Orientation from the end of the first curve
+        [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, current_orientation, x_averaged, y_averaged, drivingDistance, recordArgs);
+        trendCorrect(handles, x_averaged, y_averaged, endPoint,  t_radius, v_rot_prime);
         
         %[~, lastTurnPos] = driveKITT(offlineCom, offlineLoc, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, curves, d_q, ang_q, recordArgs); % recursive function (will initiate a turn if necessary)
 
