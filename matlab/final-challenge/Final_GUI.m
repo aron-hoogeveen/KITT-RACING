@@ -22,7 +22,7 @@ function varargout = Final_GUI(varargin)
 
 % Edit the above text to modify the response to help Final_GUI
 
-% Last Modified by GUIDE v2.5 17-Jun-2019 16:13:54
+% Last Modified by GUIDE v2.5 18-Jun-2019 10:05:00
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -114,6 +114,7 @@ if result == 0
     error('No connection established');
 else
     disp('Connection established');
+    EPOCommunications('transmit', 'A1');
 end
 guidata(hObject,handles);
 
@@ -654,3 +655,33 @@ function pushbutton11_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton11 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+
+function RecTime_Callback(hObject, eventdata, handles)
+% hObject    handle to RecTime (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of RecTime as text
+%        str2double(get(hObject,'String')) returns contents of RecTime as a double
+
+Out = handles.Out;
+Out.RecTime = str2double(get(hObject,'String'));
+handles.Out = Out;
+guidata(hObject,handles);
+
+
+
+
+% --- Executes during object creation, after setting all properties.
+function RecTime_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to RecTime (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

@@ -44,9 +44,13 @@ while(true)
     waypoint = [str2double(string(handles.Out.MidpointX)) str2double(string(handles.Out.MidpointY))];
     voltage = str2double(string(handles.Out.Voltage));
     obstacles = str2double(string(handles.Out.Obstacle));
+    recordArgs.RepCount = str2double(string(handles.Out.RepCount));
+    recordArgs.Fbit = str2double(string(handles.Out.Fbit));
+    recordArgs.RecTime = handles.Out.RecTime;
     if (waypoint(1) == -1 || waypoint(2) == -1)
         KITTControl(handles, voltage,orientation, startpoint, endpoint, recordArgs);
     else
         KITTControl(handles, voltage,orientation, startpoint, endpoint, recordArgs, waypoint, obstacles);
     end
+     EPOCommunications('transmit', 'A0');
 end%while(true)

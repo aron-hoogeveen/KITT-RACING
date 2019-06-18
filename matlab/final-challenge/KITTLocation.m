@@ -127,7 +127,7 @@ else
 %     callN = callN + 1;
     % Retrieve the coordinates of the KITT car
     
-    [coord, ~] = Record_TDOA(recordArgs.ref, recordArgs.peakperc, recordArgs.mic, recordArgs.d, recordArgs.peakn, recordArgs.Fs);
+    [coord, ~] = Record_TDOA(recordArgs.ref, recordArgs.peakperc, recordArgs.mic, recordArgs.d, recordArgs.peakn, recordArgs.Fs, recordArgs.Fbit, recordArgs.RepCount, recordArgs.RecTime);
     x = coord(1);
     y = coord(2);
     callN = callN;
