@@ -17,7 +17,7 @@ function [end_orientation, lastTurnPos, optimizeWrongTurn] = driveKITT(offlineCo
             disp('halfofpoints:');
             disp(halfOfPoints);
             for i=1:pointsAmount
-                [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, rep, callN, testCase, recordArgs, pointsAmount); %the duration of this computation is variable
+                [x, y, callN] = KITTLocation(offline, recordArgs, callN); %the duration of this computation is variable
                
                 
                 % FIXME (location discreperencies filteren)
@@ -69,7 +69,7 @@ function [end_orientation, lastTurnPos, optimizeWrongTurn] = driveKITT(offlineCo
                         smoothStop(offlineCom, 666); % 666 is the switch case for short breaking when the real speed is not very accurately known. Like in this case
                         pause(0.5) %Wait for KITT to have stopped
                         % Retrieve a new point for audio location
-                        [x, y, callN] = KITTLocation(offlineLoc, turnEndPos, endpoint, rep, callN, testCase, recordArgs, pointsAmount);% the duration of this computation is variable
+                        [x, y, callN] = KITTLocation(offline, recordArgs, callN);% the duration of this computation is variable
                         plot(handles.LocationPlot,x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % plot the point on the map
                         
                         x_points = [x_points x]; %append the x coordinate to array
