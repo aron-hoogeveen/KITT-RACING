@@ -127,7 +127,9 @@ function [end_orientation, lastTurnPos, optimizeWrongTurn] = driveKITT(offlineCo
                 end
             end
             t_loc_elapsed = toc(t_loc_start); % Duration of audio location computing
-            if (doPause)
+            if (doPause && ~optimizeWrongTurn)
+                disp("wrongturn:");
+                disp(optimizeWrongTurn);
                 pause((drivingTime - 45)/1000 - t_loc_elapsed);
                 smoothStop(offlineCom, KITTspeedNum);
                 disp('heading towards end! with slow speed');

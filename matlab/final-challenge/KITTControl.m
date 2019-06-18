@@ -30,8 +30,8 @@ function [] = KITTControl(handles, voltage, orientation, startpoint, endpoint, r
 % disp("%%%%%_____ END OF DISPLAYING PARAMETERS _____%%%%%");
 
 testCase = 1; %KITTlocation simulation with a deviated path from ideal
-offlineCom = true; %Is KITT connected?
-offlineLoc = true; % Location estimation
+offlineCom = false; %Is KITT connected?
+offlineLoc = false; % Location estimation
 step2 = true;
 challengeA = true; % Default challenge is A
 
@@ -148,7 +148,7 @@ if (challengeA)% Challenge A: no waypoint
     % turnEndPos = [x, y] at the end of the turn;
     turnEndSpeed = 1000*v_rot(turntime); % Velocity of KITT at the end of the first turn (in cm/s)
     [drivingTime, ~] = KITTstopV2(new_dist, curves.ydis_brake, curves.yspeed_brake, curves.ydis_acc, curves.yspeed_acc, curves.brakeEnd, turnEndSpeed); % Time the car must drive for step 2 in challenge A in ms (straight line)
-    maximumLocalizationTime = 200; %Maximum computation time to receive audio location
+    maximumLocalizationTime = 600; %Maximum computation time to receive audio location
     % Compute the amount of location points that can be retrieved in driving time
     pointsAmount = floor((drivingTime-transmitDelay)/maximumLocalizationTime); %45 is transmit delay
 
