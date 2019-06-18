@@ -21,7 +21,7 @@ function [end_orientation, lastTurnPos] = driveKITT(offlineCom, offlineLoc, hand
                 % FIXME (location discreperencies filteren)
                 if (i > 1) 
                     dist_prev_locpoint = sqrt((x-x_points(end))^2+(y-y_points(end))^2);
-                    if  (dist_prev_locpoint > 100) % Then the value of x or y deviates a lot from the last point (not realistic)
+                    if  (dist_prev_locpoint > 200) % Then the value of x or y deviates a lot from the last point (not realistic)
                         disp('dit is fout');
                         halfOfPoints = halfOfPoints -1;
                     else

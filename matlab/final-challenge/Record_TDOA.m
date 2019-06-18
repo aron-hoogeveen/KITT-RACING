@@ -2,7 +2,7 @@ function [coord,y, disdiff] = Record_TDOA(ref,peakperc,mic,d,peakn, Fs)
 %RECORD_TDOA Summary of this function goes here
 %   Detailed explanation goes here
 
-N = 4*48000;                          % # samples (records 100ms)
+N = 0.5*48000;                          % # samples (records 100ms)
 maxChannel = 5;                     %# mics
 
 
@@ -19,7 +19,7 @@ maxChannel = 5;                     %# mics
     playrec('delPage'); % delete the page (can be done every few cycle)
     
     B = 8000;
-    R = 4000;
+    R = 1000;
     
     %%Call TDOA and Localisation functions
     disdiff = tdoa(y,ref,peakperc,Fs,B,R,peakn);

@@ -109,7 +109,7 @@ function Connect_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 disp(strcat('\\.\com',string(handles.Out.ComPort)));
-result = EPOCommunications('open',convertStringsToChars(handles.Out.ComPort));
+result = EPOCommunications('open',(strcat('\\.\com', convertStringsToChars(handles.Out.ComPort))));
 if result == 0
     error('No connection established');
 else

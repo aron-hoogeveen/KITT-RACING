@@ -4,7 +4,7 @@ handles = guidata(H);
 peakperc = 80;
 load datamicloc.mat;
 load refsignal2.mat;
-d = 3;
+d = 2;
 peakn = 2;
 
 uiwait(handles.figure1);
