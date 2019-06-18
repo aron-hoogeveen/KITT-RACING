@@ -1,6 +1,7 @@
 % chanest
 % Author: Rik van der Hoorn - 4571150
 % Last modified: 01-06-19
+%
 % This function takes x and y as inputs to estimate the channel
 % using deconvolution in frequency domain
 
