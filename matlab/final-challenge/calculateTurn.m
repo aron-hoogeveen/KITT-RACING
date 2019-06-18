@@ -29,7 +29,7 @@ function [turntime, direction, turnEndPos, new_orientation] = calculateTurn(hand
         displ_ang = -1*direction*90+orientation; % Displacement angle for driving along a circle
         x_incr = startpoint(1)+ t_radius*(cosd(theta-orientation+displ_ang)-cosd(displ_ang)); % Calculating the new x
         y_incr = startpoint(2)+ t_radius*(sind(theta-orientation+displ_ang)-sind(displ_ang)); % Calculating the new y
-    
+
         if (abs(theta) > 180)
             theta_lim = theta-sign(theta)*360; %limit theta to -180:180 degrees
         else

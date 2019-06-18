@@ -1,8 +1,10 @@
+function [] = KITTControl(handles, voltage, orientation, startpoint, endpoint, recordArgs, waypoint, obstacles)
+%[] = KITTControl(handles, voltage, orientation, startpoint, endpoint, 
+%    recordArgs, waypoint, obstacles);
+%    KITTControl is the main 
 % EPO-4 Group B4
 % 29-05-2019
 % [] = KITTControl(argsIn) is the main control unit for the final challenge
-function [] = KITTControl(handles, voltage, orientation, startpoint, endpoint, recordArgs, waypoint, obstacles)
-
 % Arguments:
 %   orientation: -180 to 180 degrees, x-axis is 0;
 %   startpoint: [x, y] location of startingpoint
@@ -15,8 +17,6 @@ function [] = KITTControl(handles, voltage, orientation, startpoint, endpoint, r
 % 180 links: KITTControl(17.18, 0, [200,200], [55,370])
 % 90 links: KITTControl(17.18, 0, [200,200], [285,400])
 
-% FIXME DEBUG the following code will display all input arguments of this
-% function
 % disp("%%%%%_____ ALL INPUT PARAMETERS OF KITTControl _____%%%%%");
 % 
 % disp("-----handles-----"); disp(handles);
@@ -64,7 +64,7 @@ curves.ydis_acc = ydis_acc; clear ydis_acc;
 curves.yspeed_acc = yspeed_acc; clear yspeed_acc;
 curves.ydis_brake = ydis_brake; clear ydis_brake;
 curves.yspeed_brake = yspeed_brake; clear yspeed_brake;
-curves.brakeEnd = 186.5; % Predefined value. FIXME add explanation what this brakeEnd means.
+curves.brakeEnd = 186.5; % Predefined value. Distance in the braking distance-velocity curve at which the speed becomes zero
 % curves.ydis_acc = ydis_acc;
 % curves.yspeed_acc = yspeed_acc;
 % curves.ydis_brake = ydis_brake;
@@ -147,7 +147,7 @@ if (challengeA)% Challenge A: no waypoint
     % % Calculate the variables for step 2:
     % turnEndPos = [x, y] at the end of the turn;
     turnEndSpeed = 1000*v_rot(turntime); % Velocity of KITT at the end of the first turn (in cm/s)
-    [drivingTime, ~] = KITTstopV2(new_dist, curves.ydis_brake, curves.yspeed_brake, curves.ydis_acc, curves.yspeed_acc, curves.brakeEnd, turnEndSpeed); % FIXME, %Time the car must drive for step 2 in challenge A in ms (straight line)
+    [drivingTime, ~] = KITTstopV2(new_dist, curves.ydis_brake, curves.yspeed_brake, curves.ydis_acc, curves.yspeed_acc, curves.brakeEnd, turnEndSpeed); % Time the car must drive for step 2 in challenge A in ms (straight line)
     maximumLocalizationTime = 210; %Maximum computation time to receive audio location
     % Compute the amount of location points that can be retrieved in driving time
     pointsAmount = floor((drivingTime-transmitDelay)/maximumLocalizationTime); %45 is transmit delay
@@ -170,7 +170,6 @@ if (challengeA)% Challenge A: no waypoint
         EPOCom(offlineCom, 'transmit', 'M158'); % Slow driving
         finished = 0;
         
-        % FIXME DEBUG TODO
         callN = 5;
         distlist = []; %list of distances from the endpoint to KITT's location
         % A failsafe is implemented if KITT is not driving sufficiently close
@@ -298,7 +297,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     pointsAmount = floor((drivingTime-transmitDelay)/maximumLocalizationTime); %45 is transmit delay
 
     input('Press enter to continue driving to the endpoint ');
-    
+
     %%% B.STEP 4: Turn KITT
     turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
 

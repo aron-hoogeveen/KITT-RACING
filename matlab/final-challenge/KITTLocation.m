@@ -1,5 +1,5 @@
 function [x, y, callN] = KITTLocation(offline, turnEndPos, endpoint, rep, callN, testCase, recordArgs)
-%[] = retrieveAudioLocationFIXME_exlacmationmark(argin) returns an x and y
+%[] = KITTLocation(argin) returns an x and y
 %    coordinate. When <offline>==true then the function will return sample
 %    data. If <offline>==false than this function calls the function that
 %    requests the real time location of the car.
@@ -24,8 +24,6 @@ if (offline)
     end
 end
 if (offline)
-    %TODO read out sample data from a file and output the next coordinates
-    % everytime the function is called. 
     if (testCase == 0)
         
         % The car drives at a constant speed in a straight line to the

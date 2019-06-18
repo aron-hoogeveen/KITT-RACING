@@ -7,13 +7,7 @@ function [] = turnKITT(offline, direction, turntime, transmitDelay, d_q, ang_q)
         end
 
         KITTspeed = 'M158';
-
         EPOCom(offline, 'transmit', steering);
-%         KITTspeed = 'M165';
-%         EPOCom(offline, 'transmit', KITTspeed);
-%         pause(0.1);
-%         KITTspeed = 'M158';
-% max speed time = 200;
         EPOCom(offline, 'transmit', KITTspeed);
         pause(turntime/1000 - transmitDelay/1000);  %let the car drive for calculated time
         EPOCom(offline, 'transmit', 'D152'); % wheels straight, KITt is still driving
