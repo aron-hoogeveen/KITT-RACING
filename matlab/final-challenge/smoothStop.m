@@ -6,7 +6,7 @@ function [] = smoothStop(offline, speed)
 %    damage to the car.
 
 switch speed
-    case 157
+    case 158
         stopSpeed = 'M145';
         stopTime = 0.2;
         EPOCom(offline,'transmit', stopSpeed);

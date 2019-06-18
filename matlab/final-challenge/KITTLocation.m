@@ -1,4 +1,4 @@
-function [x, y, callN] = KITTLocation(offline, turnEndPos, endpoint, rep, callN, testCase, recordArgs)
+function [x, y, callN] = KITTLocation(offline, turnEndPos, endpoint, rep, callN, testCase, recordArgs, pointsAmount)
 %[] = KITTLocation(argin) returns an x and y
 %    coordinate. When <offline>==true then the function will return sample
 %    data. If <offline>==false than this function calls the function that
@@ -24,6 +24,15 @@ if (offline)
     end
 end
 if (offline)
+    % The distance between the trajectory of the car and the endpoint
+    % should be greater than 10 cm to trigger a steering correction. 
+    dist  = sqrt((endpoint(1)-turnEndPos(1))^2 + (endpoint(2)-turnEndPos(2))^2); %Distance between KITT and endpoint
+    deviation = dist/8; %The deviation of the endpoint of the simulated path is dependent on the distance
+    if (nargin > 7)
+        simPointsAmount = pointsAmount-1;
+    else
+        simPointsAmount  = floor(dist/22)
+    end
     if (testCase == 0)
         
         % The car drives at a constant speed in a straight line to the
@@ -58,11 +67,7 @@ if (offline)
 
         turnMoreLeft = true; % KITT's turns end in a path left to the endpoint, if false: KITT is headed more to the right of endpoint
         
-        % The distance between the trajectory of the car and the endpoint
-        % should be greater than 10 cm to trigger a steering correction. 
-        dist  = sqrt((endpoint(1)-turnEndPos(1))^2 + (endpoint(2)-turnEndPos(2))^2); %Distance between KITT and endpoint
-        deviation = dist/8; %The deviation of the endpoint of the simulated path is dependent on the distance
-        simPointsAmount = floor(dist/15);
+
         
         % shifts a lot with small changes in x, due to a high value of m in y = mx+b
         % Calculate at what location the deviated endpoint must be to be perpendicular to the start-end line

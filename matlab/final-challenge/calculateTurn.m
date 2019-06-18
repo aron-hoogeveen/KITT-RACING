@@ -2,7 +2,7 @@
 % 29-05-2019
 % calculateTurn() is used to calculate the turning time at a given speed
 % curve and turning radius in order to directly face a destination
-function [turntime, direction, turnEndPos, new_orientation] = calculateTurn(handles, startpoint, destination, orientation, t_radius, v_rot_prime)
+function [turntime, direction, turnEndPos, new_orientation, optimizeWrongTurn] = calculateTurn(handles, startpoint, destination, orientation, t_radius, v_rot_prime)
     % For our chosen angle(20 degrees):
     % t_radius; %cm
     % v_rot; %speed when rotating in cm per second (vector as function of t(ms);
