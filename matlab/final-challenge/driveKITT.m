@@ -2,8 +2,7 @@ function [end_orientation, lastTurnPos, optimizeWrongTurn] = driveKITT(offlineCo
             % KITT is already driving when this function is called (with
             % straight wheels)
             KITTspeedNum = 158;
-            KITTspeed = char(strcat('M', KITTspeedNum));
-            KITTspeed = 'M158';
+            KITTspeed = char(strcat('M', string(KITTspeedNum)));
             EPOCom(offlineCom, 'transmit', KITTspeed);
             callN = 1; %simulation only
             rep = 1; %simulation only
