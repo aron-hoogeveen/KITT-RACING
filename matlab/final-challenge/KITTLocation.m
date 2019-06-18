@@ -16,6 +16,7 @@ if (offline)
     if (callN == 1)
         % Ask the user how many value pairs he/she would like to input
         i_user = input('Enter number of locations: ');
+                
         if i_user < 1
             warning('Input must be greater than zero. Setting input value to 1 for you...');
             i_user = 1;

@@ -23,8 +23,11 @@ function [pathIsGood, turntime, direction, turnEndPos, new_orientation, optimize
     extended_trend = rico*x_samp  +b;
     % The distance from a point (x_p,y_p) to a line m*x +b is |m*x_p - y_p + b|/sqrt(m^2 + 1)
     end_dist_difference = abs(rico*endpoint(1) - endpoint(2) + b)/sqrt(rico^2+1); % distance between endpoint and trend
-
-    if (end_dist_difference > 10) %then: calculate a new turn
+    
+    alfa = atandWithCompensation(endpoint(2)-y_averaged(end),endpoint(1)-x_averaged(end));
+    angle_diff = abs(alfa - actual_orientation);
+    
+    if (end_dist_difference > 10 || angle_diff > 90) %then: calculate a new turn
         pathIsGood = false; % Path deviates from the ideal path: make a corrective turn
         plot(handles.LocationPlot,x_samp, x_samp*rico+b, '--m'); % plot the trend line
 

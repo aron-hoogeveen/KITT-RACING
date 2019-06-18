@@ -12,7 +12,7 @@ function [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, curren
     i = 1;
     callN = 1; % Initialization of <callN> that is used in KITTLocation when offline mode is used.
     while i < 6
-       [x, y, callN] = KITTLocation(offline, recordArgs, callN);
+       [x, y, callN] = KITTLocation(offlineLoc, recordArgs, callN);
 
        % Check for validity 
        distToLastAveragedPoint = sqrt((x-x_averaged(end))^2+(y-y_averaged(end))^2);

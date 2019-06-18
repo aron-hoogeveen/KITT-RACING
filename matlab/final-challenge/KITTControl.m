@@ -1,19 +1,10 @@
 function [] = KITTControl(handles, voltage, orientation, startpoint, endpoint, recordArgs, waypoint, obstacles)
 %[] = KITTControl(handles, voltage, orientation, startpoint, endpoint, 
 %    recordArgs, waypoint, obstacles);
-%    KITTControl is the main 
-% EPO-4 Group B4
-% 29-05-2019
-% [] = KITTControl(argsIn) is the main control unit for the final challenge
-% Arguments:
-%   orientation: -180 to 180 degrees, x-axis is 0;
-%   startpoint: [x, y] location of startingpoint
-%   endpoint: [x, y] location of endpoint
-%   recordArgs: struct with all the input arguments for the function
-%     Record_TDOA.
-%   waypoint: [x, y] location of waypoint, if nargin < 4: no waypoint
-%   obstacles: true/false, if nargin < 5: no obstacles
-%
+%    
+%    ----------------------------------------------------------------------
+%    - TODO: UPDATE THIS DESCRIPTION
+%    ----------------------------------------------------------------------
 % 180 links: KITTControl(17.18, 0, [200,200], [55,370])
 % 90 links: KITTControl(17.18, 0, [200,200], [285,400])
 
@@ -35,6 +26,8 @@ offlineLoc = true; % Location estimation
 step2 = true;
 challengeA = true; % Default challenge is A
 
+% FIXME: The check for input arguments has still to be updated. It is
+% probably a bit out of date (but still working though on 18 june).
 % Check for input errors
 disp('(O.O) - Checking input arguments for any errors...');
 if (nargin < 6)
@@ -148,10 +141,7 @@ if (challengeA)% Challenge A: no waypoint
     % turnEndPos = [x, y] at the end of the turn;
     turnEndSpeed = 1000*v_rot(turntime); % Velocity of KITT at the end of the first turn (in cm/s)
     [drivingTime, ~] = KITTstopV2(new_dist, curves.ydis_brake, curves.yspeed_brake, curves.ydis_acc, curves.yspeed_acc, curves.brakeEnd, turnEndSpeed); % Time the car must drive for step 2 in challenge A in ms (straight line)
-    maximumLocalizationTime = 600; %Maximum computation time to receive audio location
-    % Compute the amount of location points that can be retrieved in driving time
-    pointsAmount = floor((drivingTime-transmitDelay)/maximumLocalizationTime); %45 is transmit delay
-
+   
     %%%%%%%%%%%%%%%%%%%%%% START DRIVING %%%%%%%%%%%%%%%%%%%%%%%%
     input('Challenge A: Press any key to start driving','s')
     %%% A.STEP 1: Turn KITT
@@ -265,62 +255,85 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     %%%%%%%%%%%%%%%%%%%%%% START DRIVING %%%%%%%%%%%%%%%%%%%%%%%%
     input('Challenge B: press any key to start driving','s')
     %%% B.STEP 1: Turn KITT
+    finished = 0;
     turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
+    EPOCom(offlineCom, 'transmit', 'M150'); % rollout
+    pause(turnEndSpeed/100); % Pause for the rollout of complete (dependent on turnEndSpeed)
 
     %%% B.STEP 2: Accelerate and stop 100cm before point (correct if necessary)
-    [waypoint_orientation, lastTurnPos, optimizeWrongTurn] = driveKITT(offlineCom, offlineLoc, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, waypoint, transmitDelay, v_rot, t_radius, v_rot_prime, curves, d_q, ang_q, recordArgs); % recursive function (will initiate a turn if necessary)
-    % FIXME: waypoint_orientation differs if calculateTurn results in a
-    % wrong turn
+    x_averaged = [];
+    y_averaged = [];
+
+    % First request of location (6 times)
+    x_points = [];
+    y_points = [];
+    callN = 1;
+    i = 1;
+    while i < 6
+       [x, y, callN] = KITTLocation(offlineLoc, recordArgs, callN);
+
+       % Check for validity 
+       distToTurnEndPos = sqrt((x-turnEndPos(1))^2+(y-turnEndPos(2))^2);
+       if(distToTurnEndPos < 100)
+        x_points = [x_points x];
+        y_points = [y_points y];
+        disp('added');
+        i = i +1;
+        plot(handles.LocationPlot, x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % plot the location point on the map
+       else  
+           disp('i want one more');
+           plot(handles.LocationPlot, x, y, 'k+',  'MarkerSize', 5, 'linewidth',2); % plot the wrong location point on the map
+       end
+    end
+    [x_averaged(1), y_averaged(1)] = averageLocation(x_points, y_points); % store correct actual location in averaged vector
+    disp("Current loc:")
+    disp(string(x_averaged(end)) + " and " + string (y_averaged(end)));
     
-    %%% B.STEP 3: slowly drive the remaining (small) distance to the waypoint and stop/rollout
-    % FIXME If the waypoint is not exactly reached (no turn found) the car
-    % is somewhere near the waypoit, but should not drive further. It
-    % should Emmediatly calculate the remaining route to the end point
-    if (~optimizeWrongTurn)
-        EPOCom(offlineCom, 'transmit', 'M158'); % Slow driving
 
-        finished = 0;
+    while finished == 0
+        % Drive a small distance
+        distToEnd = sqrt((x_averaged(end)-waypoint(1))^2+(y_averaged(end)-waypoint(2))^2);
+        drivingDistance = driveKITTv2(offlineCom, handles, distToEnd, transmitDelay, curves, d_q, ang_q); 
+        current_orientation = new_orientation; %Orientation from the end of the first turn
+        % Retrieve new location
+        [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, current_orientation, x_averaged, y_averaged, drivingDistance, recordArgs);
+        disp("Current loc:")
+        disp(string(x_averaged(end)) + " and " + string (y_averaged(end)));
+        % Check if waypoint is reached
+        dist = sqrt((waypoint(2)-y_averaged(end))^2+(waypoint(1)-x_averaged(end))^2); % distance between KITT and the endpoint
 
-        callN = 5;
-        distlist = []; %list of distances from the endpoint to KITT's location
-        % A failsafe is implemented if KITT is not driving sufficiently close
-        % to the waypoint (to prevent it from never stopping)
-        failsafeN = 0; %number of times it was found to be driving away from the endpoint
-        while (~finished)
-            % Continuously retrieve the audio location
-            [x, y, callN] = KITTLocation(offline, recordArgs, callN);% The duration of this computation is variable
-            plot(handles.LocationPlot, x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % Plot the location point on the map
+        if (dist < 10)  % Car is withing reach of waypoint
+            finished = 1;
+        end
 
-            dist = sqrt((waypoint(2)-y)^2+(waypoint(1)-x)^2); % distance between KITT and the endpoint
-            distlist = [distlist dist]; %append dist to distlist
-            mindist = min(distlist); %minimal value of the distance
 
-            if (dist < 10)
-                finished = 1;
-                current_loc = [x, y];
-            elseif (dist > mindist) % If KITT is driving away from the endpoint
-                failsafeN = failsafeN + 1;
-                if (failsafeN > 1) % If dist>mindist occurs 3 times, failsafe is activated
-                    disp("FAILSAFE STOP: waypoint was not within reach");
-                    finished = 1;
-                    current_loc = [x, y];
-                end
+        % Check if the path is good and if not:make a turn (pathIsGood =
+        % false)
+        [pathIsGood, turntime, direction, turnEndPos, new_orientation, optimizeWrongTurn] = trendCorrect(handles, x_averaged, y_averaged, waypoint,  t_radius, v_rot_prime, v_rot);
+        if (~pathIsGood)
+            turnEndSpeed = 1000*v_rot(turntime); % Velocity of KITT at the end of corrective turn (in cm/s)
+            turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
+            EPOCom(offlineCom, 'transmit', 'M150'); % rollout
+            pause(turnEndSpeed/100);
+            if (optimizeWrongTurn)
+                finished = 1;              
             end
         end
-        EPOCom(offlineCom, 'transmit', 'M150'); % Rollout (can be changed to a stop)
-    else
-        smoothStop(offlineCom, 158);
-    end%if(~optimizeWrongTurn)
+    end%while finished
+    disp("Waypoint reached!"); %Destination reached  
     
-    disp("Waypoint reached!"); %Waypoint reached
+    waypoint_orientation = new_orientation;
+    currentloc = [x_averaged(end), y_averaged(end)]; % waypoint is adjusted to current location
     
-    % Retrieve actual location (as this is more accurate than waypoint itself)
-%     callN = 14; % Last point in the simulated location vector
-%     [x, y, callN] = KITTLocation(offline, recordArgs, callN);
-%    
-%     
-    % Calculate the second turn to the startpoint
-    [turntime, direction, turnEndPos, new_orientation, ~] = calculateTurn(handles, current_loc, endpoint,waypoint_orientation, t_radius, v_rot_prime);
+    % CHALLENGE B TO THE END POINT
+    dist = sqrt((endpoint(2)-currentloc(2))^2+(currentloc(1)-endpoint(1))^2);
+    alfa_begin = atandWithCompensation(endpoint(2)-currentloc(2),endpoint(1)-currentloc(1));
+    if ((abs(alfa_begin - waypoint_orientation) > 150) && dist < 200) %car is facing other way and distance is small
+        %consider driving backwards
+    end
+
+    % B. Calculate the turn (step 1)
+    [turntime, direction, turnEndPos, new_orientation, ~] = calculateTurn(handles, currentloc,endpoint,waypoint_orientation, t_radius, v_rot_prime);
     disp('turning time (ms):');
     disp( turntime);
     disp('[direction (1:left, -1:right), new_orientation] = ');
@@ -328,59 +341,83 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     disp('turnEndPos (x, y) = ');
     disp( turnEndPos);
     new_dist = sqrt((endpoint(2)-turnEndPos(2))^2+(endpoint(1)-turnEndPos(1))^2);
-    plot(handles.LocationPlot,turnEndPos(1), turnEndPos(2), 'b.', 'MarkerSize', 10); % plot the endlocation of the turn
+    plot(handles.LocationPlot,turnEndPos(1), turnEndPos(2), 'b.', 'MarkerSize', 10);
 
-    % % Calculate the variables for step 4:
+    % % B. Calculate the variables for step 2:
     % turnEndPos = [x, y] at the end of the turn;
     turnEndSpeed = 1000*v_rot(turntime); % Velocity of KITT at the end of the first turn (in cm/s)
-    [drivingTime, ~] = KITTstopV2(new_dist, curves.ydis_brake, curves.yspeed_brake, curves.ydis_acc, curves.yspeed_acc, curves.brakeEnd, turnEndSpeed); %Time the car must drive for step 4 in challenge B in ms (straight line)
-    % Compute the amount of location points that can be retrieved in driving time
-    pointsAmount = floor((drivingTime-transmitDelay)/maximumLocalizationTime); %45 is transmit delay
-
-    input('Press enter to continue driving to the endpoint ');
-
-    %%% B.STEP 4: Turn KITT
+    [drivingTime, ~] = KITTstopV2(new_dist, curves.ydis_brake, curves.yspeed_brake, curves.ydis_acc, curves.yspeed_acc, curves.brakeEnd, turnEndSpeed); % Time the car must drive for step 2 in challenge A in ms (straight line)
+  
+    %%%%%%%%%%%%%%%%%%%%%% START DRIVING %%%%%%%%%%%%%%%%%%%%%%%%
+    input('Challenge B: Press any key to start driving to the endpoint','s')
+    %%% B.STEP 1: Turn KITT
+    finished = 0;
     turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
+    EPOCom(offlineCom, 'transmit', 'M150'); % rollout
+    pause(turnEndSpeed/100); % Pause for the rollout of complete (dependent on turnEndSpeed)
 
-    %%% B.STEP 5: Accelerate and stop 100cm before endpoint (correct if necessary)
-    [~, lastTurnPos, optimizeWrongTurn] = driveKITT(offlineCom, offlineLoc,handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, curves, d_q, ang_q, recordArgs); % recursive function (will initiate a turn if necessary)
     
-    if (~optimizeWrongTurn)
-        %%% B.STEP 6: slowly drive the remaining (small) distance to the waypoint and stop/rollout
-        EPOCom(offlineCom, 'transmit', 'M158'); % Slow driving
-        finished = 0;
+    %%% B.STEP 2: Accelerate and stop 100cm before point (correct if
+    %%% necessary)
+    x_averaged = [];
+    y_averaged = [];
 
-        callN = 5;
-        distlist = []; %list of distances from the endpoint to KITT's location
-        % A failsafe is implemented if KITT is not driving sufficiently close
-        % to the endpoint (to prevent it from never stopping)
-        failsafeN = 0; %number of times it was found to be driving away from the endpoint
-        while (~finished)
-            % Continuously retrieve the audio location
-            [x, y, callN] = KITTLocation(offline, recordArgs, callN);% The duration of this computation is variable
-            plot(handles.LocationPlot, x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % Plot the location point on the map
+    % First request of location (6 times)
+    x_points = [];
+    y_points = [];
+    callN = 1;
+    i = 1;
+    while i < 6
+       [x, y, callN] = KITTLocation(offlineLoc, recordArgs, callN);
 
-            dist = sqrt((endpoint(2)-y)^2+(endpoint(1)-x)^2); % distance between KITT and the endpoint
-            distlist = [distlist dist]; %append dist to distlist
-            mindist = min(distlist); %minimal value of the distance
+       % Check for validity 
+       distToTurnEndPos = sqrt((x-turnEndPos(1))^2+(y-turnEndPos(2))^2);
+       if(distToTurnEndPos < 100)
+        x_points = [x_points x];
+        y_points = [y_points y];
+        disp('added');
+        i = i +1;
+        plot(handles.LocationPlot, x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % plot the location point on the map
+       else  
+           disp('i want one more');
+           plot(handles.LocationPlot, x, y, 'k+',  'MarkerSize', 5, 'linewidth',2); % plot the wrong location point on the map
+       end
+    end%while
+    [x_averaged(1), y_averaged(1)] = averageLocation(x_points, y_points); % store correct actual location in averaged vector
+    disp("Current loc:")
+    disp(string(x_averaged(end)) + " and " + string (y_averaged(end)));
 
-            if (dist < 10)
-                finished = 1;
-            elseif (dist > mindist) % If KITT is driving away from the endpoint
-                failsafeN = failsafeN + 1;
-                if (failsafeN > 1) % If dist>mindist occurs 3 times, failsafe is activated
-                    disp("FAILSAFE STOP: endpoint was not within reach");
-                    finished = 1;
-                end
+    while finished == 0
+        % Drive a small distance
+        distToEnd = sqrt((x_averaged(end)-endpoint(1))^2+(y_averaged(end)-endpoint(2))^2);
+        drivingDistance = driveKITTv2(offlineCom, handles, distToEnd, transmitDelay, curves, d_q, ang_q); 
+        current_orientation = new_orientation; %Orientation from the end of the first turn
+        % Retrieve new location
+        [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, current_orientation, x_averaged, y_averaged, drivingDistance, recordArgs);
+        disp("Current loc:")
+        disp(string(x_averaged(end)) + " and " + string (y_averaged(end)));
+        % Check if endpoint is reached
+        dist = sqrt((endpoint(2)-y_averaged(end))^2+(endpoint(1)-x_averaged(end))^2); % distance between KITT and the endpoint
+
+        if (dist < 10)  % Car is withing reach of endpoint
+            finished = 1;
+        end
+
+
+        % Check if the path is good and if not:make a turn (pathIsGood =
+        % false)
+        [pathIsGood, turntime, direction, turnEndPos, new_orientation, optimizeWrongTurn] = trendCorrect(handles, x_averaged, y_averaged, endpoint,  t_radius, v_rot_prime, v_rot);
+        if (~pathIsGood)
+            turnEndSpeed = 1000*v_rot(turntime); % Velocity of KITT at the end of corrective turn (in cm/s)
+            turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
+            EPOCom(offlineCom, 'transmit', 'M150'); % rollout
+            pause(turnEndSpeed/100);
+            if (optimizeWrongTurn)
+                finished = 1;              
             end
         end
-        EPOCom(offlineCom, 'transmit', 'M150'); % Rollout (can be changed to a stop)
-    else
-        smoothStop(offlineCom, 158);
-    end%if(~optimizeWrongTurn)
-    
-    disp("Endpoint reached!"); % Endpoint reached
-    
+    end%while finished
+    disp("Endpoint reached!"); %Destination reached  
     
 else %Challenge C: no waypoints, with obstacle
 end
