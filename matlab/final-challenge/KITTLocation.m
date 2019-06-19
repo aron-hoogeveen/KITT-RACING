@@ -45,7 +45,6 @@ if (offline)
         y = input_values(callN,2);
         % Check if there are any pre-entered locations left. Otherwise
         % let the user enter new locations the next time.
-        disp(size(input_values,1));
         if (size(input_values,1) == callN)
             callN = 1;
             input_values = [];
