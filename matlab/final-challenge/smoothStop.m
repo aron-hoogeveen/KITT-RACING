@@ -16,7 +16,7 @@ switch speed
         % Testcase 18.9[V]
         disp('smooth 160 stop');
         stopSpeed = 'M138';
-        stopTime = 0.4;
+        stopTime = 0.2;
         EPOCom(offline,'transmit', stopSpeed);
         pause(stopTime);
         EPOCom(offline,'transmit', 'M150');

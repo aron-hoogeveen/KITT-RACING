@@ -24,7 +24,7 @@ function [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, curren
            % Check for validity 
            distToLastAveragedPoint = sqrt((x-x_averaged(end))^2+(y-y_averaged(end))^2);
            distToExpectedPoint = sqrt((x-x_expected)^2+(y-y_expected)^2);
-           if(distToLastAveragedPoint < drivingDistance + 40 && distToExpectedPoint < 50)
+           if(distToLastAveragedPoint < drivingDistance + 40 && distToExpectedPoint < 30)
 
                     x_points = [x_points x];
                     y_points = [y_points y];
@@ -35,9 +35,10 @@ function [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, curren
                     plot(handles.LocationPlot, x, y, 'k+',  'MarkerSize', 5, 'linewidth',2); % plot the wrong location point on the map
 
            end
-           if (i > 100)
+           if (i > 30)
               disp("KITTLocation doesn't give valid points!");
            end
+           drawnow;
         end%while
     else
          while i < 6
@@ -55,6 +56,7 @@ function [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, curren
                disp('Incorrect location, will request again');
                plot(handles.LocationPlot, x, y, 'k+',  'MarkerSize', 5, 'linewidth',2); % plot the wrong location point on the map
            end
+           drawnow;
          end%while
     end
     

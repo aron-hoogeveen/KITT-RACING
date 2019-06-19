@@ -27,8 +27,8 @@ function [] = KITTControl(handles, voltage, orientation, startpoint, endpoint, r
 % disp("%%%%%_____ END OF DISPLAYING PARAMETERS _____%%%%%");
 
 testCase = 1; %KITTLocation simulation with a deviated path from ideal
-offlineCom = true; %Is KITT connected?
-offlineLoc = true; % Location estimation
+offlineCom = false; %Is KITT connected?
+offlineLoc = false; % Location estimation
 step2 = true;
 challengeA = true; % Default challenge is A
 
@@ -185,8 +185,10 @@ if (challengeA)% Challenge A: no waypoint
             plot(handles.LocationPlot, x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % plot the location point on the map
            else  
                disp('Incorrect location, will request again');
+               disp(("Location is " + string(x) + "," + string(y)));
                plot(handles.LocationPlot, x, y, 'k+',  'MarkerSize', 5, 'linewidth',2); % plot the wrong location point on the map
            end
+           drawnow;
         end
         [x_averaged(1), y_averaged(1)] = averageLocation(x_points, y_points); % store correct actual location in averaged vector
         disp("Current loc:")

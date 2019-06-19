@@ -7,7 +7,7 @@ function drivingDistance = driveKITTv2(offlineCom, handles, distToEnd, transmitD
 %
 %    EPO-4 Group B4
 %    <insert date of last modification>
-    drivingDistance = distToEnd/4;
+    drivingDistance = distToEnd/3;
     if (drivingDistance < 20 && drivingDistance > 10)
         drivingDistance = 20;
     elseif (drivingDistance < 10)
