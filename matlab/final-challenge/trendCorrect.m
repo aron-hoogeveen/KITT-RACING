@@ -1,4 +1,10 @@
 function [pathIsGood, turntime, direction, turnEndPos, new_orientation, optimizeWrongTurn] = trendCorrect(handles, x_averaged, y_averaged, endpoint,  t_radius, v_rot_prime, v_rot)
+% trendCorrect Creates and plots a trend created from KITT location points
+%
+%    [pathIsGood, turntime, direction, turnEndPos, new_orientation, optimizeWrongTurn] = trendCorrect(handles, x_averaged, y_averaged, endpoint,  t_radius, v_rot_prime, v_rot)
+%    
+%    EPO-4 Group B4
+%    <insert date of last modification>
     pathIsGood = true; % Assume that current path is right initially
     % Create a trend through last two points
     x_last = [x_averaged(end-1), x_averaged(end)];
