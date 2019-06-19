@@ -214,7 +214,8 @@ if (challengeA)% Challenge A: no waypoint
                 turnEndSpeed = 1000*v_rot(turntime); % Velocity of KITT at the end of corrective turn (in cm/s)
                 turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
                 EPOCom(offlineCom, 'transmit', 'M150'); % rollout
-                pause(turnEndSpeed/100);
+                pause(turnEndSpeed/100);            
+                
                 if (optimizeWrongTurn)
                     finished = 1;              
                 end
