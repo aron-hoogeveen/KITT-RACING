@@ -1,60 +1,42 @@
+% EPO-4 Group B4
+% 20-06-2019
+% KITTControl is the main function for controlling KITT to complete a challenge
+
 function [] = KITTControl(handles, voltage, orientation, startpoint, endpoint, recordArgs, waypoint, obstacles)
-% KITTControl Main script for controlling KITT. 
-%
-%    [] = KITTControl(handles, voltage, orientation, startpoint, endpoint,
-%    recordArgs) drives KITT from <startpoint> directly to <endpoint>.
+%    [] = KITTControl(handles, voltage, orientation, startpoint, endpoint, recordArgs) 
+%       drives KITT from <startpoint> directly to <endpoint>. (less
+%       arguments are inserted)
 %
 %    [] = KITTControl(handles, voltage, orientation, startpoint, endpoint,
 %    recordArgs, waypoint) drives KITT from <startpoint> to <waypoint> and
 %    after confirmation of the user then drives to the <endpoint>.
-%
-%    EPO-4 Group B4
-%    <insert date of last modification>
 
-% Display input parameters for debug information. 
-% TODO: this code should propably be removed for the report since it does
-% not really have a purpose for performing the final challenge.
-% disp("%%%%%_____ ALL INPUT PARAMETERS OF KITTControl _____%%%%%");
-% 
-% disp("-----handles-----"); disp(handles);
-% disp("-----voltage-----"); disp(voltage);
-% disp("-----orientation-----"); disp(orientation);
-% disp("-----startpoint-----"); disp(startpoint);
-% disp("-----endpoint-----"); disp(endpoint);
-% disp("-----recordArgs-----"); disp(recordArgs);
-% % disp("-----waypoints-----"); disp(waypoints);
-% % disp("-----obstacles-----"); disp(obstacles);
-% disp("%%%%%_____ END OF DISPLAYING PARAMETERS _____%%%%%");
+% For testing purposes, it can be specified if there is access to audio
+% location measurements and if KITT is connected
+offlineCom = true; % Is KITT not connected? If true: driving commands will only be displayed (and not transmitted to the car)
+offlineLoc = true; % Is the audio localization offline? If true: location points will be simulated or inserted manually
+testCase = 1; % KITTLocation simulation with a deviated path from ideal
 
-testCase = 1; %KITTLocation simulation with a deviated path from ideal
-offlineCom = false; %Is KITT connected?
-offlineLoc = true; % Location estimation
-step2 = true;
+step2 = true; % For turning testing purposes, if false: KITT will only perform a turn
 challengeA = true; % Default challenge is A
-locationRequestAmount = 5;
+locationRequestAmount = 5; % Amount of times a location is requested at a point
 
-% FIXME: The check for input arguments has still to be updated. It is
-% probably a bit out of date (but still working though on 18 june).
 % Check for input errors
 disp('(O.O) - Checking input arguments for any errors...');
 if (nargin < 6)
-    error('(*.*) - Minimum number of input arguments required is four!');
+    error('(*.*) - Minimum number of input arguments required is six!');
 elseif(abs(orientation) > 180)
-    error('(*.*) - orientation must be between -180 and 180, with x-axis being theta = 0');
-elseif (startpoint(1) < 0 || startpoint(1) > 460 || startpoint(2) < 0 || startpoint(2) > 460)
+    error('(*.*) - Orientation must be between -180 and 180, with x-axis being theta = 0');
+elseif (startpoint(1) < 0+25 || startpoint(1) > 460-25 || startpoint(2) < 0+25 || startpoint(2) > 460-25)
     error('(*.*) - Startpoint out of bounds');
-elseif (endpoint(1) < 0 || endpoint(1) > 460 || endpoint(2) < 0 || endpoint(2) > 460)
+elseif (endpoint(1) < 0+25 || endpoint(1) > 460-25 || endpoint(2) < 0+25 || endpoint(2) > 460-25)
     error('(*.*) - Endpoint out of bounds');
-elseif (nargin>7 && (waypoint(1) < 0 || waypoint(1) > 460 || waypoint(2) < 0 || waypoint(2) > 460))
+elseif (nargin>6 && (waypoint(1) < 0+25 || waypoint(1) > 460-25 || waypoint(2) < 0+25 || waypoint(2) > 460-25))
     error('(*.*) - Waypoint out of bounds');
-elseif (nargin > 7)
-    % No waypoint
-    challengeA = false; % Do challenge B or C --> one waypoint
-elseif (nargin < 9)
-    obstacles = false;
+elseif (nargin > 6) % waypoint and possibly obstacles = true is added
+    challengeA = false; % Do challenge B or C
 end
 disp('(^.^) - No input argument errors.');
-
 
 % Load saved parameters. Put them in a struct to keep the function clean
 curves = struct();
