@@ -77,7 +77,7 @@ function [] = driveKITTbackwards(offlineCom, offlineLoc, handles, transmitDelay,
         EPOCom(offlineCom, 'transmit', 'M142');
         pause(backwardTime/1000 - transmitDelay/1000); % drive for backwardTime
         EPOCom(offlineCom, 'transmit', 'M150');
-        pause(backwardTime/250); % pause for 1/4th of the drivingTime to come to  a stop
+        pause(backwardTime/4000); % pause for 1/4th of the drivingTime to come to  a stop
         
         %%%3.  REQUEST LOCATION
         x_points = [];
