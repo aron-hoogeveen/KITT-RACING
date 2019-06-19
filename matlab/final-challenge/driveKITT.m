@@ -1,3 +1,9 @@
+%DEPRECIATED
+%PLEASE NOTE THAT THIS FUNCTION IS NO LONGER IN USE. 
+%
+%
+%DEPRECIATED SINCE 28 JUNE 2019
+
 function [end_orientation, lastTurnPos, optimizeWrongTurn] = driveKITT(offlineCom, offlineLoc, handles, testCase, maximumLocalizationTime, drivingTime, pointsAmount, turnEndPos, endpoint, transmitDelay, v_rot, t_radius, v_rot_prime, curves, d_q, ang_q, recordArgs)
             % KITT is already driving when this function is called (with
             % straight wheels)
