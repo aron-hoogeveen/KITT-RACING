@@ -308,7 +308,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
         drivingDistance = driveKITTv2(offlineCom, handles, distToEnd, transmitDelay, curves, d_q, ang_q); 
         current_orientation = new_orientation; %Orientation from the end of the first turn
         % Retrieve new location
-        [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, current_orientation, x_averaged, y_averaged, drivingDistance, false,  recordArgs);
+        [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, current_orientation, x_averaged, y_averaged, drivingDistance,  recordArgs, false, turnEndPos);
         disp("Current loc:")
         disp(string(x_averaged(end)) + " and " + string (y_averaged(end)));
         % Check if waypoint is reached
@@ -412,7 +412,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
         drivingDistance = driveKITTv2(offlineCom, handles, distToEnd, transmitDelay, curves, d_q, ang_q); 
         current_orientation = new_orientation; %Orientation from the end of the first turn
         % Retrieve new location
-        [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, current_orientation, x_averaged, y_averaged, drivingDistance, false, recordArgs);
+        [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, current_orientation, x_averaged, y_averaged, drivingDistance, recordArgs, false, turnEndPos);
         disp("Current loc:")
         disp(string(x_averaged(end)) + " and " + string (y_averaged(end)));
         % Check if endpoint is reached
