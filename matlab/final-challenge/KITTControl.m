@@ -127,7 +127,8 @@ if (challengeA)% Challenge A: no waypoint
     end
 
     % Calculate the turn (step 1)
-    [turntime, direction, turnEndPos, new_orientation, ~] = calculateTurn(handles, startpoint,endpoint,orientation, t_radius, v_rot_prime);
+    [turntime, direction, turnEndPos, new_orientation, ~, outOfField] = calculateTurn(handles, startpoint,endpoint,orientation, t_radius, v_rot_prime);
+    
     disp('turning time (ms):');
     disp( turntime);
     disp('[direction (1:left, -1:right), new_orientation] = ');
@@ -140,10 +141,14 @@ if (challengeA)% Challenge A: no waypoint
     % % Calculate the variables for step 2:
     % turnEndPos = [x, y] at the end of the turn;
     turnEndSpeed = 1000*v_rot(turntime); % Velocity of KITT at the end of the first turn (in cm/s)
-    [drivingTime, ~] = KITTstopV2(new_dist, curves.ydis_brake, curves.yspeed_brake, curves.ydis_acc, curves.yspeed_acc, curves.brakeEnd, turnEndSpeed); % Time the car must drive for step 2 in challenge A in ms (straight line)
+    %[drivingTime, ~] = KITTstopV2(new_dist, curves.ydis_brake, curves.yspeed_brake, curves.ydis_acc, curves.yspeed_acc, curves.brakeEnd, turnEndSpeed); % Time the car must drive for step 2 in challenge A in ms (straight line)
    
     %%%%%%%%%%%%%%%%%%%%%% START DRIVING %%%%%%%%%%%%%%%%%%%%%%%%
     input('Challenge A: Press any key to start driving','s')
+    if (outOfField)% then : drive backwards until proper turn is found
+        driveKITTbackwards(offlineCom, offlineLoc, handles, transmitDelay, startpoint, endpoint, orientation, t_radius, v_rot_prime, recordArgs);
+        [turntime, direction, turnEndPos, new_orientation, ~, outOfField] = calculateTurn(handles, startpoint,endpoint,orientation, t_radius, v_rot_prime);
+    end
     %%% A.STEP 1: Turn KITT
     finished = 0;
     turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
@@ -177,7 +182,7 @@ if (challengeA)% Challenge A: no waypoint
             i = i +1;
             plot(handles.LocationPlot, x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % plot the location point on the map
            else  
-               disp('i want one more');
+               disp('Incorrect location, will request again');
                plot(handles.LocationPlot, x, y, 'k+',  'MarkerSize', 5, 'linewidth',2); % plot the wrong location point on the map
            end
         end
@@ -234,7 +239,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     alfa_begin = atandWithCompensation(waypoint(2)-startpoint(2),waypoint(1)-startpoint(1));
 
     % Calculate the first turn from the startpoint
-    [turntime, direction, turnEndPos, new_orientation, ~] = calculateTurn(handles, startpoint,waypoint,orientation, t_radius, v_rot_prime);
+    [turntime, direction, turnEndPos, new_orientation, ~, outOfField] = calculateTurn(handles, startpoint,waypoint,orientation, t_radius, v_rot_prime);
     disp('turning time (ms):');
     disp( turntime);
     disp('[direction (1:left, -1:right), new_orientation] = ');
@@ -247,13 +252,14 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     % % Calculate the variables for step 2:
     % turnEndPos = [x, y] at the end of the turn;
     turnEndSpeed = 1000*v_rot(turntime); % Velocity of KITT at the end of the first turn (in cm/s)
-    [drivingTime, ~] = KITTstopV2(new_dist, curves.ydis_brake, curves.yspeed_brake, curves.ydis_acc, curves.yspeed_acc, curves.brakeEnd, turnEndSpeed); %Time the car must drive for step 2 in challenge B in ms (straight line)
-    maximumLocalizationTime = 210; %Maximum computation time to receive audio location
-    % Compute the amount of location points that can be retrieved in driving time
-    pointsAmount = floor((drivingTime-transmitDelay)/maximumLocalizationTime); %45 is transmit delay
+    %[drivingTime, ~] = KITTstopV2(new_dist, curves.ydis_brake, curves.yspeed_brake, curves.ydis_acc, curves.yspeed_acc, curves.brakeEnd, turnEndSpeed); %Time the car must drive for step 2 in challenge B in ms (straight line)
 
     %%%%%%%%%%%%%%%%%%%%%% START DRIVING %%%%%%%%%%%%%%%%%%%%%%%%
     input('Challenge B: press any key to start driving','s')
+    if (outOfField)% then : drive backwards until proper turn is found
+        driveKITTbackwards(offlineCom, offlineLoc, handles, transmitDelay, startpoint, waypoint, orientation, t_radius, v_rot_prime, recordArgs);
+        [turntime, direction, turnEndPos, new_orientation, ~, outOfField] = calculateTurn(handles, startpoint,waypoint,orientation, t_radius, v_rot_prime);
+    end
     %%% B.STEP 1: Turn KITT
     finished = 0;
     turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
@@ -281,7 +287,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
         i = i +1;
         plot(handles.LocationPlot, x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % plot the location point on the map
        else  
-           disp('i want one more');
+           disp('Incorrect location, will request again');
            plot(handles.LocationPlot, x, y, 'k+',  'MarkerSize', 5, 'linewidth',2); % plot the wrong location point on the map
        end
     end
@@ -333,7 +339,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     end
 
     % B. Calculate the turn (step 1)
-    [turntime, direction, turnEndPos, new_orientation, ~] = calculateTurn(handles, currentloc,endpoint,waypoint_orientation, t_radius, v_rot_prime);
+    [turntime, direction, turnEndPos, new_orientation, ~, outOfField] = calculateTurn(handles, currentloc,endpoint,waypoint_orientation, t_radius, v_rot_prime);
     disp('turning time (ms):');
     disp( turntime);
     disp('[direction (1:left, -1:right), new_orientation] = ');
@@ -346,10 +352,14 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     % % B. Calculate the variables for step 2:
     % turnEndPos = [x, y] at the end of the turn;
     turnEndSpeed = 1000*v_rot(turntime); % Velocity of KITT at the end of the first turn (in cm/s)
-    [drivingTime, ~] = KITTstopV2(new_dist, curves.ydis_brake, curves.yspeed_brake, curves.ydis_acc, curves.yspeed_acc, curves.brakeEnd, turnEndSpeed); % Time the car must drive for step 2 in challenge A in ms (straight line)
+    %[drivingTime, ~] = KITTstopV2(new_dist, curves.ydis_brake, curves.yspeed_brake, curves.ydis_acc, curves.yspeed_acc, curves.brakeEnd, turnEndSpeed); % Time the car must drive for step 2 in challenge A in ms (straight line)
   
     %%%%%%%%%%%%%%%%%%%%%% START DRIVING %%%%%%%%%%%%%%%%%%%%%%%%
     input('Challenge B: Press any key to start driving to the endpoint','s')
+    if (outOfField)% then : drive backwards until proper turn is found
+        driveKITTbackwards(offlineCom, offlineLoc, handles, transmitDelay, currentloc, endpoint, waypoint_orientation, t_radius, v_rot_prime, recordArgs);
+        [turntime, direction, turnEndPos, new_orientation, ~, outOfField] = calculateTurn(handles, currentloc,endpoint,waypoint_orientation, t_radius, v_rot_prime);
+    end
     %%% B.STEP 1: Turn KITT
     finished = 0;
     turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
@@ -379,7 +389,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
         i = i +1;
         plot(handles.LocationPlot, x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % plot the location point on the map
        else  
-           disp('i want one more');
+           disp('Incorrect location, will request again');
            plot(handles.LocationPlot, x, y, 'k+',  'MarkerSize', 5, 'linewidth',2); % plot the wrong location point on the map
        end
     end%while

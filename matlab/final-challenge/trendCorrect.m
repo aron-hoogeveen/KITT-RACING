@@ -32,7 +32,7 @@ function [pathIsGood, turntime, direction, turnEndPos, new_orientation, optimize
         plot(handles.LocationPlot,x_samp, x_samp*rico+b, '--m'); % plot the trend line
 
         % Calculate a new turn;
-        [turntime, direction, turnEndPos, new_orientation, optimizeWrongTurn] = calculateTurn(handles, [x_averaged(end), y_averaged(end)],endpoint,actual_orientation, t_radius, v_rot_prime);
+        [turntime, direction, turnEndPos, new_orientation, optimizeWrongTurn, ~] = calculateTurn(handles, [x_averaged(end), y_averaged(end)],endpoint,actual_orientation, t_radius, v_rot_prime);
         turnEndSpeed = v_rot(turntime); % Velocity of KITT at the end of the new turn
         
         % Display values

@@ -24,7 +24,7 @@ function [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, curren
                 plot(handles.LocationPlot, x, y, 'm+',  'MarkerSize', 5, 'linewidth',2); % plot the location point on the map
                 i = i +1;
        else
-                disp('i want one more');
+                disp('Incorrect location, will request again');
                 plot(handles.LocationPlot, x, y, 'k+',  'MarkerSize', 5, 'linewidth',2); % plot the wrong location point on the map
             
        end
