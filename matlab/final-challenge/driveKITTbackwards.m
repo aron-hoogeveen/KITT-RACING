@@ -1,4 +1,4 @@
-function [] = driveKITTbackwards(offlineCom, offlineLoc, handles, transmitDelay, startpoint, endpoint,orientation, t_radius, v_rot_prime, recordArgs)
+function [] = driveKITTbackwards(offlineCom, offlineLoc, handles, transmitDelay, startpoint, endpoint,orientation, t_radius, v_rot_prime, recordArgs, voltageCorrection)
 % driveKITTbackwards Drives KITT backwards until a turn inside the field
 %    can be made.
 %
@@ -10,7 +10,6 @@ function [] = driveKITTbackwards(offlineCom, offlineLoc, handles, transmitDelay,
 %    <insert date of last modification>
 
     outOfField = true; %initially the turn is out of the field
-    velocity = 30;% cm/s    average backwards driving speed
     x_current = startpoint(1);
     y_current = startpoint(2); 
     
@@ -66,8 +65,13 @@ function [] = driveKITTbackwards(offlineCom, offlineLoc, handles, transmitDelay,
         disp("KITT will drive backwards with distance:");
         disp(backwardDistance);
 
-        % Calculate backwardTime
-        backwardTime = 1000*backwardDistance/velocity %ms
+        t_points = [500, 1000, 1500, 2000, 2500, 3000];
+        d_points = [8, 38, 91, 149, 223, 259];
+        x_samp = 1:10000;
+        p = polyfit(t_points, d_points, 2)*voltageCorrection;
+        f = polyval(p,x_samp);
+        dist = 300;
+        backwardTime = find(f>backwardDistance, 1);%ms
         
         % Calculate predicted end of driving backwards point (backEndPos);
         backEndPos(1) = x_current - backwardDistance*cosd(orientation);

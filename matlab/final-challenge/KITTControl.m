@@ -28,9 +28,10 @@ function [] = KITTControl(handles, voltage, orientation, startpoint, endpoint, r
 
 testCase = 1; %KITTLocation simulation with a deviated path from ideal
 offlineCom = false; %Is KITT connected?
-offlineLoc = false; % Location estimation
+offlineLoc = true; % Location estimation
 step2 = true;
 challengeA = true; % Default challenge is A
+locationRequestAmount = 5;
 
 % FIXME: The check for input arguments has still to be updated. It is
 % probably a bit out of date (but still working though on 18 june).
@@ -148,7 +149,7 @@ if (challengeA)% Challenge A: no waypoint
     %%%%%%%%%%%%%%%%%%%%%% START DRIVING %%%%%%%%%%%%%%%%%%%%%%%%
     input('Challenge A: Press any key to start driving','s')
     if (outOfField)% then : drive backwards until proper turn is found
-        driveKITTbackwards(offlineCom, offlineLoc, handles, transmitDelay, startpoint, endpoint, orientation, t_radius, v_rot_prime, recordArgs);
+        driveKITTbackwards(offlineCom, offlineLoc, handles, transmitDelay, startpoint, endpoint, orientation, t_radius, v_rot_prime, recordArgs, voltageCorrection);
         [turntime, direction, turnEndPos, new_orientation, ~, outOfField] = calculateTurn(handles, startpoint,endpoint,orientation, t_radius, v_rot_prime);
     end
     %%% A.STEP 1: Turn KITT
@@ -172,7 +173,7 @@ if (challengeA)% Challenge A: no waypoint
         y_points = [];
         callN = 1;
         i = 1;
-        while i < 6
+        while i < locationRequestAmount+1
            [x, y, callN] = KITTLocation(offlineLoc, recordArgs, callN);
            
            % Check for validity 
@@ -207,7 +208,7 @@ if (challengeA)% Challenge A: no waypoint
             % Check if endpoint is reached
             dist = sqrt((endpoint(2)-y_averaged(end))^2+(endpoint(1)-x_averaged(end))^2); % distance between KITT and the endpoint
        
-            if (dist < 10)  % Car is withing reach of endpoint
+            if (dist < 20)  % Car is withing reach of endpoint
                 finished = 1;
             end
                       
@@ -265,7 +266,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     %%%%%%%%%%%%%%%%%%%%%% START DRIVING %%%%%%%%%%%%%%%%%%%%%%%%
     input('Challenge B: press any key to start driving','s')
     if (outOfField)% then : drive backwards until proper turn is found
-        driveKITTbackwards(offlineCom, offlineLoc, handles, transmitDelay, startpoint, waypoint, orientation, t_radius, v_rot_prime, recordArgs);
+        driveKITTbackwards(offlineCom, offlineLoc, handles, transmitDelay, startpoint, waypoint, orientation, t_radius, v_rot_prime, recordArgs, voltageCorrection);
         [turntime, direction, turnEndPos, new_orientation, ~, outOfField] = calculateTurn(handles, startpoint,waypoint,orientation, t_radius, v_rot_prime);
     end
     %%% B.STEP 1: Turn KITT
@@ -283,7 +284,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     y_points = [];
     callN = 1;
     i = 1;
-    while i < 6
+    while i < locationRequestAmount+1
        [x, y, callN] = KITTLocation(offlineLoc, recordArgs, callN);
 
        % Check for validity 
@@ -316,7 +317,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
         % Check if waypoint is reached
         dist = sqrt((waypoint(2)-y_averaged(end))^2+(waypoint(1)-x_averaged(end))^2); % distance between KITT and the endpoint
 
-        if (dist < 10)  % Car is withing reach of waypoint
+        if (dist < 20)  % Car is withing reach of waypoint
             finished = 1;
         end
 
@@ -368,7 +369,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     %%%%%%%%%%%%%%%%%%%%%% START DRIVING %%%%%%%%%%%%%%%%%%%%%%%%
     input('Challenge B: Press any key to start driving to the endpoint','s')
     if (outOfField)% then : drive backwards until proper turn is found
-        driveKITTbackwards(offlineCom, offlineLoc, handles, transmitDelay, currentloc, endpoint, waypoint_orientation, t_radius, v_rot_prime, recordArgs);
+        driveKITTbackwards(offlineCom, offlineLoc, handles, transmitDelay, currentloc, endpoint, waypoint_orientation, t_radius, v_rot_prime, recordArgs, voltageCorrection);
         [turntime, direction, turnEndPos, new_orientation, ~, outOfField] = calculateTurn(handles, currentloc,endpoint,waypoint_orientation, t_radius, v_rot_prime);
     end
     %%% B.STEP 1: Turn KITT
@@ -388,7 +389,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
     y_points = [];
     callN = 1;
     i = 1;
-    while i < 6
+    while i < locationRequestAmount+1
        [x, y, callN] = KITTLocation(offlineLoc, recordArgs, callN);
 
        % Check for validity 
@@ -420,7 +421,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
         % Check if endpoint is reached
         dist = sqrt((endpoint(2)-y_averaged(end))^2+(endpoint(1)-x_averaged(end))^2); % distance between KITT and the endpoint
 
-        if (dist < 10)  % Car is withing reach of endpoint
+        if (dist < 20)  % Car is withing reach of endpoint
             finished = 1;
         end
 

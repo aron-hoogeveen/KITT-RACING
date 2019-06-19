@@ -87,8 +87,10 @@ function [turntime, direction, turnEndPos, new_orientation, optimizeWrongTurn, o
                 end
             end
         end
+        dist = sqrt((x_incr-destination(1))^2 + (y_incr-destination(2))^2);
+        maximumAngleDifference = acosd(1-100/(2*dist^2)); 
         % If the angles match, stop the turning
-        if (abs(theta_lim - alfa_new) < 0.1)
+        if (abs(theta_lim - alfa_new) < maximumAngleDifference)
             found = 1;
         end
         
