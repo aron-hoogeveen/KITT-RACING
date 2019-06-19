@@ -1,7 +1,12 @@
-% EPO-4 Group B4
-% 29-05-2019
-% Converts measurements into velocity vector for rotation
 function [v_rot, v_rot_prime, t_radius] = turningParameters()
+% turningParameters Converts measurements into velocity vector for rotation
+%
+%    [v_rot, v_rot_prime, t_radius] = turningParameters() returns the
+%    turning radius <t_radius> of KITT, along with the speed <v_rot> and 
+%    distance <t_rot_prime> in the turn.
+%
+%    EPO-4 Group B4
+%    <insert date of last modification>
 
     %%%% Measurements %%%%%%%%
     % For our chosen angle (25 degrees):

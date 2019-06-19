@@ -1,6 +1,12 @@
 function drivingDistance = driveKITTv2(offlineCom, handles, distToEnd, transmitDelay, curves, d_q, ang_q)
-
-    % Determine time KITT drives (small distance, dependent on distToEnd);
+% driveKITTv2 Drive KITT for a certain distance (small distance, dependent 
+%    on <distToEnd>)
+%
+%    drivingDistance = driveKITTv2(offlineCom, distToEnd, transmitDelay,
+%    curves) lets KITT drive a distance <drivingDistance>.
+%
+%    EPO-4 Group B4
+%    <insert date of last modification>
     drivingDistance = distToEnd/4;
     if (drivingDistance < 20 && drivingDistance > 10)
         drivingDistance = 20;
