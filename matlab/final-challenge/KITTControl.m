@@ -1,13 +1,19 @@
 function [] = KITTControl(handles, voltage, orientation, startpoint, endpoint, recordArgs, waypoint, obstacles)
-%[] = KITTControl(handles, voltage, orientation, startpoint, endpoint, 
-%    recordArgs, waypoint, obstacles);
-%    
-%    ----------------------------------------------------------------------
-%    - TODO: UPDATE THIS DESCRIPTION
-%    ----------------------------------------------------------------------
-% 180 links: KITTControl(17.18, 0, [200,200], [55,370])
-% 90 links: KITTControl(17.18, 0, [200,200], [285,400])
+% KITTControl Main script for controlling KITT. 
+%
+%    [] = KITTControl(handles, voltage, orientation, startpoint, endpoint,
+%    recordArgs) drives KITT from <startpoint> directly to <endpoint>.
+%
+%    [] = KITTControl(handles, voltage, orientation, startpoint, endpoint,
+%    recordArgs, waypoint) drives KITT from <startpoint> to <waypoint> and
+%    after confirmation of the user then drives to the <endpoint>.
+%
+%    EPO-4 Group B4
+%    <insert date of last modification>
 
+% Display input parameters for debug information. 
+% TODO: this code should propably be removed for the report since it does
+% not really have a purpose for performing the final challenge.
 % disp("%%%%%_____ ALL INPUT PARAMETERS OF KITTControl _____%%%%%");
 % 
 % disp("-----handles-----"); disp(handles);
@@ -49,19 +55,15 @@ end
 disp('(^.^) - No input argument errors.');
 
 
-% Load saved parameters
+% Load saved parameters. Put them in a struct to keep the function clean
 curves = struct();
-load('acc_ploy.mat', 'ydis_acc', 'yspeed_acc'); % Acceleration curve from the midterm challenge
-load('brake_ploy_v2.mat', 'ydis_brake', 'yspeed_brake'); % Braking curve from the midterm challenge
+load('acc_ploy.mat', 'ydis_acc', 'yspeed_acc'); % Acceleration curve from the midterm challenge for speedsetting 160
+load('brake_ploy_v2.mat', 'ydis_brake', 'yspeed_brake'); % Braking curve from the midterm challenge for speedsetting 160
 curves.ydis_acc = ydis_acc; clear ydis_acc;
 curves.yspeed_acc = yspeed_acc; clear yspeed_acc;
 curves.ydis_brake = ydis_brake; clear ydis_brake;
 curves.yspeed_brake = yspeed_brake; clear yspeed_brake;
 curves.brakeEnd = 186.5; % Predefined value. Distance in the braking distance-velocity curve at which the speed becomes zero
-% curves.ydis_acc = ydis_acc;
-% curves.yspeed_acc = yspeed_acc;
-% curves.ydis_brake = ydis_brake;
-% curves.yspeed_brake = yspeed_brake;
 
 lastIndex = length(curves.yspeed_acc);
 for i=1:20
