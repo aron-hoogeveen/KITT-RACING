@@ -1,13 +1,13 @@
 function [result] = EPOCom(offline, cmd, arg1)
-%[result] = EPOCom(offline, cmd, arg1)
-%    is a debug function that allows running of code that contains
-%    EPOCommunication without an actual connection to the KITT car. 
+% EPOCom Simulates sending commands to KITT when KITT is not connected
 %
-%    Input parameters:
-%    offline: boolean, if set to true offline mode will be used
-%    cmd: string, command as would be used in the EPOCommunications
-%      function.
-%    arg1: optional. Accompanying argument that goes with some cmds. 
+%    [result] = EPOCom(offline, cmd, arg1) sends the <cmd> with <arg1> to
+%    KITT when <offline> is false. When <offline> is true this function
+%    will pass the <cmd> and <arg1> to the EPOCommunications function that
+%    sends the corresponding data to KITT.
+%
+%    EPO-4 Group B4
+%    <insert date of last modification>
 
 if (nargin < 2)
     error('EPOCom requires at minimum two arguments.');
