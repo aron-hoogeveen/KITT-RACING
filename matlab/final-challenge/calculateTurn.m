@@ -3,9 +3,15 @@
 % calculateTurn() is used to calculate the turning time at a given speed
 % curve and turning radius in order to directly face a destination
 function [turntime, direction, turnEndPos, new_orientation, optimizeWrongTurn, outOfField] = calculateTurn(handles, startpoint, destination, orientation, t_radius, v_rot_prime)
-    % For our chosen angle(20 degrees):
-    % t_radius; %cm
-    % v_rot; %speed when rotating in cm per second (vector as function of t(ms);
+% calculateTurn Calculate the turning time for a given speed curve and
+% turning radius
+%
+%    [turntime, direction, turnEndPos, new_orientation, optimizeWrongTurn, outOfField] = calculateTurn(handles, startpoint, destination, orientation, t_radius, v_rot_prime)
+%    returns the turning parameters that are needed for KITT to face a
+%    <destination> point.
+%
+%    <t_radius> is given in centimeters
+%    <v_rot> is the speed in centimeters per second
     
     outOfField = false; % Will become true if the calculated turn is out of the field 
     reverseChecked = false;
