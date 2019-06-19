@@ -190,13 +190,14 @@ if (challengeA)% Challenge A: no waypoint
         disp("Current loc:")
         disp(string(x_averaged(end)) + " and " + string (y_averaged(end)));
         
+%         doATurn = false; % Initialise to false
         while finished == 0
             % Drive a small distance
             distToEnd = sqrt((x_averaged(end)-endpoint(1))^2+(y_averaged(end)-endpoint(2))^2);
             drivingDistance = driveKITTv2(offlineCom, handles, distToEnd, transmitDelay, curves, d_q, ang_q); 
             current_orientation = new_orientation; %Orientation from the end of the first turn
             % Retrieve new location
-            [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, current_orientation, x_averaged, y_averaged, drivingDistance, recordArgs);
+            [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, current_orientation, x_averaged, y_averaged, drivingDistance, recordArgs, false, turnEndPos);
             disp("Current loc:")
             disp(string(x_averaged(end)) + " and " + string (y_averaged(end)));
             % Check if endpoint is reached
@@ -214,7 +215,9 @@ if (challengeA)% Challenge A: no waypoint
                 turnEndSpeed = 1000*v_rot(turntime); % Velocity of KITT at the end of corrective turn (in cm/s)
                 turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
                 EPOCom(offlineCom, 'transmit', 'M150'); % rollout
-                pause(turnEndSpeed/100);            
+                pause(turnEndSpeed/100);      
+                current_orientation = new_orientation;
+                [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, current_orientation, x_averaged, y_averaged, drivingDistance, recordArgs, true, turnEndPos);
                 
                 if (optimizeWrongTurn)
                     finished = 1;              
@@ -303,7 +306,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
         drivingDistance = driveKITTv2(offlineCom, handles, distToEnd, transmitDelay, curves, d_q, ang_q); 
         current_orientation = new_orientation; %Orientation from the end of the first turn
         % Retrieve new location
-        [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, current_orientation, x_averaged, y_averaged, drivingDistance, recordArgs);
+        [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, current_orientation, x_averaged, y_averaged, drivingDistance, false,  recordArgs);
         disp("Current loc:")
         disp(string(x_averaged(end)) + " and " + string (y_averaged(end)));
         % Check if waypoint is reached
@@ -322,6 +325,9 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
             turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
             EPOCom(offlineCom, 'transmit', 'M150'); % rollout
             pause(turnEndSpeed/100);
+            current_orientation = new_orientation;
+            [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, current_orientation, x_averaged, y_averaged, drivingDistance, recordArgs, true, turnEndPos);
+                
             if (optimizeWrongTurn)
                 finished = 1;              
             end
@@ -404,7 +410,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
         drivingDistance = driveKITTv2(offlineCom, handles, distToEnd, transmitDelay, curves, d_q, ang_q); 
         current_orientation = new_orientation; %Orientation from the end of the first turn
         % Retrieve new location
-        [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, current_orientation, x_averaged, y_averaged, drivingDistance, recordArgs);
+        [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, current_orientation, x_averaged, y_averaged, drivingDistance, false, recordArgs);
         disp("Current loc:")
         disp(string(x_averaged(end)) + " and " + string (y_averaged(end)));
         % Check if endpoint is reached
@@ -423,6 +429,10 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
             turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
             EPOCom(offlineCom, 'transmit', 'M150'); % rollout
             pause(turnEndSpeed/100);
+            
+            current_orientation = new_orientation;
+            [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, current_orientation, x_averaged, y_averaged, drivingDistance, recordArgs, true, turnEndPos);
+                
             if (optimizeWrongTurn)
                 finished = 1;              
             end
