@@ -1,4 +1,4 @@
-function [pathIsGood, turntime, direction, turnEndPos, new_orientation] = trendCorrect(handles, x_averaged, y_averaged, endPoint,  t_radius, v_rot_prime);
+function [pathIsGood, turntime, direction, turnEndPos, new_orientation] = trendCheck(handles, x_averaged, y_averaged, endPoint,  t_radius, v_rot_prime);
     prms = polyfit(x_averaged,y_averaged,1);
     rico = prms(1); % Richtingsco�fficient
     b = prms(2); %intersection of y-axis (y = mx +b)
