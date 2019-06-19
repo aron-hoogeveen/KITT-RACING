@@ -78,11 +78,13 @@ function [turntime, direction, turnEndPos, new_orientation, optimizeWrongTurn, o
                 t = 0; % resest the time
                 direction = -1*direction;% reverse turn direction
                 reverseChecked = true;
-            elseif (~reverseTwiceChecked) % return to original turn (even if wrong)
-                % Check if other direction might be possible
-                t = 0; % resest the time
-                direction = -1*direction;% reverse turn direction
-                reverseTwiceChecked = true;
+            else
+                if (~reverseTwiceChecked) % return to original turn (even if wrong)
+                    % Check if other direction might be possible
+                    t = 0; % resest the time
+                    direction = -1*direction;% reverse turn direction
+                    reverseTwiceChecked = true;
+                end
             end
         end
         % If the angles match, stop the turning
