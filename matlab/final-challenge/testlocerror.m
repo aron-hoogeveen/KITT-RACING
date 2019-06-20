@@ -13,11 +13,11 @@ close all
 
 %% load data and specify parameters (in cm!)
 load('transmap.mat')        % translation map for 2D with 5 microphones
-transmap = 0;               % uncomment to prevent correction
+% transmap = 0;               % uncomment to prevent correction
 load('datamicloc')          % coordinates of the microphones
 mic = mic([1 2 3 4 5],:);   % select microphones used
 z = 24.8;                   % heigth of audio beacon of the car
-measerror = 0;              % random error added when calculating disdiff
+measerror = 3;              % random error added when calculating disdiff
 d = 2;                      % 2 for 2D estimation or 3 for 3D estimation
 
 %% calcutate the error of the location estimation

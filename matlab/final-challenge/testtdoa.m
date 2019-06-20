@@ -34,7 +34,8 @@ t = toc;
 
 load('datamicloc')
 d = 2;
-coord = loc(mic,disdiff,d,0)
+load('transmap.mat')        % translation map for 2D with 5 microphones
+coord = loc(mic,disdiff,d,transmap,0)
 
 % load(['D:\OneDrive\Studie\EE2\Q4 EE2L21 EPO-4 KITT Autonomous Driving Challenge 18-19\Location\Test data\Locdata' num2str(measurement) '.mat'], 'disdiff')
 % error = disdiffprac' - disdiff;
