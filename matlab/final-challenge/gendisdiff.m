@@ -8,6 +8,7 @@
 % with possibility of adding a simulated measurement error.
 % Coordinates and distances are in cm!
 %
+% function: disdiff = gendisdiff(mic,loc,error)
 % Inputs:   mic = coordinates of the microphones
 %           loc = location of audio beacon of the car [x y z]
 %           error = uniformly distributed random error between -error and
