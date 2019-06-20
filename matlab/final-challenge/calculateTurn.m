@@ -2,12 +2,20 @@
 % 29-05-2019
 % calculateTurn() is used to calculate the turning time at a given speed
 % curve and turning radius in order to directly face a destination
-function [turntime, direction, turnEndPos, new_orientation, optimizeWrongTurn] = calculateTurn(handles, startpoint, destination, orientation, t_radius, v_rot_prime)
-    % For our chosen angle(20 degrees):
-    % t_radius; %cm
-    % v_rot; %speed when rotating in cm per second (vector as function of t(ms);
+function [turntime, direction, turnEndPos, new_orientation, optimizeWrongTurn, outOfField] = calculateTurn(handles, startpoint, destination, orientation, t_radius, v_rot_prime)
+% calculateTurn Calculate the turning time for a given speed curve and
+% turning radius
+%
+%    [turntime, direction, turnEndPos, new_orientation, optimizeWrongTurn, outOfField] = calculateTurn(handles, startpoint, destination, orientation, t_radius, v_rot_prime)
+%    returns the turning parameters that are needed for KITT to face a
+%    <destination> point.
+%
+%    <t_radius> is given in centimeters
+%    <v_rot> is the speed in centimeters per second
     
     outOfField = false; % Will become true if the calculated turn is out of the field 
+    reverseChecked = false;
+    reverseTwiceChecked = false;
     
     % Calculate the angle of the points and compare to orientation to
     % determine the best turning direction
@@ -62,18 +70,27 @@ function [turntime, direction, turnEndPos, new_orientation, optimizeWrongTurn] =
         % Calculate the new alfa for the change position
         alfa_new = atandWithCompensation((destination(2)-y_incr),(destination(1)-x_incr)); 
         
-        if (x_incr > 460-10 || x_incr < 0+10 || y_incr > 460-10 || y_incr < 0+10) % Can occur when turning at waypoint
+        if (x_incr > 460-25 || x_incr < 0+25 || y_incr > 460-25 || y_incr < 0+25) % Can occur when turning at waypoint
             outOfField = true;
-            %disp('Turn is out of field, driving backwards...');
-            
-            % Calculate how much kitt should drive backwards to make the
-            % turn within reach
-           %FIXME
-            
-            
+
+            if (~reverseChecked)
+                % Check if other direction might be possible
+                t = 0; % resest the time
+                direction = -1*direction;% reverse turn direction
+                reverseChecked = true;
+            else
+                if (~reverseTwiceChecked) % return to original turn (even if wrong)
+                    % Check if other direction might be possible
+                    t = 0; % resest the time
+                    direction = -1*direction;% reverse turn direction
+                    reverseTwiceChecked = true;
+                end
+            end
         end
+        dist = sqrt((x_incr-destination(1))^2 + (y_incr-destination(2))^2);
+        maximumAngleDifference = acosd(1-100/(2*dist^2)); 
         % If the angles match, stop the turning
-        if (abs(theta_lim - alfa_new) < 0.1)
+        if (abs(theta_lim - alfa_new) < 0.1 || (abs(theta_lim - alfa_new) < maximumAngleDifference || optimizeWrongTurn))
             found = 1;
         end
         

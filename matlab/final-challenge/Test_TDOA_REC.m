@@ -1,8 +1,8 @@
 H = Final_GUI;
 handles = guidata(H);
-peakperc = 80;
+peakperc = 30;
 load datamicloc.mat;
-load refsignal2.mat;
+load refsignal3.mat;
 d = 2;
 peakn = 2;
 Fs = 48000;
@@ -13,7 +13,7 @@ end
 
 devs = playrec('getDevices');
 for id=1:size(devs,2)
-   if(strcmp('Jack Mic (Realtek Audio)', devs(id).name))
+   if(strcmp('ASIO4ALL v2', devs(id).name))
        break;
    end
 end
@@ -33,7 +33,7 @@ uiwait(handles.figure1);
     RecTime = str2double(string(handles.Out.RecTime));
 
     N = (RecTime*RepCount*Fs)/Fbit;                          % # samples (records 100ms)
-    maxChannel = 1;                     %# mics
+    maxChannel = 5;                     %# mics
 
 
         page=playrec('rec',N, 1 : maxChannel); % start recording in 
@@ -45,6 +45,12 @@ uiwait(handles.figure1);
         y = double(playrec('getRec',page)); % get the data
         plot(y);
         playrec('delPage'); % delete the page (can be done every few cycle)
+        save('loc_307_rep_1600', 'y');
+        
+            disdiff = tdoa(y,refsignal3,peakperc,Fs,Fbit,RepCount,peakn);
+    coord1 = loc(mic,disdiff,d); 
+    coord  = coord1;
+    disp(coord);
 end
         
     
