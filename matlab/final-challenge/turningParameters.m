@@ -1,19 +1,20 @@
+% EPO-4 Group B4
+% 07-06-2019
+% Convert the turning measurements into parameters for calculateTurn()
+
 function [v_rot, v_rot_prime, t_radius] = turningParameters()
-% turningParameters Converts measurements into velocity vector for rotation
+% turningParameters converts measurements into velocity vector for rotation
 %
 %    [v_rot, v_rot_prime, t_radius] = turningParameters() returns the
 %    turning radius <t_radius> of KITT, along with the speed <v_rot> and 
 %    distance <t_rot_prime> in the turn.
 %
-%    EPO-4 Group B4
-%    <insert date of last modification>
 
-    %%%% Measurements %%%%%%%%
+    %%%% Measurements %%%%
     % For our chosen angle (25 degrees):
     t_radius = 85; % Turning radius (cm)
-    v_rot_max =  51.8986; %101.4454 previously % Maximal speed in cm/s at 17.1-17.2 [V]
+    v_rot_max =  51.8986; %At M142, 101.4454 previously % Maximal speed in cm/s at 17.1-17.2 [V]
     max_speed_time = 1800; % Time (ms) after which KITT has reached constant speed
-
 
     v_rot_max_ms = v_rot_max/1000; %Maximal speed in cm / ms;
     
