@@ -2,7 +2,7 @@ H = Final_GUI;
 handles = guidata(H);
 peakperc = 30;
 load('datamicloc.mat', 'mic');
-load('refsignal3.mat', 'refsignal3');
+load('datarefsig.mat', 'ref3');
 load('transmap.mat');
 d = 2;
 peakn = 2;
@@ -29,7 +29,7 @@ Fs = 48000;
 % end
 
 % Argument struct for Record_TDOA(ref,peakperc,mic,d,peakn)
-recordArgs.ref = refsignal3;
+recordArgs.ref = ref3;
 recordArgs.peakperc = peakperc;
 recordArgs.mic = mic;
 recordArgs.d = d;
