@@ -1,42 +1,45 @@
 % testtdoa
 % Author: Rik van der Hoorn - 4571150
-% Last modified: 01-06-19
-% Feeds test data to the tdoa function
+% Last modified: 20-06-19
+% Test file for tdoa.m
 
 clear all
 close all
 
-%% getting recorded data
-measurement = 10;                % select measurement file
-load(['D:\OneDrive\Studie\EE2\Q4 EE2L21 EPO-4 KITT Autonomous Driving Challenge 18-19\Module 3\test_data\audiomeas_b4\audiomeas' num2str(measurement) '.mat'])
-load('D:\OneDrive\Studie\EE2\Q4 EE2L21 EPO-4 KITT Autonomous Driving Challenge 18-19\Module 3\test_data\audiomeas_b4\datarefsig.mat')
-ref = ref2;                     % select reference signal
-peakn = 2;
-peakperc = 40;
+%% getting data
+measurement = 3;                % select measurement file
+% load measurement data
+load(['D:\OneDrive\Studie\EE2\Q4 EE2L21 EPO-4 KITT Autonomous Driving Challenge 18-19\Final Rik\Module 3\test_data\audiomeas_final\audiomeas' num2str(measurement) '.mat'])
+micrec = Acq_data(1:end,:);     % select part of recording
+F = str2double(F(2:end));       % carrier frequency
+B = str2double(B(2:end));       % bit frequency
+R = str2double(R(2:end));       % repetition count
+% load reference signals
+load('D:\OneDrive\Studie\EE2\Q4 EE2L21 EPO-4 KITT Autonomous Driving Challenge 18-19\Final Rik\Module 3\test_data\audiomeas_final\datarefsig.mat')
+ref = ref3;                     % select reference signal
+peakperc = 40;                  % threshold peak detection [%]
+check = 1;                      % if check is nonzero, plots figures to debug
 
-%% selecting 1 recorded pulse by hand
-% llim = 10000;
-% rlim = llim + 14400;
-micdata = Acq_data;
-% micdata = Acq_data(llim:rlim,1:5);
+%% TDOA calculations
+disdiff = tdoa(micrec,ref,Fs,B,R,peakperc,check); % calculate range differences
 
-%% plot figures in time domain
-% figure
-% hold on
-% plot(micdata)
-% title('Microphone recording')
-% xlabel('Sample number')
-% ylabel('Amplitude')
+load('datamicloc')          % coordinates of the microphones
+d = 2;                      % 2 for 2D estimation or 3 for 3D estimation
+load('transmap.mat')        % translation map for 2D with 5 microphones
+loccar = [383 307 24.8];    % location of audio beacon of the car [x y z]
+disdiffgen = gendisdiff(mic,loccar,0);  % generated range differences
+errordisdiff = disdiff - disdiffgen;    % error in detected range differences
 
-tic
-disdiff = tdoa(micdata,ref,peakperc,Fs,5000,1500,peakn);
-t = toc;
+%% location calculation
+coord = loc(mic,disdiff,d,transmap,0)   % location of the car based on recording
 
-load('datamicloc')
-d = 2;
-coord = loc(mic,disdiff,d,0)
-
-% load(['D:\OneDrive\Studie\EE2\Q4 EE2L21 EPO-4 KITT Autonomous Driving Challenge 18-19\Location\Test data\Locdata' num2str(measurement) '.mat'], 'disdiff')
-% error = disdiffprac' - disdiff;
-% erroravg = mean(abs(error))
-
+%% plot selected recording
+if check
+figure
+plot(micrec)
+xlabel('Sample number')
+ylabel('Amplitude')
+title('Microphone recordings')
+legend('Microphone 1','Microphone 2','Microphone 3','Microphone 4','Microphone 5')
+xlim([0 length(micrec(:,1))])
+end

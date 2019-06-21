@@ -13,6 +13,5 @@ loc = [314 57 24.8];        % location of the audio beacon of the car (z = 24.8)
 error = 0;                  % maximum error added to distance between mic(i) and car
 
 %% run function and save output
-disdiff = gendisdiff(mic,loc,error);
-
+disdiff = gendisdiff(mic,loc,error);    % range differences
 % save('locdata10','disdiff')

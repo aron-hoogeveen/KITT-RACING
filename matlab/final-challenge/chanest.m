@@ -1,36 +1,43 @@
 % chanest
 % Author: Rik van der Hoorn - 4571150
-% Last modified: 01-06-19
+% Last modified: 20-06-19
+% Status: complete, commented and tested
 %
-% This function takes x and y as inputs to estimate the channel
-% using deconvolution in frequency domain
+% Channel estimation using deconvolution in the frequency domain, with
+% threshold for weak frequencies.
+%
+% function  hhat = chanest(x,y,e,check)
+% Inputs:	x = reference signal
+%           y = microphone recording
+%           e = threshold for weak frequencies [%]
+%           check = if check is nonzero, plots figures to debug
+% Output:   hhat = estimated channel
 
-function hhat = chanest(x,y,e)
-x = x(:);                   % ensure column vectors
-y = y(:);                   % ensure column vectors
-Ny = length(y);             % define lengths
-Nx = length(x);             % define lengths
-L = Ny - Nx + 1;            % define lengths
+function hhat = chanest(x,y,e,check)
+x = x(:);                   % ensure column vector
+y = y(:);                   % ensure column vector
+Ny = length(y);             % length microphone recording
+Nx = length(x);             % length reference signal
 Y = fft(y);
-X = fft([x; zeros(Ny - Nx, 1)]);    % zero padding to length Ny
-epsilon = e/100*max(abs(X));            % create treshold for weak frequencies
+X = fft([x; zeros(Ny - Nx, 1)]);	% zero padding to length Ny
+epsilon = e/100*max(abs(X));        % create treshold for weak frequencies
 H = Y ./ X;                         % frequency domain deconvolution
 for n = 1:Ny
-    if (abs(X(n))>epsilon)          % use the treshold
+    if (abs(X(n))>epsilon)          % create vector to remove weak frequencies
         G(n) = 1;
     else
         G(n) = 0;
     end
 end
 G = G(:);
-Hhat = H.*G;                        % pointwise multiplication to remove weak frequencies
-hhat = ifft(Hhat);
-%hhat = hhat(1:L);                  % truncate h to length L
-hhat = real(hhat);
+Hhat = H.*G;                        % remove weak frequencies
+hhat = real(ifft(Hhat));            % estimated channel
 
-% figure
-% plot(hhat)
-% title('Channel estimation of microphone recording and reference signal')
-% xlabel('Sample number')
-% ylabel('Amplitude')
+if check                            % figure for debuging
+    figure
+    plot(hhat)
+    title('Channel estimation')
+    xlabel('Sample number')
+    ylabel('Amplitude')
+end
 end

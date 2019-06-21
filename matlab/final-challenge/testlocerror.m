@@ -1,6 +1,6 @@
 % testlocerror
 % Author: Rik van der Hoorn - 4571150
-% Last modified: 08-06-19
+% Last modified: 18-06-19
 % Test file for calculating what the error is in location estimation 
 % for the entire field. With a testcase for 2D and 3D estimation, 
 % with possibility to add error, using the least squares algorithm.
@@ -13,11 +13,11 @@ close all
 
 %% load data and specify parameters (in cm!)
 load('transmap.mat')        % translation map for 2D with 5 microphones
-transmap = 0;               % uncomment to prevent correction
+% transmap = 0;               % uncomment to prevent correction
 load('datamicloc')          % coordinates of the microphones
 mic = mic([1 2 3 4 5],:);   % select microphones used
 z = 24.8;                   % heigth of audio beacon of the car
-measerror = 0;              % random error added when calculating disdiff
+measerror = 3;              % random error added when calculating disdiff
 d = 2;                      % 2 for 2D estimation or 3 for 3D estimation
 
 %% calcutate the error of the location estimation
@@ -26,12 +26,12 @@ actlocmat = zeros(460,460,d);   % contains the actual locations
 
 for y = 0:460
     for x = 0:460
-        location = [x y z];     % location of audio beacon of the car [x y z]
+        location = [x y z];         % location of audio beacon of the car [x y z]
         disdiff = gendisdiff(mic,location,measerror);	% generates the range differences
         coord = loc(mic,disdiff,d,transmap,0);	% calculate the estimated location
         estlocmat(y+1,x+1,:) = coord;
         actlocmat(y+1,x+1,:) = location(1:d);
-    end    
+    end
 end
 errormat = estlocmat - actlocmat;   % error of the estimated location
 
