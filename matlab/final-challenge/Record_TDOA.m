@@ -21,8 +21,7 @@ maxChannel = 5;                     %# mics
     %%Call TDOA and Localisation functions
 %     disdiff = tdoa(y,ref,peakperc,Fs,Fbit,RepCount,peakn); % old version
     disdiff = tdoa(y,ref,Fs,Fbit,RepCount,peakperc,debugPlots); % new version
-    coord1 = loc(mic,disdiff,d, transmap, debugPlots); 
-    coord  = coord1;
+    coord = loc(mic,disdiff,d, transmap, debugPlots); 
 
 end
 
