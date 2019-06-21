@@ -1,4 +1,4 @@
-function [coord,y, disdiff] = Record_TDOA(ref,peakperc,mic,d,peakn, Fs, Fbit, RepCount,RecTime)
+function [coord,y, disdiff] = Record_TDOA(ref,peakperc,mic,d,peakn, Fs, Fbit, RepCount, RecTime, transmap)
 %RECORD_TDOA Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -20,7 +20,7 @@ maxChannel = 5;                     %# mics
     
     %%Call TDOA and Localisation functions
     disdiff = tdoa(y,ref,peakperc,Fs,Fbit,RepCount,peakn);
-    coord1 = loc(mic,disdiff,d); 
+    coord1 = loc(mic,disdiff,d, transmap, 0); 
     coord  = coord1;
 
 end

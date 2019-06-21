@@ -3,6 +3,7 @@ handles = guidata(H);
 peakperc = 30;
 load('datamicloc.mat', 'mic');
 load('refsignal3.mat', 'refsignal3');
+load('transmap.mat');
 d = 2;
 peakn = 2;
 Fs = 48000;
@@ -34,6 +35,7 @@ recordArgs.mic = mic;
 recordArgs.d = d;
 recordArgs.peakn = peakn;
 recordArgs.Fs = Fs;
+recordArgs.transmap = transmap;
 
 while(true)
     uiwait(handles.figure1);
