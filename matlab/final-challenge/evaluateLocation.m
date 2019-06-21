@@ -18,7 +18,7 @@ function [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, curren
     callN = 1; % Initialization of <callN> that is used in KITTLocation when offline mode is used.
     
     if(~doATurn)
-        while i < 6
+        while i < 3
            [x, y, callN] = KITTLocation(offlineLoc, recordArgs, callN);
 
            % Check for validity 
@@ -41,7 +41,7 @@ function [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, curren
            drawnow;
         end%while
     else
-         while i < 6
+         while i < 3
            [x, y, callN] = KITTLocation(offlineLoc, recordArgs, callN);
            
            % Check for validity 

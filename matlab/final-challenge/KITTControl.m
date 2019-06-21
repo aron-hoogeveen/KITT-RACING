@@ -19,7 +19,7 @@ testCase = 1; % KITTLocation simulation with a deviated path from ideal
 
 step2 = true; % For turning testing purposes, if false: KITT will only perform a turn
 challengeA = true; % Default challenge is A
-locationRequestAmount = 5; % Amount of times a location is requested at a point
+locationRequestAmount = 2; % Amount of times a location is requested at a point
 
 % Check for input errors
 disp('(O.O) - Checking input arguments for any errors...');
