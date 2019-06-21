@@ -48,6 +48,7 @@ curves.ydis_brake = ydis_brake; clear ydis_brake;
 curves.yspeed_brake = yspeed_brake; clear yspeed_brake;
 curves.brakeEnd = 186.5; % Predefined value. Distance in the braking distance-velocity curve at which the speed becomes zero
 
+% Extend the curves
 lastIndex = length(curves.yspeed_acc);
 for i=1:20
     curves.yspeed_acc = [curves.yspeed_acc (curves.yspeed_acc(lastIndex) + (curves.yspeed_acc(lastIndex) - curves.yspeed_acc(lastIndex - 1)))];
@@ -63,11 +64,11 @@ transmitDelay = 45; %ms for the car to react to change in speed command
 
 % Read out the current voltage of the car. This voltage will be used to
 % adjust the rotation velocity accordingly.
-%voltageStr = EPOCom(offlineCom, 'transmit', 'Sv');
-%voltage = str2double(voltageStr(6:9)); % Extract the voltage.
+% voltageStr = EPOCom(offlineCom, 'transmit', 'Sv');
+% voltage = str2double(voltageStr(6:9)); % Extract the voltage.
 
 % Adjust v_rot_prime according to voltage:
-% Nominal voltage: 17.1-17.2 [V]
+% Nominal voltage: 17.3-17.4 [V]
 voltageCorrection = 1;
 if (voltage <= 18.00 && voltage > 17.90)
       voltageCorrection = 1.25;
@@ -80,13 +81,13 @@ elseif (voltage <= 17.70 && voltage > 17.60)
 elseif (voltage <= 17.60 && voltage > 17.50)
       voltageCorrection = 1.04;
 elseif (voltage <= 17.50 && voltage > 17.40)
-      voltageCorrection = 1.03; % verified
+      voltageCorrection = 1.03;
 elseif (voltage <= 17.40 && voltage > 17.30)
-      voltageCorrection = 1.00; % probably verified
+      voltageCorrection = 1.00; %fixed value for nominal voltage = (17.3-17.4V)
 elseif (voltage <= 17.30 && voltage > 17.20) 
-      voltageCorrection = 0.95; % verified
-elseif (voltage <= 17.20 && voltage > 17.10)%nominal voltage
-      voltageCorrection = 0.87; % probably ok, fixed value for nominal voltage = (17.2-17.3V)
+      voltageCorrection = 0.95; 
+elseif (voltage <= 17.20 && voltage > 17.10)
+      voltageCorrection = 0.87; 
 elseif (voltage <= 17.10 && voltage > 17.00)
       voltageCorrection = 0.84;
 elseif (voltage <= 17.00 && voltage > 16.90)
@@ -97,7 +98,6 @@ end
 
 % Correct the velocity curve with voltageCorrection.
 v_rot_prime = voltageCorrection * v_rot_prime; %scaling of the integral has the same result as scaling v_rot
-
 
 % Clear all existing figures
 % clf;
@@ -177,12 +177,11 @@ if (challengeA)% Challenge A: no waypoint
         disp("Current loc:")
         disp(string(x_averaged(end)) + " and " + string (y_averaged(end)));
         
-%         doATurn = false; % Initialise to false
         while finished == 0
             % Drive a small distance
             distToEnd = sqrt((x_averaged(end)-endpoint(1))^2+(y_averaged(end)-endpoint(2))^2);
             drivingDistance = driveKITTv2(offlineCom, handles, distToEnd, transmitDelay, curves, d_q, ang_q); 
-            current_orientation = new_orientation; %Orientation from the end of the first turn
+            current_orientation = new_orientation; %Orientation from the end of the turn
             % Retrieve new location
             [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, current_orientation, x_averaged, y_averaged, drivingDistance, recordArgs, false, turnEndPos);
             disp("Current loc:")
@@ -202,8 +201,8 @@ if (challengeA)% Challenge A: no waypoint
                 turnEndSpeed = 1000*v_rot(turntime); % Velocity of KITT at the end of corrective turn (in cm/s)
                 turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
                 EPOCom(offlineCom, 'transmit', 'M150'); % rollout
-                pause(turnEndSpeed/100);      
-                current_orientation = new_orientation;
+                pause(turnEndSpeed/100);       % Pause for time depending on the ending speed of the turn
+                current_orientation = new_orientation; %Orientation from the end of the turn
                 [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, current_orientation, x_averaged, y_averaged, drivingDistance, recordArgs, true, turnEndPos);
                 
                 if (optimizeWrongTurn)
@@ -213,11 +212,6 @@ if (challengeA)% Challenge A: no waypoint
         end%while finished
         disp("Endpoint reached!"); %Destination reached  
     end
-
-
-      
-    
-    
     
 %%%%% OTHER CHALLENGES:
 
@@ -271,7 +265,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
 
        % Check for validity 
        distToTurnEndPos = sqrt((x-turnEndPos(1))^2+(y-turnEndPos(2))^2);
-        if(distToTurnEndPos < 100) % FIXME QUICKFIX
+        if(distToTurnEndPos < 100) % accpetable radius around the expected point
         x_points = [x_points x];
         y_points = [y_points y];
         disp('added');
@@ -291,7 +285,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
         % Drive a small distance
         distToEnd = sqrt((x_averaged(end)-waypoint(1))^2+(y_averaged(end)-waypoint(2))^2);
         drivingDistance = driveKITTv2(offlineCom, handles, distToEnd, transmitDelay, curves, d_q, ang_q); 
-        current_orientation = new_orientation; %Orientation from the end of the first turn
+        current_orientation = new_orientation; %Orientation from the end of the turn
         % Retrieve new location
         [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, current_orientation, x_averaged, y_averaged, drivingDistance,  recordArgs, false, turnEndPos);
         disp("Current loc:")
@@ -312,7 +306,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
             turnKITT(offlineCom, direction, turntime, transmitDelay, d_q, ang_q);
             EPOCom(offlineCom, 'transmit', 'M150'); % rollout
             pause(turnEndSpeed/100);
-            current_orientation = new_orientation;
+            current_orientation = new_orientation;% Orientation from the end of the turn
             [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, current_orientation, x_averaged, y_averaged, drivingDistance, recordArgs, true, turnEndPos);
                 
             if (optimizeWrongTurn)
@@ -376,7 +370,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
 
        % Check for validity 
        distToTurnEndPos = sqrt((x-turnEndPos(1))^2+(y-turnEndPos(2))^2);
-       if(distToTurnEndPos < 100) % QUICKFIX FIXME
+       if(distToTurnEndPos < 100) % accpetable radius around the expected point
         x_points = [x_points x];
         y_points = [y_points y];
         disp('added');
