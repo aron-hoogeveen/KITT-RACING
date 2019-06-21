@@ -1,3 +1,6 @@
+% EPO-4 Group B4
+% 19-06-2019
+
 function drivingDistance = driveKITTv2(offlineCom, handles, distToEnd, transmitDelay, curves, d_q, ang_q)
 % driveKITTv2 Drive KITT for a certain distance (small distance, dependent 
 %    on <distToEnd>)
@@ -5,8 +8,6 @@ function drivingDistance = driveKITTv2(offlineCom, handles, distToEnd, transmitD
 %    drivingDistance = driveKITTv2(offlineCom, distToEnd, transmitDelay,
 %    curves) lets KITT drive a distance <drivingDistance>.
 %
-%    EPO-4 Group B4
-%    <insert date of last modification>
     drivingDistance = distToEnd/3;
     if (drivingDistance < 20 && drivingDistance > 10)
         drivingDistance = 20;

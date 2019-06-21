@@ -1,10 +1,14 @@
+% EPO-4 Group B4
+% 21-06-2019
+% evaluateLocation() checks if the point is within the expected radius 
+
 function [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, current_orientation, x_averaged, y_averaged, drivingDistance, recordArgs, doATurn, turnEndPos)
 
     % Compute expected point
-    if (~doATurn)
+    if (~doATurn) % car is driving straight
         x_expected = x_averaged(end) + cosd(current_orientation)*drivingDistance;
         y_expected = y_averaged(end) + sind(current_orientation)*drivingDistance;
-    else
+    else % car has performed a turn
         x_expected = turnEndPos(1);
         y_expected = turnEndPos(2);
     end
@@ -24,7 +28,7 @@ function [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, curren
            % Check for validity 
            distToLastAveragedPoint = sqrt((x-x_averaged(end))^2+(y-y_averaged(end))^2);
            distToExpectedPoint = sqrt((x-x_expected)^2+(y-y_expected)^2);
-           if(distToLastAveragedPoint < drivingDistance + 40000 && distToExpectedPoint < 100) % FIXME QUICKFIX
+           if(distToLastAveragedPoint < drivingDistance + 100 && distToExpectedPoint < 100) % allowed radius of expected endpoint
 
                     x_points = [x_points x];
                     y_points = [y_points y];

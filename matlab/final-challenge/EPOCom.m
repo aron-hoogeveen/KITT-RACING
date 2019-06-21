@@ -1,3 +1,6 @@
+% EPO-4 Group B4
+% 14-06-2019
+
 function [result] = EPOCom(offline, cmd, arg1)
 % EPOCom Simulates sending commands to KITT when KITT is not connected
 %
@@ -6,8 +9,6 @@ function [result] = EPOCom(offline, cmd, arg1)
 %    will pass the <cmd> and <arg1> to the EPOCommunications function that
 %    sends the corresponding data to KITT.
 %
-%    EPO-4 Group B4
-%    <insert date of last modification>
 
 if (nargin < 2)
     error('EPOCom requires at minimum two arguments.');

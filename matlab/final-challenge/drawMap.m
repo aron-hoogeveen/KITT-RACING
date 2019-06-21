@@ -1,13 +1,10 @@
 % EPO-4 Group B4
-% 29-05-2019
+% 15-06-2019
 %[] = drawMap is used to iniate a plot functioning as a field map
 function [] = drawMap(handles, startpoint, endpoint, orientation, waypoint)
     
     % Map size
-    %figure('WindowState', 'maximized')
-    
-    %Draw the bounds of the field:
-    
+    %figure('WindowState', 'maximized')   
     
     % Draw the start and end points (and optionally waypoint)
     plot(handles.LocationPlot,startpoint(1), startpoint(2), 'b*', 'MarkerSize', 10);

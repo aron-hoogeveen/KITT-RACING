@@ -1,12 +1,11 @@
+% EPO-4 Group B4
+% 05-06-2019
+% angkeToCommand() is used to convert a desired wheel angle into a command
 function command = angleToCommand(angle, direction, d_q, ang_q)
 % angleToCommand Converts angles to commands for the control function
 % 
 %    command = angleToCommand(angle, direction) converts <angle> to a valid
 %    <direction> command that can be send to KITT.
-%
-%    EPO-4 Group B4
-%    <insert date of last modification>
-
     if (abs(angle) > 25)
         error('Angle is out of range (>25)');
     end

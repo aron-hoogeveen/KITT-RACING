@@ -1,14 +1,9 @@
-function [] = driveKITTbackwards(offlineCom, offlineLoc, handles, transmitDelay, startpoint, endpoint,orientation, t_radius, v_rot_prime, recordArgs, voltageCorrection)
+% EPO-4 Group B4
+% 21-06-2019
 % driveKITTbackwards Drives KITT backwards until a turn inside the field
 %    can be made.
-%
-%    [] = driveKITTbackwards(offlineCom, offlineLoc, handles, 
-%    transmitDelay, startpoint, endpoint,orientation, t_radius, 
-%    v_rot_prime, recordArgs)
-%
-%    EPO-4 Group B4
-%    <insert date of last modification>
-
+function [] = driveKITTbackwards(offlineCom, offlineLoc, handles, transmitDelay, startpoint, endpoint,orientation, t_radius, v_rot_prime, recordArgs, voltageCorrection)
+	
     outOfField = true; %initially the turn is out of the field
     x_current = startpoint(1);
     y_current = startpoint(2); 

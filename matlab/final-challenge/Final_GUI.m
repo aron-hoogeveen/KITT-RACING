@@ -1,3 +1,6 @@
+% EPO-4 Group B4
+% 18-06-2019
+
 function varargout = Final_GUI(varargin)
 % FINAL_GUI MATLAB code for Final_GUI.fig
 %      FINAL_GUI, by itself, creates a new FINAL_GUI or raises the existing
@@ -21,8 +24,6 @@ function varargout = Final_GUI(varargin)
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
 % Edit the above text to modify the response to help Final_GUI
-
-% Last Modified by GUIDE v2.5 18-Jun-2019 10:05:00
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;

@@ -1,3 +1,7 @@
+% EPO-4 Group B4
+% 21-06-2019
+% Challenge_GUI is  called to open the GUI and insert the challenge specifications
+
 H = Final_GUI;
 handles = guidata(H);
 peakperc = 40;

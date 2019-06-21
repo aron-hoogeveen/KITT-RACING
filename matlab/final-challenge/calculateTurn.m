@@ -1,5 +1,5 @@
 % EPO-4 Group B4
-% 29-05-2019
+% 21-06-2019
 % calculateTurn() is used to calculate the turning time at a given speed
 % curve and turning radius in order to directly face a destination
 function [turntime, direction, turnEndPos, new_orientation, optimizeWrongTurn, outOfField] = calculateTurn(handles, startpoint, destination, orientation, t_radius, v_rot_prime)
@@ -108,4 +108,4 @@ function [turntime, direction, turnEndPos, new_orientation, optimizeWrongTurn, o
     turntime = t; %ms
     turnEndPos = [x_incr, y_incr];
     new_orientation = theta_lim;
-end%turningTime
+end

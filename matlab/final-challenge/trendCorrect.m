@@ -1,3 +1,6 @@
+% EPO-4 Group B4
+% 19-06-2019
+
 function [pathIsGood, turntime, direction, turnEndPos, new_orientation, optimizeWrongTurn] = trendCorrect(handles, x_averaged, y_averaged, endpoint,  t_radius, v_rot_prime, v_rot)
 % trendCorrect Creates and plots a trend created from KITT location points
 %

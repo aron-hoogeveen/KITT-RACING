@@ -1,3 +1,6 @@
+% EPO-4 Group B4
+% 18-06-2019
+
 function [x, y, callN] = KITTLocation(offline, recordArgs, callN)
 %[] = KITTLocation(argin) returns an x and y
 %    coordinate. When <offline>==true then the function will return sample

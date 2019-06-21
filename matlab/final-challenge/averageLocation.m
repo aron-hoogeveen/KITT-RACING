@@ -1,3 +1,6 @@
+% EPO-4 Group B4
+% 13-05-2019
+% averageLocation returns the average x, and y for corresponding vectors
 function [x, y] = averageLocation(x_vector, y_vector)
     
   if (length(x_vector) ~= length(y_vector))
