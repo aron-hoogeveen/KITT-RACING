@@ -54,8 +54,8 @@ function [] = driveKITTbackwards(offlineCom, offlineLoc, handles, transmitDelay,
 
         % Calculate the distance that will be driven backwards
         % (backwardDistance) in cm
-        if (floor(availableDist/2) > neededDist)
-            backwardDistance = (availableDist/2);
+        if (availableDist > neededDist)
+            backwardDistance = floor(neededDist + (availableDist-neededDist)/2);
             if (backwardDistance > neededDist*2) % if backwardDistance is too much
                 backwardDistance = neededDist + neededDist/2; % reduce to 1m more than needed
             end
