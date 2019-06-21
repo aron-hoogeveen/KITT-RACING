@@ -271,7 +271,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
 
        % Check for validity 
        distToTurnEndPos = sqrt((x-turnEndPos(1))^2+(y-turnEndPos(2))^2);
-       if(distToTurnEndPos < 100)
+        if(distToTurnEndPos < 50000) % FIXME QUICKFIX
         x_points = [x_points x];
         y_points = [y_points y];
         disp('added');
@@ -376,7 +376,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
 
        % Check for validity 
        distToTurnEndPos = sqrt((x-turnEndPos(1))^2+(y-turnEndPos(2))^2);
-       if(distToTurnEndPos < 100)
+       if(distToTurnEndPos < 10000) % QUICKFIX FIXME
         x_points = [x_points x];
         y_points = [y_points y];
         disp('added');
