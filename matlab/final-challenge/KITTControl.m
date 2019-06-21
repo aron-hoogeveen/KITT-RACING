@@ -13,8 +13,8 @@ function [] = KITTControl(handles, voltage, orientation, startpoint, endpoint, r
 
 % For testing purposes, it can be specified if there is access to audio
 % location measurements and if KITT is connected
-offlineCom = true; % Is KITT not connected? If true: driving commands will only be displayed (and not transmitted to the car)
-offlineLoc = true; % Is the audio localization offline? If true: location points will be simulated or inserted manually
+offlineCom = false; % Is KITT not connected? If true: driving commands will only be displayed (and not transmitted to the car)
+offlineLoc = false; % Is the audio localization offline? If true: location points will be simulated or inserted manually
 testCase = 1; % KITTLocation simulation with a deviated path from ideal
 
 step2 = true; % For turning testing purposes, if false: KITT will only perform a turn
@@ -190,7 +190,7 @@ if (challengeA)% Challenge A: no waypoint
             % Check if endpoint is reached
             dist = sqrt((endpoint(2)-y_averaged(end))^2+(endpoint(1)-x_averaged(end))^2); % distance between KITT and the endpoint
        
-            if (dist < 20)  % Car is withing reach of endpoint
+            if (dist < 30)  % Car is withing reach of endpoint
                 finished = 1;
             end
                       
@@ -271,7 +271,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
 
        % Check for validity 
        distToTurnEndPos = sqrt((x-turnEndPos(1))^2+(y-turnEndPos(2))^2);
-        if(distToTurnEndPos < 50000) % FIXME QUICKFIX
+        if(distToTurnEndPos < 100) % FIXME QUICKFIX
         x_points = [x_points x];
         y_points = [y_points y];
         disp('added');
@@ -299,7 +299,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
         % Check if waypoint is reached
         dist = sqrt((waypoint(2)-y_averaged(end))^2+(waypoint(1)-x_averaged(end))^2); % distance between KITT and the endpoint
 
-        if (dist < 20)  % Car is withing reach of waypoint
+        if (dist < 30)  % Car is withing reach of waypoint
             finished = 1;
         end
 
@@ -376,7 +376,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
 
        % Check for validity 
        distToTurnEndPos = sqrt((x-turnEndPos(1))^2+(y-turnEndPos(2))^2);
-       if(distToTurnEndPos < 10000) % QUICKFIX FIXME
+       if(distToTurnEndPos < 100) % QUICKFIX FIXME
         x_points = [x_points x];
         y_points = [y_points y];
         disp('added');
@@ -403,7 +403,7 @@ elseif (challengeA ~= true) % Challenge B: one waypoint
         % Check if endpoint is reached
         dist = sqrt((endpoint(2)-y_averaged(end))^2+(endpoint(1)-x_averaged(end))^2); % distance between KITT and the endpoint
 
-        if (dist < 20)  % Car is withing reach of endpoint
+        if (dist < 25)  % Car is withing reach of endpoint
             finished = 1;
         end
 

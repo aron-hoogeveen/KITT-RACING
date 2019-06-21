@@ -24,7 +24,7 @@ function [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, curren
            % Check for validity 
            distToLastAveragedPoint = sqrt((x-x_averaged(end))^2+(y-y_averaged(end))^2);
            distToExpectedPoint = sqrt((x-x_expected)^2+(y-y_expected)^2);
-           if(distToLastAveragedPoint < drivingDistance + 40000 && distToExpectedPoint < 50000) % FIXME QUICKFIX
+           if(distToLastAveragedPoint < drivingDistance + 40000 && distToExpectedPoint < 100) % FIXME QUICKFIX
 
                     x_points = [x_points x];
                     y_points = [y_points y];
@@ -46,7 +46,7 @@ function [x_averaged, y_averaged] = evaluateLocation(offlineLoc, handles, curren
            
            % Check for validity 
            distToTurnEndPos = sqrt((x-turnEndPos(1))^2+(y-turnEndPos(2))^2);
-           if(distToTurnEndPos < 50000)
+           if(distToTurnEndPos < 190)
             x_points = [x_points x];
             y_points = [y_points y];
             disp('added');
