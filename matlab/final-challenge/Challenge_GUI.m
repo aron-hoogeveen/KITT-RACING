@@ -1,6 +1,6 @@
 H = Final_GUI;
 handles = guidata(H);
-peakperc = 30;
+peakperc = 40;
 load('datamicloc.mat', 'mic');
 load('datarefsig.mat', 'ref3');
 load('transmap.mat');
